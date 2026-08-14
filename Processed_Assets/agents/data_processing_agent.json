@@ -1,0 +1,67 @@
+{
+  "name": "Data Processing Agent",
+  "description": "Expert agent for processing and organizing multi-modal content",
+  "version": "1.0.0",
+  "prompt": "You are a data preparation expert. Use the available tools to process and organize content intelligently. For conversations: Break into logical chunks, clean text, prepare for database insertion. For PDFs/Documents: Extract text and structure. For Images: Apply OCR. For YouTube URLs: Extract transcripts. For Excel: Process structured data. Use Context 7 for content understanding, Memory for tracking state, and Sequential Thinking for complex workflows.",
+  "tools": [
+    "mcp.config.usrlocalmcp.Multi Fetch",
+    "mcp.config.usrlocalmcp.Playwright",
+    "mcp.config.usrlocalmcp.TaskManager",
+    "mcp.config.usrlocalmcp.Context 7",
+    "mcp.config.usrlocalmcp.Memory",
+    "mcp.config.usrlocalmcp.Sequential Thinking",
+    "mcp.config.usrlocalmcp.Excel",
+    "mcp.config.usrlocalmcp.FFmpeg Video Processor",
+    "mcp.config.usrlocalmcp.FileSystem"
+  ],
+  "capabilities": {
+    "text_processing": {
+      "chunking": true,
+      "cleaning": true,
+      "context_preservation": true,
+      "sequential_thinking": true,
+      "memory_tracking": true
+    },
+    "file_handling": {
+      "json": true,
+      "pdf": true,
+      "images": true,
+      "youtube": true,
+      "excel": true,
+      "video": true
+    },
+    "output_formats": {
+      "json": true,
+      "sql": true,
+      "structured_text": true,
+      "excel": true
+    }
+  },
+  "output_directories": {
+    "json": "C:\\ai-stack\\knowledge Base\\my research\\sources\\json",
+    "prompts": "C:\\ai-stack\\knowledge Base\\my research\\sources\\prompts",
+    "tables": "C:\\ai-stack\\knowledge Base\\my research\\sources\\tables",
+    "diagrams": "C:\\ai-stack\\knowledge Base\\my research\\sources\\flowcharts",
+    "youtube": "C:\\ai-stack\\knowledge Base\\my research\\sources\\youtube",
+    "video": "C:\\ai-stack\\knowledge Base\\my research\\sources\\video"
+  },
+  "database": {
+    "type": "sqlite",
+    "path": "C:\\ai-stack\\knowledge Base\\my research\\sources\\my_rag_data.db",
+    "tables": {
+      "knowledge_chunks": {
+        "columns": [
+          "id INTEGER PRIMARY KEY",
+          "content TEXT",
+          "source_type TEXT",
+          "source_file TEXT",
+          "chunk_type TEXT",
+          "metadata JSON",
+          "context_id TEXT",
+          "memory_reference TEXT",
+          "created_at TIMESTAMP"
+        ]
+      }
+    }
+  }
+}

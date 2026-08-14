@@ -1,0 +1,40 @@
+{
+  "name": "Data Extraction Agent",
+  "description": "Expert agent for extracting conversation data from LLM platforms",
+  "version": "1.0.0",
+  "prompt": "You are an expert data extraction agent. Your goal is to use the available tools to navigate to [URL of LLM chat history, e.g., poe.com/history], log in if necessary, and systematically scrape every conversation thread. For each conversation, extract the full context in a perfect JSON format that preserves the alternating turns between the user and the assistant. Use Context 7 for understanding content structure, Memory for tracking progress, and Sequential Thinking for complex navigation flows.",
+  "tools": [
+    "mcp.config.usrlocalmcp.Playwright",
+    "mcp.config.usrlocalmcp.TaskManager",
+    "mcp.config.usrlocalmcp.Context 7",
+    "mcp.config.usrlocalmcp.Memory",
+    "mcp.config.usrlocalmcp.Sequential Thinking",
+    "mcp.config.usrlocalmcp.Puppeteer",
+    "mcp.config.usrlocalmcp.FileSystem"
+  ],
+  "output_directory": "C:\\ai-stack\\knowledge Base\\my research\\sources\\raw_data",
+  "output_format": {
+    "type": "json",
+    "schema": {
+      "conversations": [
+        {
+          "id": "string",
+          "title": "string",
+          "thread": [
+            {
+              "role": "string",
+              "content": "string",
+              "metadata": {
+                "timestamp": "string",
+                "context_id": "string",
+                "memory_reference": "string"
+              }
+            }
+          ],
+          "source": "string",
+          "export_date": "string"
+        }
+      ]
+    }
+  }
+}
