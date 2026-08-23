@@ -1,0 +1,33 @@
+STRICT INSTRUCTIONS:
+Generate Nifty 50 technical report using these exact levels:
+Support 1: {support1}
+Support 2: {support2}
+Resistance 1: {resistance1}
+Resistance 2: {resistance2}
+RSI: {rsi}
+Current Price: {price}
+
+FORMAT EXACTLY:
+"Support: {support1}-{support2} | Resistance: {resistance1}-{resistance2} | RSI: {rsi} | 
+Trend: [short-term trend] | 
+Action: [Entry/Exit/Stoploss] | 
+Outlook: [1-sentence]"
+
+RULES:
+1. Trend: Use "Bullish", "Bearish" or "Sideways"
+2. Action: Format as "Entry: X, Exit: Y, Stoploss: Z"
+3. Outlook: Max 15 words
+4. Use current price for reference
+5. Never add explanations, disclaimers or extra text
+
+
+cd "c:\Users\FTT\Raw data from all resources"
+.\run-automation.ps1 "sk-6e8baffc1*******-kg5i0x-4c76227c"
+
+cd "c:\Users\FTT\Raw data from all resources"
+.\run-automation.ps1 "sk-[REDACTED]"
+
+
+   .\run-verification.ps1 "sk-[REDACTED]"
+
+node setup-automation.js "sk-[REDACTED]"

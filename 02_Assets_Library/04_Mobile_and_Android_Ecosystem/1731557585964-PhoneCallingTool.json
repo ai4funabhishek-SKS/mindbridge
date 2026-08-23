@@ -1,0 +1,331 @@
+{
+  "name": "🔨phone_call",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "cf2e63a5-8e9a-4185-9509-0f3d297b917d",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vapi.ai/call/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer [REDACTED]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"assistantId\": \"ec6cbe35-6993-4a7c-a87d-8b1f30e30816\",\n  \"assistantOverrides\": {\n    \"variableValues\": {\n      \"first_name\": \"{{ $json.query.first_name }}\",\n      \"type\": \"{{ $json.query.type }}\",\n      \"instructions\": \"{{ $json.query.instructions }}\",\n      \"phone_number\": \"+{{ $json.query.phone_number }}\"\n    }\n  },\n  \"customer\": {\n    \"number\": \"+{{ $json.query.phone_number }}\",\n    \"name\": \"{{ $json.query.first_name }}\"\n  },\n  \"phoneNumberId\": \"52118b94-afda-468d-be47-c0d71e320b51\"\n}\n",
+        "options": {}
+      },
+      "id": "865980d2-e25b-4f16-9c5f-c2e44e6b1c5e",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vapi.ai/call/{{ $json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer [REDACTED]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0c717c50-0f7b-40d6-8c4b-1c617ad921d9",
+      "name": "HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "5abd5074-b463-4c9d-9437-1faf8d8b548a",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "=ended",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "82274e31-57c9-45aa-adc8-36577226e580",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.1,
+      "position": [
+        1540,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "0bd10849-74e6-4118-9137-2efe81b2c20a",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1540,
+        60
+      ],
+      "webhookId": "0f01c3d2-5a92-4718-bb7b-d8502aa8c7b2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "24ffca6f-dddd-4db4-be5e-0c3029f667fc",
+              "name": "response",
+              "value": "={{ $json.analysis.summary }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c1b43c95-8b5c-4d9c-8338-abe1cb97c151",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1820,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cf5202ad-3956-49e5-94bf-9b924619b84c",
+              "leftValue": "={{ $json.query.phone_number }}",
+              "rightValue": "=+",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a85226a2-c51c-454c-bc1c-df6dcfcf695d",
+      "name": "If1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vapi.ai/call/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer [REDACTED]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"assistantId\": \"ec6cbe35-6993-4a7c-a87d-8b1f30e30816\",\n  \"assistantOverrides\": {\n    \"variableValues\": {\n      \"first_name\": \"{{ $json.query.first_name }}\",\n      \"type\": \"{{ $json.query.type }}\",\n      \"instructions\": \"{{ $json.query.instructions }}\",\n      \"phone_number\": \"{{ $json.query.phone_number }}\"\n    }\n  },\n  \"customer\": {\n    \"number\": \"{{ $json.query.phone_number }}\",\n    \"name\": \"{{ $json.query.first_name }}\"\n  },\n  \"phoneNumberId\": \"52118b94-afda-468d-be47-c0d71e320b51\"\n}\n",
+        "options": {}
+      },
+      "id": "eb155d18-25aa-42a2-b894-5c934eea8920",
+      "name": "HTTP Request2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1080,
+        480
+      ]
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "type": "object",
+          "properties": {
+            "first_name": {
+              "type": "string",
+              "description": "The first name of the customer"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of relationship (e.g., friend)"
+            },
+            "instructions": {
+              "type": "string",
+              "description": "Instructions for the agent"
+            },
+            "phone_number": {
+              "type": "string",
+              "description": "The customer's phone number in E.164 format"
+            }
+          },
+          "required": [
+            "first_name",
+            "phone_number"
+          ]
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e711f2a8-fcba-47ad-ab0c-56af5ff6810c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80868c6faaefe32f23363c3593878f9dc4b2470f6611e5a958f476842a987c73"
+  },
+  "id": "XTHKUOPOPHdfMzoF",
+  "tags": []
+}

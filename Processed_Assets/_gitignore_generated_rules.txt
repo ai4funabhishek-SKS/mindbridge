@@ -11,11 +11,5 @@
 /Processed_Assets/Prompts/trading/trading_1_v1.md
 /Processed_Assets/Prompts/workflow/workflow_1_v1.md
 /04_Archive_Cold_Storage/classified_archive/24feb2026.txt
-/02_Assets_Library/02_Workflow_Automations_n8n/1731548473948-SocialMediaAutomation.json
-/02_Assets_Library/02_Workflow_Automations_n8n/_Free_Resource____10_Mega_n8n_automations_v2.json
-/02_Assets_Library/03_Prompt_Engineering_and_Frameworks/STRICT INSTRUCTIONS.txt
-/02_Assets_Library/04_Mobile_and_Android_Ecosystem/1731557585964-PhoneCallingTool.json
-/02_Assets_Library/07_Content_Creation_and_Media_Engines/YouTube_Content_Idea_Generator (1).json
 /02_Assets_Library/08_Business_Operations_and_Subbroking/AIS Resume Indeed.json
-/02_Assets_Library/09_LLM_Conversations_and_Syntheses/Tavily's AI.txt
 /02_Assets_Library/10_R_and_D_Incubator_Half_Baked_Ideas/Non-Coder's_GuidetoAI-PoweredWd_PRECONFIG.txt

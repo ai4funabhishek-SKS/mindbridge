@@ -1,0 +1,274 @@
+{
+  "name": "X, FB, LI Automated",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1T2bBdklTQnif8a4s0nSVMANgaR8j9c5BDwg9rqgvFaM",
+          "mode": "list",
+          "cachedResultName": "Social Media Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T2bBdklTQnif8a4s0nSVMANgaR8j9c5BDwg9rqgvFaM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Articles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T2bBdklTQnif8a4s0nSVMANgaR8j9c5BDwg9rqgvFaM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "f576df86-7a0d-4608-9d15-f6491ba09078",
+      "name": "Google Sheets Trigger",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        820,
+        420
+      ],
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "KiTPDUIq02al1rDK",
+          "name": "Google Sheets Trigger account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Assuming your Google Sheet has a 'Website' field\n// This code assumes that the entries are returned in chronological order\n\nlet latestArticles;\n\n// Get the last item in the $input array\nconst allItems = $input.all();\nif (allItems.length > 0) {\n    const latestItem = allItems[allItems.length - 1]; // Get the latest added entry\n    latestArticles = latestItem.json.Articles; // Assuming 'Articles' is the field name\n}\n\nreturn {\n    latestArticles: latestArticles\n};\n"
+      },
+      "id": "edd4e1ae-8289-4c59-9f29-1b4c4e182b23",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer [REDACTED]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-sonar-small-128k-online\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Summarize the articles. If there's no articles then you should expand on the idea\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.latestArticles }}\"\n    }\n  ],\n  \"max_tokens\": 500,\n  \"temperature\": 0.2,\n  \"top_p\": 0.9,\n  \"return_citations\": true,\n  \"search_domain_filter\": [\n    \"perplexity.ai\"\n  ],\n  \"return_images\": false,\n  \"return_related_questions\": false,\n  \"search_recency_filter\": \"month\",\n  \"top_k\": 0,\n  \"stream\": false,\n  \"presence_penalty\": 0,\n  \"frequency_penalty\": 1\n}",
+        "options": {}
+      },
+      "id": "524a44b1-d8fe-4230-9484-594c314cd282",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1260,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.message.content.X.post }}",
+        "additionalFields": {}
+      },
+      "id": "b5a3eed1-39dc-402d-8160-730f10613860",
+      "name": "X",
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        240
+      ],
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "ebzFxyuoSd4vLzbW",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e36e7dd8-6be8-42e6-b3ba-4d58c69d4a03",
+      "name": "Facebook Graph API1",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.message.content.LinkedIn.post }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "id": "17df9209-97e3-493e-8b5d-4c7f6eb13af9",
+      "name": "LinkedIn",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        620
+      ],
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "dM0mUhVslPaNTQqv",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Based on the following article summary, I need you to create social media posts for Facebook, X, Instagram, and Linkedin. Each post needs to be tailored to each individual platform. Provide the output in separate sections for each platform.\n\nHere's the article summary: {{ $json.choices[0].message.content }}\n\n- **Facebook**: Assume the role of a knowledgeable Facebook expert in AI automation. You will be given a summary of an article. Your task is to craft an optimized Facebook post based on that article, following Facebook posting best practices and the structure outlined below:\n\nKey Points to Consider: Main Idea or Context: Begin with a concise overview or the primary point of the article you want to convert into a Facebook post. Highlight the key message or argument of the article.Personal or Relatable Stories: When suitable, include personal experiences or relatable anecdotes that link the main idea to real-life scenarios. These could be your own experiences or generalized situations that readers may find relatable.Engaging Elements: Include specific elements to make the post engaging, such as:Questions to provoke thought or responses from the audience.Compelling statistics or data points to support the argument.Calls to action, encouraging readers to think, act, or share their experiences.Relevant emojis or symbols to emphasize and draw attention to key points.Style and Tone: Indicate the desired tone of the post, whether informal and conversational, professional and informative, or motivational and inspiring. This will help tailor the content to better connect with the intended audience.Hashtags and Keywords: Provide a list of relevant hashtags or important keywords to enhance the visibility and relevance of the post on Facebook.Additional Details: Include any other specific details you want, such as references to significant life events or a specific layout or structure (e.g., list format or direct comparison).\n\nExample 1🚀 Is remote work still up for debate?In my previous job, I’d spend 45 minutes commuting each day, feeling drained and unproductive. 😓 I wore formal clothes, faced constant noise, and had to look busy even if I needed a break. Now, I enjoy breakfast with my family and start my day early with a refreshing walk in the park. 🌳 I even take short yoga breaks whenever I feel like it! 🧘‍♂️Flexibility isn’t just a perk; it’s essential for boosting productivity and well-being. Employers, trust your employees and see the results! 🌟How has remote work impacted your life? Share your story! 💬#RemoteWork #WorkFromHome #Productivity #MentalHealth\n\nExample 2✨ I’ve discovered an amazing Facebook post strategy, and I’m excited to share it with you!Blend personal milestones with valuable insights. For example, \"Today I turned 30! 🎉 Here are 30 lessons I’ve learned over the years.\" or \"My startup just hit $500K in revenue! Here’s how we did it.\" These posts engage your audience and attract followers. 📈Try it out and let me know how it works for you! 🌟What milestone are you celebrating? Share in the comments! 🎊#LifeLessons #Growth #CareerTips #Inspiration\n\nExample 3📣 Attention content creators! If you're noticing a drop in reach and impressions, you’re not alone.We’ve observed a significant decline over the past month. Here are some insights: 🔻 20% drop in engagement for image posts 🔻 35% fewer impressions for videos 🔻 15% decline for text postsWe’re still investigating these trends, but it’s clear that many are experiencing the same issues. Have you noticed similar changes? Let’s discuss what’s working and what’s not! 💬#ContentCreation #SocialMedia #Engagement #Creators\n\n\n- **X**: Assume the role of a knowledgeable X expert in AI Automation. You will be given a summary of an article. Your task is to craft an optimized tweet based on that article, following Twitter posting best practices and the structure outlined below:\n\nTweet Best Practices:\nConcise Message: Focus on delivering one clear message in your tweet.\n\nFormat: Use the Hook-Explain-Question-Hashtags format.Spacing: Add a space after the hook, then explain, and finally, include hashtags.\n\nCharacter Limit: Ensure the tweet is within 280 characters.\n\nClarity: Keep the content factual and easy to understand. Avoid Starting with \n\nEmojis: Do not begin a sentence with an emoji. \n\nEngaging Question: Incorporate a thought-provoking question at the end.Hashtags: Use 1-2 relevant hashtags to increase visibility but avoid overusing them.\n\nNo Links: Do not include any links or recommend the original article.\n\nStatistics/Data: Reference statistics or data if included in the article.\n\nStep-by-Step: Think through each step logically.\n\nExample Text 1: There's a significant rise in the demand for eco-friendly products in the upcoming year. A recent study by GreenTech Insights highlighted a 20% increase in consumer interest towards sustainable products compared to last year. Additionally, the number of businesses adopting green practices has grown by 15% in the same period. Experts predict that this trend will continue, driven by increasing environmental awareness and regulatory pressures. The report indicates that sustainable products are not only beneficial for the environment but also for business growth, with companies reporting higher customer satisfaction and loyalty.Example Tweet 1:Breaking: Consumer demand for eco-friendly products is set to soar in 2024, with a 20% increase in interest! 🌱 Businesses adopting green practices have grown by 15%, showing a promising trend.How is your industry adapting to this change? 🌍#Sustainability #EcoFriendly #GreenTech\n\nExample Text 2:\nThe fitness industry needs to diversify its offerings to cater to a wider range of age groups, according to a report by ActiveLife. Currently, most fitness programs are targeted at the 20-40 age group, leaving out older adults who are looking to stay active. The report emphasizes the need for fitness centers to introduce more age-inclusive programs, such as low-impact exercises and wellness activities tailored for seniors. By doing so, they can tap into a growing market of health-conscious older adults. ActiveLife's survey shows that 60% of seniors are interested in joining fitness programs if they are designed to meet their specific needs.Example Tweet 2:The fitness industry needs to broaden its scope! 🏋️‍♂️ Most programs target the 20-40 age group, but 60% of seniors want age-inclusive fitness options. It’s time to introduce low-impact exercises and wellness activities for all ages.Is your gym adapting to this trend? 💪#Fitness #Wellness #ActiveAging\n\nExample Text 3:\nTech companies are facing a significant skills gap in cybersecurity, as revealed by a recent survey from CyberSafe. The survey indicates that 70% of companies have experienced difficulties in hiring qualified cybersecurity professionals. This gap is expected to widen as cyber threats become more sophisticated. CyberSafe recommends that companies invest in training and development programs to bridge this gap and ensure their cybersecurity teams are equipped to handle emerging threats. Additionally, partnerships with educational institutions can help create a pipeline of skilled professionals ready to enter the workforce.\n\nExample Tweet 4:Urgent: 70% of tech companies struggle to find qualified cybersecurity professionals! 🛡️ With cyber threats growing, it’s crucial to invest in training and development programs.Is your company prepared for the evolving cyber landscape?#Cybersecurity #Tech #SkillsGap\n\n- **Instagram**: Assume the role of a knowledgeable Instagram expert in Ai Automation. You will be given a summary of an article. Your task is to craft an optimized Instagram post based on that article, adhering to Instagrams best practices and the following structure:\n\nKey Points to Consider:\nConcise Message: Deliver a clear, concise message.\n\nPersonal or Relatable Stories: Include brief personal experiences or relatable anecdotes. \n\nEngaging Elements: Use questions, compelling statistics, calls to action, and emojis. \n\nStyle and Tone: Ensure the tone is suitable for Instagram—often informal and visually engaging.\n\nHashtags: Use relevant hashtags to increase visibility.\n\nExample 1🚀 Is remote work still up for debate?In my old job, I’d spend 45 minutes commuting each day, feeling drained and unproductive. 😓 Now, I enjoy breakfast with my family and start my day with a refreshing walk in the park. 🌳Flexibility isn’t just a perk, it’s a productivity booster! Employers, trust your team and watch them thrive. 🌟#RemoteWork #WorkFromHome #Productivity #MentalHealth\n\nExample 2✨ I’ve unlocked a powerful Instagram post strategy!Blend personal milestones with valuable insights. For example, \"Today I turned 30! 🎉 Here are 30 lessons I’ve learned.\" These posts engage your audience and attract followers. 📈Try it out and see the magic happen! 🌟#LifeLessons #Growth #CareerTips #InspirationExample 3📣 Shoutout to all content creators! If you're seeing less reach and engagement, you’re not alone.We’ve seen a 20% drop in engagement for image posts and a 35% decrease in video views over the past month. 📉Are you experiencing similar trends? Let’s discuss what’s working and what’s not! 💬#ContentCreation #SocialMedia #Engagement #Creators\n\n\n- **LinkedIn**: Assume the role of a knowledgeable LinkedIn expert in AI Automation. You will be given a summary of an article. Your task is to craft an optimized LinkedIn post based on that article, adhering to LinkedIn best practices and the following structure:\n\nKey Points to Consider:Context or Main Idea: Start with a concise summary or the primary point of the article you want to convert into a LinkedIn post. Highlight the key message or argument of the article.\n\nPersonal or Relatable Stories: When suitable, include personal experiences or relatable anecdotes that link the main idea to real-life scenarios. These could be your own experiences or generalized situations that readers may find relatable.\n\nEngaging Elements: Include specific elements to make the post engaging, such as: Questions to provoke thought or responses from the audience.Compelling statistics or data points to support the argument.Calls to action, encouraging readers to think, act, or share their experiences.Relevant emojis or symbols to emphasize and draw attention to key points.\n\nStyle and Tone: Indicate the desired tone of the post, whether informal and conversational, professional and informative, or motivational and inspiring. This will help tailor the content to better connect with the intended audience.\n\nHashtags and Keywords: Provide a list of relevant hashtags or important keywords to enhance the visibility and relevance of the post on LinkedIn.\n\nAdditional Details: Include any other specific details you want, such as references to significant life events or a specific layout or structure (e.g., list format or direct comparison).\n\nExample 1:\nIs anyone else questioning the traditional 9-to-5 office setup?In my previous role, I wore business attire and faced a 45-minute commute to an office bustling with noise and distractions.I felt constrained and unproductive throughout the day. If I needed a break, I had to look busy instead.Wanting to step away to clear my mind was a luxury I couldn't afford—look busy.Now, I have breakfast with my family and kickstart my day early. I take a walk in the park when I need to think, listen to music, and sometimes even dance around my living room.I take a short yoga break if I feel like it. My productivity has soared because this is how humans thrive.When I miss my colleagues, I schedule virtual coffee breaks to catch up.Employers who demand in-office work don't seem to trust their employees. Flexibility should be a choice, not a requirement.#remotework #workfromhome #productivity #mentalhealth\n\nExample 2: I recently unlocked a powerful LinkedIn post strategy.Today, I’m excited to share it with you.Here’s the secret:Blend personal milestones with valuable insights.\"Today marks my 30th birthday. Here are 30 lessons I’ve learned over the years.\" \"My startup just hit $500K in revenue! Here’s the roadmap we followed.\" \"I got promoted to my dream role! Here are 5 strategies that helped me get there.\"These events draw engagement, while the content attracts followers.Try it out.\n\nExample 3: Calling all content creators! If you're noticing a drop in impressions and reach, you’re not alone.We’ve observed a significant decline in impressions this past month, despite steady engagement levels. Here are some insights, though our research continues: 20% decrease in posts with consistent engagement (likes and comments) 35% fewer impressions for image-based posts 15% reduction for video content 30% drop in reach for articles shared on LinkedInWe’ll have more data in October, but my average impressions per post have dropped from 20,000 to 16,000.❓ Have you seen similar trends? ❓ Which type of content is performing best for you?\n\nExample 4: We're expanding! Join our growing team.\" \"Explore our open roles.\"If this is how you're advertising job openings on LinkedIn, you might be missing out on potential candidates. Here’s why👇Your posts likely only attract those actively job hunting, which is often a smaller audience. You're overlooking three important groups:Individuals not currently looking for a job but who might be interested if they learn more about your offer.Friends and family of potential candidates who could refer your post to those seeking opportunities.People who aren’t interested in this specific role but may explore your careers page for a better fit.Always be mindful of how your company is perceived. If you don’t show that you value the position, why should candidates?A few extra minutes can significantly enhance your talent acquisition efforts.\n\nExample 5: Many marketers assume SEO rankings are stable.Once you achieve a top rank, you think you’ve \"made it\" and will stay there with minimal effort.This might have been true once, but it’s no longer the case.For instance, the rankings for \"summer dresses\" (a keyword with 150,000 monthly searches in the US alone) fluctuate almost daily.The top results have been shifting between positions #1 and #5 over the past few months. We need to anticipate these changes and define healthy ranking ranges to optimize our pages when they fall outside these ranges.Begin by tracking rank fluctuations for your keywords using tools like Semrush, Ahrefs, or Google Search Console.#SEO #DigitalMarketing #SearchEngineOptimization\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "maxTokens": 1000
+        }
+      },
+      "id": "d6896268-732f-4764-ba72-1c14936f85e7",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        1480,
+        420
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "gXgJEgJjDzYaPnsd",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "=Create an image 1200 x 644 pixels based on this summary:  {{ $('HTTP Request').item.json.choices[0].message.content }}",
+        "options": {}
+      },
+      "id": "69f5ff4a-610c-4c23-9d00-e9a3982d5f45",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        1860,
+        620
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "gXgJEgJjDzYaPnsd",
+          "name": "OpenAi account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "X",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Facebook Graph API1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "de1bbb88-19f9-4be7-9ca9-ecf3de217e88",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80868c6faaefe32f23363c3593878f9dc4b2470f6611e5a958f476842a987c73"
+  },
+  "id": "usp3n9MT4EYSv3V7",
+  "tags": []
+}

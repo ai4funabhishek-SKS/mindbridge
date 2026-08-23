@@ -1,0 +1,39 @@
+> Set up Tavily's MCP server so I get live web access (search, extract, crawl, and map) in your coding agent.
+
+Add Tavily to your coding agent's MCP config. This form works with most MCP clients (needs Node.js 18+ on your PATH):
+```json
+{
+  "mcpServers": {
+    "tavily": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.tavily.com/mcp/?tavilyApiKey=tvly-dev-[REDACTED]"]
+    }
+  }
+}
+```
+
+Restart your coding agent, then reply once the `tavily_*` tools show up ✅.
+
+If the `tavily_*` tools don't appear, call Tavily directly (also confirms the key):
+```bash
+curl -s https://api.tavily.com/search -H "Authorization: Bearer tvly-dev-[REDACTED]" -H "Content-Type: application/json" -d '{"query":"latest AI news"}'
+```
+```python
+from tavily import TavilyClient; print(TavilyClient("tvly-dev-[REDACTED]").search(query="latest AI news"))
+```
+```typescript
+import { tavily } from "@tavily/core"; console.log(await tavily({ apiKey: "tvly-dev-[REDACTED]" }).search("latest AI news"));
+```
+
+Install the Tavily CLI (search, extract, crawl, map, research from the terminal):
+```bash
+curl -fsSL https://cli.tavily.com/install.sh | bash
+tvly login --api-key tvly-dev-[REDACTED]
+```
+
+Add Tavily's Agent Skills (best-practice patterns), then restart:
+```bash
+npx skills add tavily-ai/skills --all
+```
+
+More: https://docs.tavily.com/agents.md (setup + defaults), https://docs.tavily.com/llms.txt (index; append `.md` to any docs URL).
