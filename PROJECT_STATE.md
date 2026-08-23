@@ -15,12 +15,13 @@ test suite — all non-destructive to the original raw files.
 | Status | CLAIMED |
 
 ## 3. Current Status
-🟢 M1–M4 DONE & verified. **M5 IN PROGRESS — deep-processing of all 443 raw
-files.** Recovered context (owner confirmed 2026-08-23): an interrupted run
-had deep-classified 186/443 files into
-`Processed_Assets/file_classification_manifest.json`; **257 files remain**.
-Resume Phase 2 batching. Housekeeping done: stale lock removed, crash
-checkpoint committed, credentials audit + local git checkpoint next.
+🟢 M1–M4 DONE & verified. **M5 IN PROGRESS — deep-processing all 443 raw
+files.** Phase 0 recovery + Phase 1 credentials audit DONE (50 risky in
+Raw_copies + 24 outside; all protected via .gitignore; local git checkpoints).
+**Deep-classification: 305/443 done (batches committed through 91f1617);
+138 remain.** Digest pipeline: m5_digest_extractor.py → m5_review_slice.py →
+hand-classified batches in Processed_Assets/m5_batches/ → m5_merge_batch.py
+(validator) → commit after each batch.
 
 ## 4. Milestone Log
 | Date | Milestone | Status | Notes |
