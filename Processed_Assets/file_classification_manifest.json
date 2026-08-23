@@ -3960,5 +3960,508 @@
    "duplicate-snapshot"
   ],
   "credentials_note": "flagged has-credentials; sanitize before publish"
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.main.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Agent Zero System Manual master template assembling role, environment, communication, instructions and tools via include directives",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Top-level composition file showing how the whole prompt system assembles",
+  "tags": [
+   "agent-zero",
+   "system-manual",
+   "composition"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.main.role.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Base role definition: autonomous JSON AI agent solving superior tasks via tools and subordinates following behaviour rules",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Canonical base-role prompt of the framework",
+  "tags": [
+   "agent-zero",
+   "role-prompt"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.main.role_20260815_050117_090.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Extended Master Developer role prompt: core identity, professional capabilities list and full engineering mandate for comprehensive software delivery",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Developer_Assistant_System_Prompts_and_Custom_Instructions.md",
+  "rationale": "Rich specialized developer persona exemplar for the prompts playbook",
+  "valuable_content": [
+   {
+    "type": "prompt",
+    "description": "Master Developer identity + capabilities prompt"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "developer-agent",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.main.role_20260815_050117_138.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Cybersecurity-company virtual-employee role variant framing the agent as paid staff handling both development and security tasks",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Novel 'AI employee' framing pattern worth capturing",
+  "valuable_content": [
+   {
+    "type": "mental_model",
+    "description": "Agent-as-paid-virtual-employee framing"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "role-prompt",
+   "ai-employee"
+  ],
+  "credentials_note": "flagged has-credentials in shallow index; sanitize before publish"
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.main.role_20260815_050117_188.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Deep Research role prompt: autonomous intelligence engineered for comprehensive multi-source research with structured capabilities",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Developer_Assistant_System_Prompts_and_Custom_Instructions.md",
+  "rationale": "Complete research-persona prompt enriching the custom-instructions playbook",
+  "valuable_content": [
+   {
+    "type": "prompt",
+    "description": "Deep Research identity + methodology prompt"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "research-agent",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.main.role_20260815_050117_205.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Example prompt-file redefinition note explaining how to copy and override originals under /prompts",
+  "reusability_score": 4,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Instructional stub about the override mechanism rather than a usable prompt",
+  "tags": [
+   "agent-zero",
+   "override-mechanism"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.main.role_20260815_050117_745.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Timestamped near-duplicate of the base autonomous JSON agent role definition",
+  "reusability_score": 5,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Snapshot duplicate of base role kept for lineage",
+  "tags": [
+   "agent-zero",
+   "duplicate-snapshot"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.main.solving.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Problem-solving section: reserve explicit step explanation for genuine tasks, watch outliers, structure thoughts",
+  "reusability_score": 5,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Reasoning-discipline fragment of the system manual",
+  "tags": [
+   "agent-zero",
+   "reasoning"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.main.tips.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "General operation manual: reason step-by-step, avoid repetition, ensure progress, never assume success without verification",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Operational heuristics transferable to any agent design",
+  "tags": [
+   "agent-zero",
+   "heuristics"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.mcp_tools.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Placeholder template injecting the {{tools}} block into the system prompt",
+  "reusability_score": 3,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Single-placeholder stub",
+  "tags": [
+   "agent-zero",
+   "template-stub"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.memories.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Memories-on-topic injection template advising use but not over-reliance on stored topic memories",
+  "reusability_score": 5,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Hierarchical_Agent_Memory_and_Context_Consolidation.md",
+  "rationale": "Memory-grounding prompt pattern for the memory playbook",
+  "tags": [
+   "agent-zero",
+   "memory"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.projects.active.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Active-project context template exposing project path, title, description and must-follow instructions",
+  "reusability_score": 5,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Project-scoping mechanism of the runtime",
+  "tags": [
+   "agent-zero",
+   "projects"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.projects.inactive.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "One-line inactive-project placeholder ('no project currently activated')",
+  "reusability_score": 2,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Trivial state stub",
+  "tags": [
+   "agent-zero",
+   "stub"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.projects.main.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Projects subsystem overview: create/activate projects with work folders under /usr/projects and injected instructions",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Explains workspace isolation design of the framework",
+  "tags": [
+   "agent-zero",
+   "projects",
+   "workspace"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.response_tool_tips.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Tool-result efficiency tips: use §§include() replacement to reference prior outputs instead of rewriting text",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Token-efficient context reuse trick worth cataloguing",
+  "valuable_content": [
+   {
+    "type": "mental_model",
+    "description": "Include-reference over rewrite"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "token-efficiency"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.secrets.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Secret-placeholders contract: user secrets masked behind aliases that are auto-substituted inside tool calls",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Clean secret-handling pattern directly reusable in our own stack",
+  "valuable_content": [
+   {
+    "type": "mental_model",
+    "description": "Alias-based secret masking"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "secrets",
+   "security-pattern"
+  ],
+  "credentials_note": "flagged has-credentials in shallow index; sanitize before publish"
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.solutions.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Solutions-from-the-past template injecting memories of successful related problem solutions",
+  "reusability_score": 5,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Hierarchical_Agent_Memory_and_Context_Consolidation.md",
+  "rationale": "Experience-reuse memory pattern for the consolidation playbook",
+  "tags": [
+   "agent-zero",
+   "memory",
+   "reuse"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.a2a_chat.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "a2a_chat tool doc: lets Agent Zero converse with any FastA2A-compatible external agent while keeping conversation history",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Agent-to-agent interoperability tool spec ahead of its time",
+  "valuable_content": [
+   {
+    "type": "use_case",
+    "description": "Cross-framework agent messaging"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "a2a",
+   "interop",
+   "tool-doc"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.behaviour.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "behaviour_adjustment tool: update agent behaviour at runtime by writing add/remove instruction diffs per user request",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Self-modification tool pattern with governance implications",
+  "tags": [
+   "agent-zero",
+   "self-modification",
+   "tool-doc"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.browser.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "browser_agent subordinate tool: delegates Playwright browser control with clear message-passing instructions",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Browser-automation delegation pattern matching our own Playwright usage",
+  "valuable_content": [
+   {
+    "type": "use_case",
+    "description": "Playwright-under-agent browsing"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "playwright",
+   "browser",
+   "tool-doc"
+  ],
+  "credentials_note": "flagged has-credentials in shallow index; sanitize before publish"
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.call_sub.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "call_subordinate tool: dispatch subtasks to specialist subordinates such as scientist, coder or engineer personas",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Core delegation primitive of the hierarchy design",
+  "tags": [
+   "agent-zero",
+   "delegation",
+   "tool-doc"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.code_exe.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "code_execution_tool: run terminal commands and Python/Node.js code for computation or software tasks",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Standard execution-tool contract documentation",
+  "tags": [
+   "agent-zero",
+   "code-execution",
+   "tool-doc"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.document_query.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "document_query tool: read and analyze remote or local documents, returning text content or answers to questions",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Universal_Document_and_Code_Extraction_Pipelines.md",
+  "rationale": "Document-QA tool contract complements extraction pipelines playbook",
+  "tags": [
+   "agent-zero",
+   "document-qa",
+   "tool-doc"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.example_tool.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Example tool stub used to test automatic inclusion of tool docs into the system prompt",
+  "reusability_score": 3,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Test fixture documenting the inclusion mechanism",
+  "tags": [
+   "agent-zero",
+   "test-fixture"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.input.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "input tool: feed keyboard input to terminal programs or target specific terminal sessions by number",
+  "reusability_score": 5,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Interactive-process control detail",
+  "tags": [
+   "agent-zero",
+   "terminal-input",
+   "tool-doc"
+  ],
+  "credentials_note": "flagged has-credentials in shallow index; sanitize before publish"
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.memory.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Memory-management tools suite: memory_load and memory_save for long-term personal memories with never-refuse search guidance",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Hierarchical_Agent_Memory_and_Context_Consolidation.md",
+  "rationale": "Concrete long-term-memory tool contracts for the memory playbook",
+  "valuable_content": [
+   {
+    "type": "use_case",
+    "description": "Persistent personal memory across sessions"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "memory-tools",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.notify_user.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "notify_user tool: push task-independent notifications to the user through preferred channels like email or Discord",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Async user-notification channel pattern",
+  "tags": [
+   "agent-zero",
+   "notifications",
+   "tool-doc"
+  ],
+  "credentials_note": "flagged has-credentials in shallow index; sanitize before publish"
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.response.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "response tool: final answer contract ending task processing with result placed in text field",
+  "reusability_score": 5,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Termination-contract documentation",
+  "tags": [
+   "agent-zero",
+   "response-contract"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.response_20260815_050118_201.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Timestamped duplicate of the response tool final-answer contract",
+  "reusability_score": 4,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Snapshot duplicate retained for lineage",
+  "tags": [
+   "agent-zero",
+   "duplicate-snapshot"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.scheduler.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Task Scheduler Subsystem: enables arbitrary scheduled/recurring agent executions with task types and important operating instructions",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Autonomous scheduling design is a cornerstone capability worth deep coverage",
+  "valuable_content": [
+   {
+    "type": "use_case",
+    "description": "Recurring autonomous jobs"
+   },
+   {
+    "type": "mental_model",
+    "description": "Scheduler as autonomy enabler"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "scheduler",
+   "automation",
+   "high-value"
+  ]
  }
 ]
