@@ -2002,7 +2002,7 @@
   "keys": [
    "web"
   ],
-  "preview": "{\"web\": {\"client_id\": \"33848024425-s56jn3cgcejt2h52108dt9dd62r1of73.apps.googleusercontent.com\", \"project_id\": \"knowledgehub-476307\", \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\", \"token_uri\": \"https://oauth2.googleapis.com/token\", \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\", \"client_secret\": \"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\", \"redirect_uris\": [\"http://localhost:5678/rest/oauth2-credential/callback\"]}}"
+  "preview": "{\"web\": {\"client_id\": \"33848024425-s56jn3cgcejt2h52108dt9dd62r1of73.apps.googleusercontent.com\", \"project_id\": \"knowledgehub-476307\", \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\", \"token_uri\": \"https://oauth2.googleapis.com/token\", \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\", \"client_secret\": \"[[REDACTED-REAL-KEY-2026-08-23]]\", \"redirect_uris\": [\"http://localhost:5678/rest/oauth2-credential/callback\"]}}"
  },
  "Raw_copies/connectivity.md": {
   "kind": "text",
@@ -2637,7 +2637,7 @@
    "urls": 0,
    "prompt_markers": 0
   },
-  "preview": "Deep infra API KEY : - P2kL2UiT0a7E7SQbRDoOVq5Z15IO5mQr\nJina AI API - jina_849ebc26d1d1493da11a2172b8e66583yYZSaqxbe9sDGTRb9ctu2lcv0p4N\nHyperbolic AI API - sk_live_yH1Zlq6W7DZDsZpnkSb5tAL7VkZWRF7sRH3D9KZX4T-74zpHVNgUVWGr0TCwdj5Tw\nCohere API - aa2kiWmJc3Z3VOQMM3dy809D6yBErnRTR0ghISXx"
+  "preview": "Deep infra API KEY : - [[REDACTED-REAL-KEY-2026-08-23]]\nJina AI API - [[REDACTED-REAL-KEY-2026-08-23]]\nHyperbolic AI API - [[REDACTED-REAL-KEY-2026-08-23]]\nCohere API - [[REDACTED-REAL-KEY-2026-08-23]]"
  },
  "Raw_copies/manifest_20260815_050119_785.json": {
   "kind": "json_dict",
@@ -3158,7 +3158,7 @@
    "urls": 0,
    "prompt_markers": 0
   },
-  "preview": "# 🔑 OmniRoute Configured API Keys Backup\n\n**Generated Date**: 2026-08-13 16:21:46 \n**Storage Location**: `C:\\ai-stack\\OmniRoute-FreeProviders-Config\\my_api_keys_backup.md` \n**Total API Key Accounts Configured**: 47\n\n> [!IMPORTANT]\n> Keep this document secure! It contains your private API keys for all configured LLM providers in OmniRoute.\n\n---\n\n## 📋 Configured API Keys List\n\n| Provider | Account Name | Auth Type | Decrypted API Key |\n| :--- | :--- | :---: | :--- |\n| **CEREBRAS** | `Cerebras Account #1` | `API Key` | `csk-xdhx4hw22e85968p5d43pkcthyjmm8k2vhnw268mprw82hdv` |\n| **CEREBRAS** | `Cerebras Account #2` | `API Key` | `csk-83yw869wh8rm2dhp4vy2pxhf5xxenr96hhmcfxv4p24ttvmy` |\n| **CLOUDFLARE-AI** | `cloudflare workers ai ` | `API Key` | `3c8fafccd8484ed4951a4a00a6519b6d.Wpn-T-fpgTJnHHDNOsn_hvDr` |\n| **COHERE** | `Cohere API Account #1` | `API Key` | `aa2kiWmJc3Z3VOQMM3dy809D6yBErnRTR0ghISXx` |\n| **DEEPINFRA** | `Deep Infra` | `API Key` | `P2kL2UiT0a7E7SQbRDoOVq5Z15IO5mQr` |\n| **DEEPINFRA** | `DeepInfra Account #1` | `API Key` | `P2kL2UiT0a7E7SQbRDoOVq5Z15IO5mQr` |\n| **DEEPSEEK** | `Deepseek Account #1` | `API Key` | `sk-282449bafefe438489b95c55e40a924f` |\n| **FREEMODEL** | `Freemodel Account #1` | `API Key` | `fe_oa_72e5d7d488859009a12fcea3c5518f1a972af52f3d843fa6` |\n| **FREEMODEL** | `Freemodel Account #2` | `API Key` | `fe_oa_8e83d2efc146108de59b61450112086ee7e842f70097d3f"
+  "preview": "# 🔑 OmniRoute Configured API Keys Backup\n\n**Generated Date**: 2026-08-13 16:21:46 \n**Storage Location**: `C:\\ai-stack\\OmniRoute-FreeProviders-Config\\my_api_keys_backup.md` \n**Total API Key Accounts Configured**: 47\n\n> [!IMPORTANT]\n> Keep this document secure! It contains your private API keys for all configured LLM providers in OmniRoute.\n\n---\n\n## 📋 Configured API Keys List\n\n| Provider | Account Name | Auth Type | Decrypted API Key |\n| :--- | :--- | :---: | :--- |\n| **CEREBRAS** | `Cerebras Account #1` | `API Key` | `[[REDACTED-REAL-KEY-2026-08-23]]` |\n| **CEREBRAS** | `Cerebras Account #2` | `API Key` | `[[REDACTED-REAL-KEY-2026-08-23]]` |\n| **CLOUDFLARE-AI** | `cloudflare workers ai ` | `API Key` | `[[REDACTED-REAL-KEY-2026-08-23]]` |\n| **COHERE** | `Cohere API Account #1` | `API Key` | `[[REDACTED-REAL-KEY-2026-08-23]]` |\n| **DEEPINFRA** | `Deep Infra` | `API Key` | `[[REDACTED-REAL-KEY-2026-08-23]]` |\n| **DEEPINFRA** | `DeepInfra Account #1` | `API Key` | `[[REDACTED-REAL-KEY-2026-08-23]]` |\n| **DEEPSEEK** | `Deepseek Account #1` | `API Key` | `[[REDACTED-REAL-KEY-2026-08-23]]` |\n| **FREEMODEL** | `Freemodel Account #1` | `API Key` | `[[REDACTED-REAL-KEY-2026-08-23]]` |\n| **FREEMODEL** | `Freemodel Account #2` | `API Key` | `fe_oa_8e83d2efc146108de59b61450112086ee7e842f70097d3f"
  },
  "Raw_copies/package_20260815_050120_642.json": {
   "kind": "json_dict",
@@ -3260,7 +3260,7 @@
    "urls": 3,
    "prompt_markers": 0
   },
-  "preview": "# Groq Setup\nfrom groq import Groq\n\ngroq_client = Groq(api_key=\"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\")\ngroq_response = groq_client.chat.completions.create(\n model=\"mixtral-8x7b-32768\",\n messages=[{\"role\": \"user\", \"content\": \"Hello\"}],\n base_url=\"https://api.groq.com/openai/v1\"\n)\n\n# Hugging Face Setup\nimport requests\n\nhf_api_url = \"https://api-inference.huggingface.co/models/meta-llama/Llama-3.1-8B-Instruct\"\nheaders = {\"Authorization\": f\"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\"}\nresponse = requests.post(hf_api_url, headers=headers, json={\"inputs\": \"Hello\"})\n\n# 9Router API\nsk-6e8baffc19d7aa6e-pkj66z-e294342f\n\n#z.ai\nsk-6e8baffc19d7aa6e-pkj66z-e294342f\n\nhttps://z.ai/manage-apikey/apikey-list\nUser ID 41171781271338424\nAPI Key ID d724...9332\n\nAPI key d724cf3f289c4dc7b9ed820f4d709332.8xFvcAlxtZxD9QT1"
+  "preview": "# Groq Setup\nfrom groq import Groq\n\ngroq_client = Groq(api_key=\"[[REDACTED-REAL-KEY-2026-08-23]]\")\ngroq_response = groq_client.chat.completions.create(\n model=\"mixtral-8x7b-32768\",\n messages=[{\"role\": \"user\", \"content\": \"Hello\"}],\n base_url=\"https://api.groq.com/openai/v1\"\n)\n\n# Hugging Face Setup\nimport requests\n\nhf_api_url = \"https://api-inference.huggingface.co/models/meta-llama/Llama-3.1-8B-Instruct\"\nheaders = {\"Authorization\": f\"[[REDACTED-REAL-KEY-2026-08-23]]\"}\nresponse = requests.post(hf_api_url, headers=headers, json={\"inputs\": \"Hello\"})\n\n# 9Router API\n[[REDACTED-REAL-KEY-2026-08-23]]\n\n#z.ai\n[[REDACTED-REAL-KEY-2026-08-23]]\n\nhttps://z.ai/manage-apikey/apikey-list\nUser ID 41171781271338424\nAPI Key ID d724...9332\n\nAPI key [[REDACTED-REAL-KEY-2026-08-23]]"
  },
  "Raw_copies/version_control_guidelines.md": {
   "kind": "text",
