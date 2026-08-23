@@ -1,0 +1,109 @@
+﻿{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "env": {
+        "ALLOWED_DIRECTORIES": "C:\\ai-stack"
+      }
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"],
+      "env": {
+        "GIT_REPOSITORY_PATH": "C:\\ai-stack"
+      }
+    },
+    "web-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-web-search"],
+      "env": {
+        "SEARCH_API_KEY": "your-search-api-key-here"
+      }
+    },
+    "database": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-database"],
+      "env": {
+        "DATABASE_URL": "your-database-url-here"
+      }
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {
+        "MEMORY_STORAGE_PATH": "C:\\ai-stack\\.cursor-memory"
+      }
+    },
+    "terminal": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-terminal"],
+      "env": {
+        "ALLOWED_COMMANDS": "safe,moderate,critical",
+        "SAFE_COMMANDS": "ls,dir,get-location,pwd,echo,type,cat,head,tail",
+        "MODERATE_COMMANDS": "copy,move,new-item,remove-item,install,update",
+        "CRITICAL_COMMANDS": "remove-item,format,diskpart,shutdown,restart"
+      }
+    },
+    "docker": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-docker"],
+      "env": {
+        "DOCKER_HOST": "localhost",
+        "ALLOWED_OPERATIONS": "status,list,logs,inspect"
+      }
+    },
+    "obsidian": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-obsidian"],
+      "env": {
+        "OBSIDIAN_VAULT_PATH": "C:\\Users\\FTT\\Documents\\Obsidian Vault"
+      }
+    },
+    "n8n": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-n8n"],
+      "env": {
+        "N8N_HOST": "localhost:5678",
+        "N8N_API_KEY": "your-n8n-api-key"
+      }
+    },
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-supabase"],
+      "env": {
+        "SUPABASE_URL": "your-supabase-url",
+        "SUPABASE_ANON_KEY": "your-supabase-anon-key"
+      }
+    },
+    "google-drive": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-google-drive"],
+      "env": {
+        "GOOGLE_DRIVE_API_KEY": "your-google-drive-api-key"
+      }
+    },
+    "whatsapp": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-whatsapp"],
+      "env": {
+        "WHATSAPP_API_KEY": "your-whatsapp-api-key"
+      }
+    },
+    "telegram": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-telegram"],
+      "env": {
+        "TELEGRAM_BOT_TOKEN": "your-telegram-bot-token"
+      }
+    },
+    "ollama": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-ollama"],
+      "env": {
+        "OLLAMA_HOST": "localhost:11434",
+        "ALLOWED_MODELS": "llama3.1,qwen2,mistral,deepseek,phi3"
+      }
+    }
+  }
+}

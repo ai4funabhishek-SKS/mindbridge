@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Brain Knowledge Mine Navigator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-main: #0B0F17;
+            --bg-card: #151D2C;
+            --bg-card-hover: #1C263A;
+            --border: #232E42;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --accent-blue: #38BDF8;
+            --accent-cyan: #06B6D4;
+            --accent-purple: #A855F7;
+            --accent-green: #10B981;
+            --accent-amber: #F59E0B;
+            --accent-rose: #F43F5E;
+            --accent-gold: #FBBF24;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .brand h1 {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #FFFFFF;
+        }
+        .brand p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .header-status {
+            text-align: right;
+        }
+        .header-status .ws-path {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .header-status .live-status {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+
+        /* KPI Metrics Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .stat-card:hover { 
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+        }
+        .stat-card .label { 
+            font-size: 11.5px; 
+            color: var(--text-muted); 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+        }
+        .stat-card .value { 
+            font-size: 26px; 
+            font-weight: 800; 
+            color: var(--text-primary); 
+            font-family: 'JetBrains Mono', monospace; 
+        }
+        .stat-card .sub { 
+            font-size: 11.5px; 
+            color: var(--accent-cyan); 
+        }
+
+        /* Charts Section */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 1200px) { .charts-row { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 768px) { .charts-row { grid-template-columns: 1fr; } }
+        .chart-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            height: 250px;
+        }
+        .chart-box h3 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .chart-container { 
+            position: relative; 
+            height: 190px; 
+            width: 100%; 
+        }
+
+        /* Filter Controls Panel */
+        .controls-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .search-bar {
+            position: relative;
+            width: 100%;
+        }
+        .search-bar input {
+            width: 100%;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 18px 14px 44px;
+            font-size: 15px;
+            color: var(--text-primary);
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-bar input:focus { 
+            border-color: var(--accent-blue); 
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        .filter-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .filter-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .filter-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .filter-btn:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--accent-blue);
+            color: #FFFFFF;
+        }
+        .filter-btn.active {
+            background: var(--accent-blue);
+            color: #0B0F17;
+            border-color: var(--accent-blue);
+            font-weight: 700;
+        }
+        .filter-btn .count-badge {
+            background: rgba(0,0,0,0.2);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .filter-btn.active .count-badge { 
+            background: #0B0F17; 
+            color: #FFF; 
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        #resultsCount {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Asset Grid & Card Styling */
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 18px;
+        }
+        .asset-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .asset-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+        .asset-card.card-golden {
+            border-color: rgba(245, 158, 11, 0.5);
+            background: linear-gradient(180deg, rgba(245, 158, 11, 0.05) 0%, rgba(21, 29, 44, 1) 100%);
+        }
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .card-title {
+            font-size: 15.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.35;
+        }
+        .card-format {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent-blue);
+            white-space: nowrap;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .format-golden {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-gold);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+        .reusability-meter {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .problem-box {
+            background: rgba(15, 23, 42, 0.6);
+            border-left: 3px solid var(--accent-cyan);
+            padding: 8px 12px;
+            border-radius: 0 6px 6px 0;
+            font-size: 12.5px;
+            color: #E2E8F0;
+            line-height: 1.4;
+        }
+        .problem-box.golden-border {
+            border-left-color: var(--accent-gold);
+        }
+        .card-summary {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.45;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .tag-pill {
+            font-size: 11px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.06);
+            color: var(--text-muted);
+        }
+        .status-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
+        .status-ready { background: rgba(16, 185, 129, 0.15); color: #34D399; }
+        .status-draft { background: rgba(245, 158, 11, 0.15); color: #FBBF24; }
+        .status-vault { background: rgba(244, 63, 94, 0.15); color: #FB7185; }
+        .status-ref { background: rgba(148, 163, 184, 0.15); color: #CBD5E1; }
+        .status-gold { background: rgba(245, 158, 11, 0.25); color: #FBBF24; font-weight: 800; }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .highlight {
+            background-color: rgba(56, 189, 248, 0.35);
+            color: #FFFFFF;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">
+                <h1>🧠 Second Brain Knowledge Mine</h1>
+                <p>Interactive Knowledge Graph & Multi-Asset Intelligence Navigator</p>
+            </div>
+            <div class="header-status">
+                <div class="ws-path">Workspace: C:\knowledgeBase_staging</div>
+                <div class="live-status">● Active Ingestion & Search Engine Ready</div>
+            </div>
+        </header>
+
+        <!-- KPI Metrics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Total Cataloged Assets</div>
+                <div class="value" id="kpi-total">489</div>
+                <div class="sub">Raw Sources + Golden Masters</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">🏆 Golden Master Playbooks</div>
+                <div class="value" id="kpi-gm">46</div>
+                <div class="sub">10 Canonical Domains</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">⚡ Workable Automations</div>
+                <div class="value" id="kpi-auto">224</div>
+                <div class="sub">n8n, Agents & Code Snippets</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">🤖 Prompt Decks & Packs</div>
+                <div class="value" id="kpi-prompts">75</div>
+                <div class="sub">Parameterized Instructions</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">💡 Half-Baked Ideas (R&D)</div>
+                <div class="value" id="kpi-halfbaked">12</div>
+                <div class="sub">Incubation & Synthesis Mine</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">🔒 Private Vault Items</div>
+                <div class="value" id="kpi-vault">44</div>
+                <div class="sub">Quarantined Financials & Keys</div>
+            </div>
+        </div>
+
+        <!-- Dynamic Visual Charts -->
+        <div class="charts-row">
+            <div class="chart-box">
+                <h3>10 Canonical Domains Breakdown</h3>
+                <div class="chart-container">
+                    <canvas id="topicChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-box">
+                <h3>Workability & Solution Readiness</h3>
+                <div class="chart-container">
+                    <canvas id="workChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-box">
+                <h3>Reusability Score Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="reusabilityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instant Filter & Search Controls -->
+        <div class="controls-panel">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Instant search across 489+ assets, playbooks, prompts, tools (e.g. n8n, ZeroClaw, DeepSeek, Pinecone, SEBI, YouTube)...">
+            </div>
+
+            <div>
+                <div class="filter-section-title">1-Click Domain Filter Pills (10 Canonical Domains)</div>
+                <div class="filter-pills">
+                    <button class="filter-btn active" onclick="setFilter('all', this)">All Assets <span class="count-badge" id="badge-all">489</span></button>
+                    <button class="filter-btn" onclick="setFilter('golden_master', this)">🏆 Golden Masters <span class="count-badge">46</span></button>
+                    <button class="filter-btn" onclick="setFilter('dom_01', this)">01 AI Agents <span class="count-badge">52</span></button>
+                    <button class="filter-btn" onclick="setFilter('dom_02', this)">02 n8n Workflows <span class="count-badge">145</span></button>
+                    <button class="filter-btn" onclick="setFilter('dom_03', this)">03 Prompt Engineering <span class="count-badge">48</span></button>
+                    <button class="filter-btn" onclick="setFilter('dom_04', this)">04 Mobile & Android <span class="count-badge">16</span></button>
+                    <button class="filter-btn" onclick="setFilter('dom_05', this)">05 Code & Dev Tools <span class="count-badge">38</span></button>
+                    <button class="filter-btn" onclick="setFilter('dom_06', this)">06 Quant Finance <span class="count-badge">42</span></button>
+                    <button class="filter-btn" onclick="setFilter('dom_07', this)">07 Content & Media <span class="count-badge">56</span></button>
+                    <button class="filter-btn" onclick="setFilter('dom_08', this)">08 Business & Ops <span class="count-badge">34</span></button>
+                    <button class="filter-btn" onclick="setFilter('dom_09', this)">09 LLM Syntheses <span class="count-badge">24</span></button>
+                    <button class="filter-btn" onclick="setFilter('dom_10', this)">10 R&D Incubator <span class="count-badge">34</span></button>
+                </div>
+            </div>
+
+            <div>
+                <div class="filter-section-title">Operational Category Filters</div>
+                <div class="filter-pills">
+                    <button class="filter-btn" onclick="setFilter('automations', this)">⚡ Workable Automations <span class="count-badge">224</span></button>
+                    <button class="filter-btn" onclick="setFilter('prompts', this)">🤖 Prompts & Instructions <span class="count-badge">75</span></button>
+                    <button class="filter-btn" onclick="setFilter('trading', this)">📈 Trading & Systems <span class="count-badge">42</span></button>
+                    <button class="filter-btn" onclick="setFilter('half-baked', this)">💡 Half-Baked Ideas <span class="count-badge">12</span></button>
+                    <button class="filter-btn" onclick="setFilter('reference', this)">📚 Reference & Docs <span class="count-badge">92</span></button>
+                    <button class="filter-btn" onclick="setFilter('vault', this)">🔒 Private Vault <span class="count-badge">44</span></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-header">
+            <div id="resultsCount">Showing 489 assets</div>
+            <div style="color: var(--text-muted); font-size: 13px;">Click on any card to view detailed specifications</div>
+        </div>
+
+        <!-- Dynamic Grid of Cards -->
+        <div class="asset-grid" id="assetGrid"></div>
+    </div>
+
+    <script>
+        // Full Dataset of Raw Assets and Synthesized Golden Master Playbooks
+        const rawData = [
+            // Golden Master Playbooks (Domain 1 to 10)
+            {
+                "File Name": "GM_ZeroClaw_Apex_MultiAgent_Workforce_Architecture.md",
+                "Relative Path": "03_Topics_and_Projects/01_AI_Agents_and_Autonomous_Systems/GM_ZeroClaw_Apex_MultiAgent_Workforce_Architecture.md",
+                "Asset Title": "Apex Multi-Agent Workforce Architecture (ZeroClaw)",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 14.22,
+                "Primary Topic": "01_AI_Agents_and_Autonomous_Systems",
+                "Problem Solved": "Unified multi-agent orchestration, autonomous decision loops, memory tiering, and tool execution",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 96,
+                "Tags & Technologies": "AI Agent, ZeroClaw, Multi-Agent, MCP, Autonomous Workforce",
+                "Content Summary & Logic": "Synthesized from AGENTS.md, zeroclaw agent -plan 0.v1.txt, SOUL.md, PROTOCOLS.md. High-performance multi-agent framework featuring dynamic task planning, sub-agent spawning, and zero-hallucination tool calling.",
+                "IsGolden": true,
+                "DomainId": "dom_01"
+            },
+            {
+                "File Name": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+                "Relative Path": "03_Topics_and_Projects/01_AI_Agents_and_Autonomous_Systems/GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+                "Asset Title": "Agent Zero Core Runtime & Subordinate Tooling",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 15.36,
+                "Primary Topic": "01_AI_Agents_and_Autonomous_Systems",
+                "Problem Solved": "Self-contained sub-agent spawning, instrument routing, and dynamic Python code execution",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 95,
+                "Tags & Technologies": "Agent Zero, Tool Execution, Subordinates, Runtime, Python",
+                "Content Summary & Logic": "Synthesized from agent.system.* and tool definitions. Complete runtime implementation for dockerized Agent Zero instances with tool calling, sub-agent communication, and error recovery.",
+                "IsGolden": true,
+                "DomainId": "dom_01"
+            },
+            {
+                "File Name": "GM_Hierarchical_Agent_Memory_and_Context_Consolidation.md",
+                "Relative Path": "03_Topics_and_Projects/01_AI_Agents_and_Autonomous_Systems/GM_Hierarchical_Agent_Memory_and_Context_Consolidation.md",
+                "Asset Title": "Hierarchical Agent Memory & Context Consolidation",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 14.57,
+                "Primary Topic": "01_AI_Agents_and_Autonomous_Systems",
+                "Problem Solved": "Tiered episodic, semantic, and working memory architecture with context decay mitigation",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 94,
+                "Tags & Technologies": "Memory, SQLite, Vector DB, Context Management, Embedding",
+                "Content Summary & Logic": "Synthesized from agent.system.memories.md and memory tools. Multi-tier memory engine utilizing SQLite for episodic storage and vector embeddings for semantic recall.",
+                "IsGolden": true,
+                "DomainId": "dom_01"
+            },
+            {
+                "File Name": "GM_Model_Context_Protocol_MCP_and_Superpowers_Integration.md",
+                "Relative Path": "03_Topics_and_Projects/01_AI_Agents_and_Autonomous_Systems/GM_Model_Context_Protocol_MCP_and_Superpowers_Integration.md",
+                "Asset Title": "Model Context Protocol (MCP) & Superpowers Integration",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.58,
+                "Primary Topic": "01_AI_Agents_and_Autonomous_Systems",
+                "Problem Solved": "Universal tool and resource integration across MCP servers for Claude and Agent Zero",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 92,
+                "Tags & Technologies": "MCP, Anthropic, Tool Integration, JSON-RPC, Superpowers",
+                "Content Summary & Logic": "Synthesized from mcp_config.json, mcp_tools.md, and MCP documentation. Complete client and server configurations for tool interoperability.",
+                "IsGolden": true,
+                "DomainId": "dom_01"
+            },
+            {
+                "File Name": "GM_Autonomous_AI_App_Factory_20_Stage_Lifecycle.md",
+                "Relative Path": "03_Topics_and_Projects/01_AI_Agents_and_Autonomous_Systems/GM_Autonomous_AI_App_Factory_20_Stage_Lifecycle.md",
+                "Asset Title": "Autonomous AI App Factory: 20-Stage Lifecycle",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 13.89,
+                "Primary Topic": "01_AI_Agents_and_Autonomous_Systems",
+                "Problem Solved": "End-to-end automated software lifecycle from PRD generation to deployment",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 93,
+                "Tags & Technologies": "App Factory, Software Lifecycle, PRD, Automation, Architecture",
+                "Content Summary & Logic": "Synthesized from AI_App_Factory_Complete_20_Stage.docx and blueprint notes. Standardized automated workflow for generating production-ready full-stack applications.",
+                "IsGolden": true,
+                "DomainId": "dom_01"
+            },
+            {
+                "File Name": "GM_n8n_Enterprise_Architectural_Foundations_and_Best_Practices.md",
+                "Relative Path": "03_Topics_and_Projects/02_Workflow_Automations_n8n/GM_n8n_Enterprise_Architectural_Foundations_and_Best_Practices.md",
+                "Asset Title": "n8n Enterprise Foundations & Node Execution Guide",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 10.47,
+                "Primary Topic": "02_Workflow_Automations_n8n",
+                "Problem Solved": "Enterprise workflow design, execution scaling, sub-workflows, and error handling",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 98,
+                "Tags & Technologies": "n8n, Architecture, Enterprise, Error Handling, Subworkflows",
+                "Content Summary & Logic": "Synthesized from complete-n8n-documentation.docx and n8n shortcuts. Best practices for node execution, payload transformation, and robust workflow topology.",
+                "IsGolden": true,
+                "DomainId": "dom_02"
+            },
+            {
+                "File Name": "GM_AI_Agent_Army_Generation_and_Subworkflow_Orchestration.md",
+                "Relative Path": "03_Topics_and_Projects/02_Workflow_Automations_n8n/GM_AI_Agent_Army_Generation_and_Subworkflow_Orchestration.md",
+                "Asset Title": "AI Agent Army Generation & Subworkflow Orchestration",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 10.82,
+                "Primary Topic": "02_Workflow_Automations_n8n",
+                "Problem Solved": "Hierarchical sub-workflow orchestration for multi-model AI agent swarms",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 96,
+                "Tags & Technologies": "n8n, Agent Swarm, Subworkflows, Orchestration, Multi-Model",
+                "Content Summary & Logic": "Synthesized from master_ai_agent_army.json, Ultimate_AI_Agent.json, and AI Marketing Team workflows. Orchestrates specialist agents across tasks.",
+                "IsGolden": true,
+                "DomainId": "dom_02"
+            },
+            {
+                "File Name": "GM_Mega_Automation_Library_and_Production_Templates.md",
+                "Relative Path": "03_Topics_and_Projects/02_Workflow_Automations_n8n/GM_Mega_Automation_Library_and_Production_Templates.md",
+                "Asset Title": "Mega Automation Library & Production Templates",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 9.00,
+                "Primary Topic": "02_Workflow_Automations_n8n",
+                "Problem Solved": "Curated library of high-reusability n8n production automation templates",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 95,
+                "Tags & Technologies": "n8n, Templates, Webhooks, Data Pipeline, Automation",
+                "Content Summary & Logic": "Consolidates 50+ n8n workflow templates covering webhooks, data transformation, scheduled jobs, and CRM synchronizations.",
+                "IsGolden": true,
+                "DomainId": "dom_02"
+            },
+            {
+                "File Name": "GM_RAG_Vector_Ingestion_and_Pinecone_Workflows.md",
+                "Relative Path": "03_Topics_and_Projects/02_Workflow_Automations_n8n/GM_RAG_Vector_Ingestion_and_Pinecone_Workflows.md",
+                "Asset Title": "RAG Vector Ingestion & Pinecone Workflows",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 9.02,
+                "Primary Topic": "02_Workflow_Automations_n8n",
+                "Problem Solved": "Automated chunking, embedding generation, and Pinecone vector store upsert pipelines",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 97,
+                "Tags & Technologies": "RAG, Pinecone, Embeddings, Vector Search, n8n",
+                "Content Summary & Logic": "Synthesized from UploadDocumenttoPineconeAgent.json and RAGAIAgent.json. High-throughput document embedding and retrieval pipeline.",
+                "IsGolden": true,
+                "DomainId": "dom_02"
+            },
+            {
+                "File Name": "GM_Human_in_the_Loop_and_Executive_Inbox_Automation.md",
+                "Relative Path": "03_Topics_and_Projects/02_Workflow_Automations_n8n/GM_Human_in_the_Loop_and_Executive_Inbox_Automation.md",
+                "Asset Title": "Human-in-the-Loop & Executive Inbox Automation",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 10.87,
+                "Primary Topic": "02_Workflow_Automations_n8n",
+                "Problem Solved": "Automated email triage, classification, and Telegram approval gates for human oversight",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 94,
+                "Tags & Technologies": "HITL, Gmail, Telegram, Approval Gate, n8n",
+                "Content Summary & Logic": "Synthesized from LabelEmailsBlueprint.json and human_in_da_loop.json. Routes incoming emails through AI analysis and Telegram approval buttons.",
+                "IsGolden": true,
+                "DomainId": "dom_02"
+            },
+            {
+                "File Name": "GM_Frontier_Prompt_Engineering_Principles_and_Mental_Models.md",
+                "Relative Path": "03_Topics_and_Projects/03_Prompt_Engineering_and_Frameworks/GM_Frontier_Prompt_Engineering_Principles_and_Mental_Models.md",
+                "Asset Title": "Frontier Prompt Engineering Principles & Mental Models",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 9.82,
+                "Primary Topic": "03_Prompt_Engineering_and_Frameworks",
+                "Problem Solved": "Few-shot prompting, chain-of-thought, XML encapsulation, and reasoning calibration",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 98,
+                "Tags & Technologies": "Prompt Engineering, Few-Shot, CoT, XML, Anthropic",
+                "Content Summary & Logic": "Synthesized from TechAI-Google-whitepaper_Prompt_Engineering and Mindstream guide. Institutional guide for crafting deterministic, high-reasoning prompt structures.",
+                "IsGolden": true,
+                "DomainId": "dom_03"
+            },
+            {
+                "File Name": "GM_Automated_Prompt_Generators_and_Form_Workflows.md",
+                "Relative Path": "03_Topics_and_Projects/03_Prompt_Engineering_and_Frameworks/GM_Automated_Prompt_Generators_and_Form_Workflows.md",
+                "Asset Title": "Automated Prompt Generators & Dynamic Forms",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 9.87,
+                "Primary Topic": "03_Prompt_Engineering_and_Frameworks",
+                "Problem Solved": "Interactive prompt meta-generation and parametric variable substitution",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 92,
+                "Tags & Technologies": "Prompt Generator, Meta-Prompting, Forms, Variable Substitution",
+                "Content Summary & Logic": "Synthesized from AI prompt generator.txt and AI PROMPT MAKER.txt. Automates generation of domain-specific prompts with structured variable slots.",
+                "IsGolden": true,
+                "DomainId": "dom_03"
+            },
+            {
+                "File Name": "GM_Dynamic_Prompt_Repository_Sync_and_n8n_Injection.md",
+                "Relative Path": "03_Topics_and_Projects/03_Prompt_Engineering_and_Frameworks/GM_Dynamic_Prompt_Repository_Sync_and_n8n_Injection.md",
+                "Asset Title": "Dynamic Prompt Repository Sync & n8n Injection",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.50,
+                "Primary Topic": "03_Prompt_Engineering_and_Frameworks",
+                "Problem Solved": "Version-controlled prompt repository synchronization into n8n execution nodes",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 94,
+                "Tags & Technologies": "Prompt Sync, Git, n8n, Runtime Injection, Version Control",
+                "Content Summary & Logic": "Synchronizes central prompt markdown files into n8n workflow memory at execution time without hardcoding prompt strings.",
+                "IsGolden": true,
+                "DomainId": "dom_03"
+            },
+            {
+                "File Name": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+                "Relative Path": "03_Topics_and_Projects/03_Prompt_Engineering_and_Frameworks/GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+                "Asset Title": "Universal MicroPrompt Deck & Text Transformation Catalog",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 10.93,
+                "Primary Topic": "03_Prompt_Engineering_and_Frameworks",
+                "Problem Solved": "High-density catalog of single-purpose micro-prompts for rapid text transformations",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 96,
+                "Tags & Technologies": "MicroPrompts, Transformations, Utilities, JSON, Regex",
+                "Content Summary & Logic": "Synthesized from micro_prompt_catalog.json and text transformation notes. 40+ atomic prompts for summarization, entity extraction, reformatting, and translation.",
+                "IsGolden": true,
+                "DomainId": "dom_03"
+            },
+            {
+                "File Name": "GM_Developer_Assistant_System_Prompts_and_Custom_Instructions.md",
+                "Relative Path": "03_Topics_and_Projects/03_Prompt_Engineering_and_Frameworks/GM_Developer_Assistant_System_Prompts_and_Custom_Instructions.md",
+                "Asset Title": "Developer Assistant System Prompts & Custom Instructions",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 9.24,
+                "Primary Topic": "03_Prompt_Engineering_and_Frameworks",
+                "Problem Solved": "Hardened system instructions for Cursor, Claude, and VS Code developer assistants",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 95,
+                "Tags & Technologies": "System Prompts, Cursor, Custom Instructions, Copilot",
+                "Content Summary & Logic": "Synthesized from custominstruction.md, copilot-instructions.md, and cursor-update-guide.md. Enforces clean code, strict typing, and test-first mindset.",
+                "IsGolden": true,
+                "DomainId": "dom_03"
+            },
+            {
+                "File Name": "GM_Voice_AI_Telephony_and_Vapi_Calling_Engines.md",
+                "Relative Path": "03_Topics_and_Projects/04_Mobile_and_Android_Ecosystem/GM_Voice_AI_Telephony_and_Vapi_Calling_Engines.md",
+                "Asset Title": "Voice AI Telephony & Vapi Calling Engines",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.09,
+                "Primary Topic": "04_Mobile_and_Android_Ecosystem",
+                "Problem Solved": "Automated low-latency inbound/outbound telephony agents via Vapi and Twilio",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 94,
+                "Tags & Technologies": "Vapi, Voice AI, Telephony, Twilio, Webhook",
+                "Content Summary & Logic": "Synthesized from PhoneCallingAgent.json, PhoneCallingTool.json, and vapi_telephony_config.json. High-fidelity voice conversational flows.",
+                "IsGolden": true,
+                "DomainId": "dom_04"
+            },
+            {
+                "File Name": "GM_Mobile_Messaging_Agents_WhatsApp_and_Twilio_Gateways.md",
+                "Relative Path": "03_Topics_and_Projects/04_Mobile_and_Android_Ecosystem/GM_Mobile_Messaging_Agents_WhatsApp_and_Twilio_Gateways.md",
+                "Asset Title": "Mobile Messaging Agents: WhatsApp & Twilio Gateways",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 8.07,
+                "Primary Topic": "04_Mobile_and_Android_Ecosystem",
+                "Problem Solved": "Conversational mobile bot infrastructure for WhatsApp Cloud API and Twilio SMS",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 92,
+                "Tags & Technologies": "WhatsApp, Twilio, Mobile Bot, Messaging, Webhook",
+                "Content Summary & Logic": "Synthesized from WhatsApp bot workflows and Twilio triggers. Bi-directional chat automation with media payload support.",
+                "IsGolden": true,
+                "DomainId": "dom_04"
+            },
+            {
+                "File Name": "GM_Mobile_First_Responsive_UI_UX_Architecture.md",
+                "Relative Path": "03_Topics_and_Projects/04_Mobile_and_Android_Ecosystem/GM_Mobile_First_Responsive_UI_UX_Architecture.md",
+                "Asset Title": "Mobile-First Responsive UI/UX Architecture",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.35,
+                "Primary Topic": "04_Mobile_and_Android_Ecosystem",
+                "Problem Solved": "Ultra-responsive CSS grid/flexbox layouts and mobile touch interaction patterns",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 91,
+                "Tags & Technologies": "UI/UX, Mobile-First, Responsive Design, CSS Grid, Touch",
+                "Content Summary & Logic": "Synthesized from UI designer notes and mobile frontend specifications. Pure CSS layout patterns optimized for mobile and desktop screens.",
+                "IsGolden": true,
+                "DomainId": "dom_04"
+            },
+            {
+                "File Name": "GM_Android_DevOps_CLI_Automation_and_Emulation_Playbook.md",
+                "Relative Path": "03_Topics_and_Projects/04_Mobile_and_Android_Ecosystem/GM_Android_DevOps_CLI_Automation_and_Emulation_Playbook.md",
+                "Asset Title": "Android DevOps CLI Automation & Emulation Playbook",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 9.84,
+                "Primary Topic": "04_Mobile_and_Android_Ecosystem",
+                "Problem Solved": "Headless ADB automation, Gradle builds, APK instrumentation, and emulator workflows",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 90,
+                "Tags & Technologies": "Android, ADB, Gradle, CLI Automation, DevOps",
+                "Content Summary & Logic": "Complete automation scripts for headless Android device management, package deployment, UI dump inspection, and automated testing.",
+                "IsGolden": true,
+                "DomainId": "dom_04"
+            },
+            {
+                "File Name": "GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+                "Relative Path": "03_Topics_and_Projects/05_Code_Snippets_and_Dev_Tools/GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+                "Asset Title": "Local Dev Scaffolding & IDE Configuration Mastery",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 8.09,
+                "Primary Topic": "05_Code_Snippets_and_Dev_Tools",
+                "Problem Solved": "Standardized developer workspace initialization, Python virtualenvs, and VS Code configs",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 95,
+                "Tags & Technologies": "DevOps, Scaffolding, IDE, Python, Virtualenv",
+                "Content Summary & Logic": "Synthesized from build scripts and environment guidelines. Automates workspace setup, linter configurations, and git hooks.",
+                "IsGolden": true,
+                "DomainId": "dom_05"
+            },
+            {
+                "File Name": "GM_Containerized_Docker_Runtime_and_Networking_Architecture.md",
+                "Relative Path": "03_Topics_and_Projects/05_Code_Snippets_and_Dev_Tools/GM_Containerized_Docker_Runtime_and_Networking_Architecture.md",
+                "Asset Title": "Containerized Docker Runtime & Networking Architecture",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 7.60,
+                "Primary Topic": "05_Code_Snippets_and_Dev_Tools",
+                "Problem Solved": "Multi-container Docker Compose architectures for local AI agents, n8n, and SQLite",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 96,
+                "Tags & Technologies": "Docker, Compose, Networking, Container, Port Forwarding",
+                "Content Summary & Logic": "Production docker-compose templates for isolated agent environments with persistent volume mapping and inter-container DNS.",
+                "IsGolden": true,
+                "DomainId": "dom_05"
+            },
+            {
+                "File Name": "GM_PowerShell_DevOps_and_Repository_Automation_Playbook.md",
+                "Relative Path": "03_Topics_and_Projects/05_Code_Snippets_and_Dev_Tools/GM_PowerShell_DevOps_and_Repository_Automation_Playbook.md",
+                "Asset Title": "PowerShell DevOps & Repository Automation Playbook",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 9.28,
+                "Primary Topic": "05_Code_Snippets_and_Dev_Tools",
+                "Problem Solved": "Automated Windows filesystem maintenance, batch file migration, and git hooks",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 93,
+                "Tags & Technologies": "PowerShell, DevOps, Windows Automation, Migration, Scripting",
+                "Content Summary & Logic": "Synthesized from Cleanup-RawCopies.ps1 and Collect-KnowledgeBase.ps1. Institutional PowerShell automation scripts.",
+                "IsGolden": true,
+                "DomainId": "dom_05"
+            },
+            {
+                "File Name": "GM_Universal_Document_and_Code_Extraction_Pipelines.md",
+                "Relative Path": "03_Topics_and_Projects/05_Code_Snippets_and_Dev_Tools/GM_Universal_Document_and_Code_Extraction_Pipelines.md",
+                "Asset Title": "Universal Document & Code Extraction Pipelines",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 12.40,
+                "Primary Topic": "05_Code_Snippets_and_Dev_Tools",
+                "Problem Solved": "High-speed multi-format text extraction (PDF, DOCX, XLSX, JSON) using PyMuPDF and docx",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 97,
+                "Tags & Technologies": "Document Extraction, PyMuPDF, python-docx, RAG, Parser",
+                "Content Summary & Logic": "High-throughput text extraction pipelines capable of processing heterogeneous corporate repositories without cloud APIs.",
+                "IsGolden": true,
+                "DomainId": "dom_05"
+            },
+            {
+                "File Name": "GM_Knowledge_Graph_and_Hybrid_Search_Engine_Architecture.md",
+                "Relative Path": "03_Topics_and_Projects/05_Code_Snippets_and_Dev_Tools/GM_Knowledge_Graph_and_Hybrid_Search_Engine_Architecture.md",
+                "Asset Title": "Knowledge Graph & Hybrid Search Engine Architecture",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.06,
+                "Primary Topic": "05_Code_Snippets_and_Dev_Tools",
+                "Problem Solved": "Dual linear SQLite FTS5 BM25 search and Vis.js graph relationship traversal",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 99,
+                "Tags & Technologies": "Search Engine, SQLite FTS5, BM25, Knowledge Graph, Vis.js",
+                "Content Summary & Logic": "Synthesized from init_rag_and_knowledge_graph.py and search_engine.py. Full dual-mode search and visualization architecture.",
+                "IsGolden": true,
+                "DomainId": "dom_05"
+            },
+            {
+                "File Name": "GM_MultiAgent_Algorithmic_Trading_System_Architecture.md",
+                "Relative Path": "03_Topics_and_Projects/06_Quantitative_Finance_and_Trading/GM_MultiAgent_Algorithmic_Trading_System_Architecture.md",
+                "Asset Title": "Multi-Agent Algorithmic Trading System Architecture",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 12.80,
+                "Primary Topic": "06_Quantitative_Finance_and_Trading",
+                "Problem Solved": "Autonomous multi-agent algorithmic trading, market signal ingestion, and risk controls",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 96,
+                "Tags & Technologies": "Quant Trading, Algorithmic, Risk Management, Multi-Agent, TradingView",
+                "Content Summary & Logic": "Synthesized from MULTI_AGENT_TRADING_SYSTEM.json, n8n_trading_system.json, and DayTradingAgent.json. Multi-agent trading pipeline with risk management.",
+                "IsGolden": true,
+                "DomainId": "dom_06"
+            },
+            {
+                "File Name": "GM_Automated_Stock_Screening_and_Technical_Analysis_Pipelines.md",
+                "Relative Path": "03_Topics_and_Projects/06_Quantitative_Finance_and_Trading/GM_Automated_Stock_Screening_and_Technical_Analysis_Pipelines.md",
+                "Asset Title": "Automated Stock Screening & Technical Analysis Pipelines",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.20,
+                "Primary Topic": "06_Quantitative_Finance_and_Trading",
+                "Problem Solved": "Automated technical indicator calculations, screener pipelines, and breakout alerts",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 94,
+                "Tags & Technologies": "Stock Screener, Technical Analysis, Indicators, SMA, RSI",
+                "Content Summary & Logic": "Synthesized from screener.json, AIS AI-Powered Stock Analysis Assistant.json, and levels.txt. Multi-timeframe screening algorithms.",
+                "IsGolden": true,
+                "DomainId": "dom_06"
+            },
+            {
+                "File Name": "GM_High_Probability_Intraday_and_Scalping_Prompt_Frameworks.md",
+                "Relative Path": "03_Topics_and_Projects/06_Quantitative_Finance_and_Trading/GM_High_Probability_Intraday_and_Scalping_Prompt_Frameworks.md",
+                "Asset Title": "High-Probability Intraday & Scalping Prompt Frameworks",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 9.50,
+                "Primary Topic": "06_Quantitative_Finance_and_Trading",
+                "Problem Solved": "Structured AI prompt frameworks for real-time market regime and scalping analysis",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 92,
+                "Tags & Technologies": "Scalping, Intraday, Prompts, Trading Rules, Risk Rules",
+                "Content Summary & Logic": "Synthesized from scalp prompt template.txt and trading_tools.md. High-probability decision prompts for options scalping.",
+                "IsGolden": true,
+                "DomainId": "dom_06"
+            },
+            {
+                "File Name": "GM_SEBI_and_NISM_Research_Analyst_Regulatory_and_Valuation_Standards.md",
+                "Relative Path": "03_Topics_and_Projects/06_Quantitative_Finance_and_Trading/GM_SEBI_and_NISM_Research_Analyst_Regulatory_and_Valuation_Standards.md",
+                "Asset Title": "SEBI & NISM Research Analyst Regulatory & Valuation Standards",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 14.10,
+                "Primary Topic": "06_Quantitative_Finance_and_Trading",
+                "Problem Solved": "Institutional compliance, financial statement analysis, and valuation modeling",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 97,
+                "Tags & Technologies": "SEBI, NISM, Valuation, Compliance, Research Analyst, DCF",
+                "Content Summary & Logic": "Synthesized from NISM-Series-XV-ResearchAnalyst-Workbook and SEBI Financial Education Booklet. Institutional valuation frameworks.",
+                "IsGolden": true,
+                "DomainId": "dom_06"
+            },
+            {
+                "File Name": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+                "Relative Path": "03_Topics_and_Projects/07_Content_Creation_and_Media_Engines/GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+                "Asset Title": "Faceless YouTube Production Engine & Script Generation",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 12.60,
+                "Primary Topic": "07_Content_Creation_and_Media_Engines",
+                "Problem Solved": "End-to-end automated faceless YouTube channel pipeline from script to upload",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 95,
+                "Tags & Technologies": "YouTube, Faceless Video, Script Generation, Media Engine, Blotato",
+                "Content Summary & Logic": "Synthesized from YouTube Content Strategist.json, Faceless_YouTube_Generator.json, and 4K Video Creator.json.",
+                "IsGolden": true,
+                "DomainId": "dom_07"
+            },
+            {
+                "File Name": "GM_Generative_AI_Video_and_Avatar_Cloning_Workflows.md",
+                "Relative Path": "03_Topics_and_Projects/07_Content_Creation_and_Media_Engines/GM_Generative_AI_Video_and_Avatar_Cloning_Workflows.md",
+                "Asset Title": "Generative AI Video & Avatar Cloning Workflows",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.40,
+                "Primary Topic": "07_Content_Creation_and_Media_Engines",
+                "Problem Solved": "AI voice cloning, avatar generation (HeyGen/Hedra/Veo), and video rendering",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 93,
+                "Tags & Technologies": "AI Video, Avatar Cloning, Hedra, Veo3, Voice Cloning",
+                "Content Summary & Logic": "Synthesized from Veo3 AI Video Generator.json, AI Clone Creator.json, and Hedra workflows. Avatar animation pipeline.",
+                "IsGolden": true,
+                "DomainId": "dom_07"
+            },
+            {
+                "File Name": "GM_Automated_Graphic_Design_and_YouTube_Thumbnail_Engines.md",
+                "Relative Path": "03_Topics_and_Projects/07_Content_Creation_and_Media_Engines/GM_Automated_Graphic_Design_and_YouTube_Thumbnail_Engines.md",
+                "Asset Title": "Automated Graphic Design & YouTube Thumbnail Engines",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 9.80,
+                "Primary Topic": "07_Content_Creation_and_Media_Engines",
+                "Problem Solved": "Automated CTR-optimized thumbnail generation and banner layout processing",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 92,
+                "Tags & Technologies": "Thumbnail Generator, Graphic Design, CTR Optimization, Banner",
+                "Content Summary & Logic": "Synthesized from Auto Graphic Design System.json and Thumbnail Generator.json. Automates visual asset rendering.",
+                "IsGolden": true,
+                "DomainId": "dom_07"
+            },
+            {
+                "File Name": "GM_Omnichannel_Social_Media_Syndication_and_Repurposing.md",
+                "Relative Path": "03_Topics_and_Projects/07_Content_Creation_and_Media_Engines/GM_Omnichannel_Social_Media_Syndication_and_Repurposing.md",
+                "Asset Title": "Omnichannel Social Media Syndication & Repurposing",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.90,
+                "Primary Topic": "07_Content_Creation_and_Media_Engines",
+                "Problem Solved": "Automated single-post-to-multi-platform distribution across Twitter, LinkedIn, Instagram",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 96,
+                "Tags & Technologies": "Social Media, Syndication, Multi-Platform, Blotato, Repurposing",
+                "Content Summary & Logic": "Synthesized from 1_post_everywhere_N8N_TEMPLATE.json, Complete Social Media Automation.json, and Multi-Platform Publisher.json.",
+                "IsGolden": true,
+                "DomainId": "dom_07"
+            },
+            {
+                "File Name": "GM_SEO_Blog_Generation_and_Content_Strategy_Playbook.md",
+                "Relative Path": "03_Topics_and_Projects/07_Content_Creation_and_Media_Engines/GM_SEO_Blog_Generation_and_Content_Strategy_Playbook.md",
+                "Asset Title": "SEO Blog Generation & Content Strategy Playbook",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 10.30,
+                "Primary Topic": "07_Content_Creation_and_Media_Engines",
+                "Problem Solved": "Automated keyword research, outline drafting, and SEO-optimized longform blog publishing",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 94,
+                "Tags & Technologies": "SEO, Blog Automation, Content Strategy, WordPress, Keyword Research",
+                "Content Summary & Logic": "Synthesized from SEO Blog Automation System.json and Unlimited Content Ideas Documentation. Automated longform SEO drafting.",
+                "IsGolden": true,
+                "DomainId": "dom_07"
+            },
+            {
+                "File Name": "GM_Financial_Subbroking_Client_Acquisition_and_Funnel_Architecture.md",
+                "Relative Path": "03_Topics_and_Projects/08_Business_Operations_and_Subbroking/GM_Financial_Subbroking_Client_Acquisition_and_Funnel_Architecture.md",
+                "Asset Title": "Financial Subbroking Client Acquisition & Funnel Architecture",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 12.10,
+                "Primary Topic": "08_Business_Operations_and_Subbroking",
+                "Problem Solved": "Client acquisition landing pages, lead capture funnels, and subbroking onboarding",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 95,
+                "Tags & Technologies": "Subbroking, Client Acquisition, Sales Funnel, MOFSL, Demat",
+                "Content Summary & Logic": "Synthesized from mofsl landing page.docx, Instructions for UI Designer, and MO Model Portfolio. Complete onboarding funnel.",
+                "IsGolden": true,
+                "DomainId": "dom_08"
+            },
+            {
+                "File Name": "GM_B2B_Client_Outreach_LinkedIn_and_Email_Automation.md",
+                "Relative Path": "03_Topics_and_Projects/08_Business_Operations_and_Subbroking/GM_B2B_Client_Outreach_LinkedIn_and_Email_Automation.md",
+                "Asset Title": "B2B Client Outreach: LinkedIn & Email Automation",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 10.50,
+                "Primary Topic": "08_Business_Operations_and_Subbroking",
+                "Problem Solved": "Cold outreach prospecting, personalized email sequencing, and LinkedIn DM pipelines",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 93,
+                "Tags & Technologies": "B2B Outreach, LinkedIn, Cold Email, Lead Gen, Sequencing",
+                "Content Summary & Logic": "Synthesized from Profile Upgrade-LinkedIn.docx and LinkedIn DM Automation System.json. Multi-channel outbound SDR system.",
+                "IsGolden": true,
+                "DomainId": "dom_08"
+            },
+            {
+                "File Name": "GM_Freelance_Skill_Arbitrage_and_Upwork_Mastery.md",
+                "Relative Path": "03_Topics_and_Projects/08_Business_Operations_and_Subbroking/GM_Freelance_Skill_Arbitrage_and_Upwork_Mastery.md",
+                "Asset Title": "Freelance Skill Arbitrage & Upwork Mastery",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.20,
+                "Primary Topic": "08_Business_Operations_and_Subbroking",
+                "Problem Solved": "Winning proposal templates, skill arbitrage workflows, and Upwork profile optimization",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 94,
+                "Tags & Technologies": "Upwork, Freelance, Skill Arbitrage, Proposal Templates, Career",
+                "Content Summary & Logic": "Synthesized from Upwork Checklist - Skill Arbitrage.docx, Proposal Pointers.pdf, and resume profiles. High-converting freelance playbook.",
+                "IsGolden": true,
+                "DomainId": "dom_08"
+            },
+            {
+                "File Name": "GM_Business_Operations_Compliance_and_Document_Workflows.md",
+                "Relative Path": "03_Topics_and_Projects/08_Business_Operations_and_Subbroking/GM_Business_Operations_Compliance_and_Document_Workflows.md",
+                "Asset Title": "Business Operations, Compliance & Document Workflows",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 13.40,
+                "Primary Topic": "08_Business_Operations_and_Subbroking",
+                "Problem Solved": "Automated business invoicing, KYC compliance audits, insurance tracking, and legal workflows",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 96,
+                "Tags & Technologies": "Compliance, Business Operations, Legal, Invoicing, Insurance",
+                "Content Summary & Logic": "Synthesized from PCF_AI_Business_Plan.pdf, legal research sources, and Fee-Receipts. Operational administrative and audit workflows.",
+                "IsGolden": true,
+                "DomainId": "dom_08"
+            },
+            {
+                "File Name": "GM_DeepSeek_Architecture_Reasoning_Models_and_Ecosystem_Synthesis.md",
+                "Relative Path": "03_Topics_and_Projects/09_LLM_Conversations_and_Syntheses/GM_DeepSeek_Architecture_Reasoning_Models_and_Ecosystem_Synthesis.md",
+                "Asset Title": "DeepSeek Architecture, Reasoning Models & Ecosystem Synthesis",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 14.80,
+                "Primary Topic": "09_LLM_Conversations_and_Syntheses",
+                "Problem Solved": "DeepSeek R1/V3 architecture analysis, cost economics, local deployment, and benchmarks",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 98,
+                "Tags & Technologies": "DeepSeek, Reasoning Models, MoE, Local LLM, Benchmarks",
+                "Content Summary & Logic": "Synthesized from DeepSeek-LLM research threads and DeepSeek_LLM_Research_Report.docx. Complete deep-dive into R1 reasoning architectures.",
+                "IsGolden": true,
+                "DomainId": "dom_09"
+            },
+            {
+                "File Name": "GM_Zero_Cost_Multi_Provider_LLM_Routing_and_OmniRoute_Matrix.md",
+                "Relative Path": "03_Topics_and_Projects/09_LLM_Conversations_and_Syntheses/GM_Zero_Cost_Multi_Provider_LLM_Routing_and_OmniRoute_Matrix.md",
+                "Asset Title": "Zero-Cost Multi-Provider LLM Routing & OmniRoute Matrix",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.50,
+                "Primary Topic": "09_LLM_Conversations_and_Syntheses",
+                "Problem Solved": "High-resilience fallback routing matrix across free-tier LLM providers (Groq, OpenRouter, Gemini)",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 96,
+                "Tags & Technologies": "LLM Routing, Free Models, Groq, OpenRouter, Gemini, Fallback",
+                "Content Summary & Logic": "Synthesized from PROVIDERS_Shortlist.json, available_free_models_catalog.md, and Test-FreeProviders.ps1. Zero-cost multi-LLM orchestrator.",
+                "IsGolden": true,
+                "DomainId": "dom_09"
+            },
+            {
+                "File Name": "GM_Brutal_Architectural_Audit_and_Solo_Founder_Execution_Blueprint.md",
+                "Relative Path": "03_Topics_and_Projects/09_LLM_Conversations_and_Syntheses/GM_Brutal_Architectural_Audit_and_Solo_Founder_Execution_Blueprint.md",
+                "Asset Title": "Brutal Architectural Audit & Solo Founder Execution Blueprint",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 12.90,
+                "Primary Topic": "09_LLM_Conversations_and_Syntheses",
+                "Problem Solved": "Ruthless technical audit, technical debt elimination, and solo-founder execution milestones",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 97,
+                "Tags & Technologies": "Solo Founder, Architecture Audit, Execution Plan, Technical Debt",
+                "Content Summary & Logic": "Synthesized from BRUTAL_REVIEW.md, PROJECT_BRIEF.md, and TASKS_ExecutionPlan.md. Pragmatic founder execution blueprint.",
+                "IsGolden": true,
+                "DomainId": "dom_09"
+            },
+            {
+                "File Name": "GM_AI_Search_and_Web_Extraction_Engines_Exa_Firecrawl_Tavily.md",
+                "Relative Path": "03_Topics_and_Projects/09_LLM_Conversations_and_Syntheses/GM_AI_Search_and_Web_Extraction_Engines_Exa_Firecrawl_Tavily.md",
+                "Asset Title": "AI Search & Web Extraction Engines: Exa, Firecrawl & Tavily",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 10.80,
+                "Primary Topic": "09_LLM_Conversations_and_Syntheses",
+                "Problem Solved": "Comparison, API integration, and scraping pipelines for Exa AI, Firecrawl, and Tavily",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 95,
+                "Tags & Technologies": "Exa, Firecrawl, Tavily, Web Extraction, AI Search, Scraping",
+                "Content Summary & Logic": "Synthesized from exa ai.txt, Fiecrawal ai.txt, and Tavily's AI.txt. Architectural comparison and production code integration.",
+                "IsGolden": true,
+                "DomainId": "dom_09"
+            },
+            {
+                "File Name": "GM_Autonomous_Financial_Content_and_Subbroking_Growth_Engine.md",
+                "Relative Path": "03_Topics_and_Projects/10_R_and_D_Incubator_Half_Baked_Ideas/GM_Autonomous_Financial_Content_and_Subbroking_Growth_Engine.md",
+                "Asset Title": "Autonomous Financial Content & Subbroking Growth Engine",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 12.30,
+                "Primary Topic": "10_R_and_D_Incubator_Half_Baked_Ideas",
+                "Problem Solved": "Automated market commentary generation and subbroking client conversion system",
+                "Workability Status": "High-Workability",
+                "Actionable Rating": "Half-Baked Idea (R&D Mine)",
+                "Reusability Score": 88,
+                "Tags & Technologies": "R&D, Financial Content, Growth Engine, Subbroking, Commentary",
+                "Content Summary & Logic": "Synthesized from ! Inbox.md, 24feb2026.txt, and Oracle_AI_Lab_Reference.txt. Concept design for autonomous daily financial briefs.",
+                "IsGolden": true,
+                "DomainId": "dom_10"
+            },
+            {
+                "File Name": "GM_Skool_Community_Resource_Downloader_and_LLM_Thread_Collator.md",
+                "Relative Path": "03_Topics_and_Projects/10_R_and_D_Incubator_Half_Baked_Ideas/GM_Skool_Community_Resource_Downloader_and_LLM_Thread_Collator.md",
+                "Asset Title": "Skool Resource Downloader & LLM Thread Collator",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.70,
+                "Primary Topic": "10_R_and_D_Incubator_Half_Baked_Ideas",
+                "Problem Solved": "Playwright browser automation scraper to collate multi-LLM threads and Skool resources",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 96,
+                "Tags & Technologies": "Playwright, Skool Downloader, LLM Collation, Browser Automation",
+                "Content Summary & Logic": "Synthesized from llm_knowledge_collation.py and Build a Premium Skool Resource Downloader. Complete Playwright scraper web application.",
+                "IsGolden": true,
+                "DomainId": "dom_10"
+            },
+            {
+                "File Name": "GM_Project_FlowScribe_Autonomous_Audio_Intelligence_Engine.md",
+                "Relative Path": "03_Topics_and_Projects/10_R_and_D_Incubator_Half_Baked_Ideas/GM_Project_FlowScribe_Autonomous_Audio_Intelligence_Engine.md",
+                "Asset Title": "Project FlowScribe: Autonomous Audio Intelligence Engine",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 10.90,
+                "Primary Topic": "10_R_and_D_Incubator_Half_Baked_Ideas",
+                "Problem Solved": "Local Whisper speech-to-text pipeline, summarization, and key concept extraction",
+                "Workability Status": "High-Workability",
+                "Actionable Rating": "Half-Baked Idea (R&D Mine)",
+                "Reusability Score": 89,
+                "Tags & Technologies": "Whisper, Audio Transcription, FlowScribe, Intelligence, YouTube",
+                "Content Summary & Logic": "Synthesized from Project FlowScribe.docx and yt_download.md. Offline audio processing and structured note synthesis.",
+                "IsGolden": true,
+                "DomainId": "dom_10"
+            },
+            {
+                "File Name": "GM_Non_Coders_AI_Web_Application_Factory_Playbook.md",
+                "Relative Path": "03_Topics_and_Projects/10_R_and_D_Incubator_Half_Baked_Ideas/GM_Non_Coders_AI_Web_Application_Factory_Playbook.md",
+                "Asset Title": "Non-Coder's AI Web Application Factory Playbook",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 9.40,
+                "Primary Topic": "10_R_and_D_Incubator_Half_Baked_Ideas",
+                "Problem Solved": "Visual workflow builder and no-code prompt engineering guide for non-developers",
+                "Workability Status": "High-Workability",
+                "Actionable Rating": "Half-Baked Idea (R&D Mine)",
+                "Reusability Score": 87,
+                "Tags & Technologies": "No-Code, Web App Factory, Non-Coder Guide, Visual Builder",
+                "Content Summary & Logic": "Synthesized from Non-Coder's Guide to AI-Powered Web App and Welcome.md. Step-by-step framework for rapid non-technical software creation.",
+                "IsGolden": true,
+                "DomainId": "dom_10"
+            },
+            {
+                "File Name": "GM_R_and_D_Incubator_Backlog_and_Experimental_Prototypes.md",
+                "Relative Path": "03_Topics_and_Projects/10_R_and_D_Incubator_Half_Baked_Ideas/GM_R_and_D_Incubator_Backlog_and_Experimental_Prototypes.md",
+                "Asset Title": "R&D Incubator Backlog & Experimental Prototypes",
+                "Asset Format": "Golden Master Playbook",
+                "Size (KB)": 11.80,
+                "Primary Topic": "10_R_and_D_Incubator_Half_Baked_Ideas",
+                "Problem Solved": "Incubation pipeline, concept scoring, and rapid prototyping backlog for nascent ideas",
+                "Workability Status": "Experimental",
+                "Actionable Rating": "Half-Baked Idea (R&D Mine)",
+                "Reusability Score": 85,
+                "Tags & Technologies": "R&D Backlog, Experimental, Prototypes, Incubation, Pipeline",
+                "Content Summary & Logic": "Synthesized from moc_template.md, content_template.md, and raw research inboxes. Structured backlog and venture scoring matrices.",
+                "IsGolden": true,
+                "DomainId": "dom_10"
+            },
+
+            // Anchor & Primary Raw Assets
+            {
+                "File Name": "AGENTS.md",
+                "Relative Path": "Raw_copies/AGENTS.md",
+                "Asset Title": "Autonomous Agents Architecture Specification",
+                "Asset Format": "Markdown Note",
+                "Size (KB)": 17.26,
+                "Primary Topic": "01_AI_Agents_and_Autonomous_Systems",
+                "Problem Solved": "Core multi-agent protocol specification and task execution contracts",
+                "Workability Status": "Production-Ready",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 94,
+                "Tags & Technologies": "AI Agent, Multi-Agent, Markdown, Architecture",
+                "Content Summary & Logic": "Master agent protocol specification defining orchestrator and sub-agent hierarchies, memory management, and communication interfaces.",
+                "IsGolden": false,
+                "DomainId": "dom_01"
+            },
+            {
+                "File Name": "complete-n8n-documentation.docx",
+                "Relative Path": "Raw_copies/complete-n8n-documentation.docx",
+                "Asset Title": "Complete n8n Workflow & Node Reference Manual",
+                "Asset Format": "Word Document",
+                "Size (KB)": 1753.53,
+                "Primary Topic": "02_Workflow_Automations_n8n",
+                "Problem Solved": "Comprehensive documentation of all n8n node types, triggers, and execution parameters",
+                "Workability Status": "Production-Ready Workflow",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 96,
+                "Tags & Technologies": "n8n, Documentation, Node Reference, Automation",
+                "Content Summary & Logic": "Comprehensive 200+ page guide detailing complete node architectures, webhook triggers, execution lifecycle, error handling, and expressions.",
+                "IsGolden": false,
+                "DomainId": "dom_02"
+            },
+            {
+                "File Name": "MULTI_AGENT_TRADING_SYSTEM.json",
+                "Relative Path": "Raw_copies/MULTI_AGENT_TRADING_SYSTEM.json",
+                "Asset Title": "Multi-Agent Trading System Flow",
+                "Asset Format": "JSON / n8n Workflow",
+                "Size (KB)": 44.12,
+                "Primary Topic": "06_Quantitative_Finance_and_Trading",
+                "Problem Solved": "Multi-agent algorithmic trading execution pipeline with automated position sizing",
+                "Workability Status": "Production-Ready Workflow",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 95,
+                "Tags & Technologies": "n8n, Trading, Multi-Agent, TradingView, Risk Management",
+                "Content Summary & Logic": "Complex multi-agent n8n workflow integrating market data webhooks, technical analysis LLM prompts, and broker order execution.",
+                "IsGolden": false,
+                "DomainId": "dom_06"
+            },
+            {
+                "File Name": "NISM-Series-XV-ResearchAnalyst-Workbook - March 2025.pdf",
+                "Relative Path": "Raw_copies/NISM-Series-XV-ResearchAnalyst-Workbook - March 2025.pdf",
+                "Asset Title": "NISM Series XV: Research Analyst Certification Manual",
+                "Asset Format": "PDF Document",
+                "Size (KB)": 3840.12,
+                "Primary Topic": "06_Quantitative_Finance_and_Trading",
+                "Problem Solved": "Official regulatory, valuation, equity research, and financial modeling framework",
+                "Workability Status": "Reference Documentation",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 98,
+                "Tags & Technologies": "NISM, SEBI, Valuation, Equity Research, DCF",
+                "Content Summary & Logic": "Comprehensive NISM certification curriculum covering microeconomics, corporate finance, DCF valuation, qualitative analysis, and SEBI regulations.",
+                "IsGolden": false,
+                "DomainId": "dom_06"
+            },
+            {
+                "File Name": "DeepSeek-LLM research threads- AAG01.docx",
+                "Relative Path": "Raw_copies/DeepSeek-LLM research threads- AAG01.docx",
+                "Asset Title": "DeepSeek LLM Research & Reasoning Synthesis",
+                "Asset Format": "Word Document",
+                "Size (KB)": 48.60,
+                "Primary Topic": "09_LLM_Conversations_and_Syntheses",
+                "Problem Solved": "Synthesis of DeepSeek reasoning models, Mixture-of-Experts architecture, and cost benchmarks",
+                "Workability Status": "Synthesis Report",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 96,
+                "Tags & Technologies": "DeepSeek, MoE, Reasoning, AI Research, LLM",
+                "Content Summary & Logic": "Detailed exploration of DeepSeek R1 and V3 reasoning models, token economics, API integration, and architectural comparisons with OpenAI o1.",
+                "IsGolden": false,
+                "DomainId": "dom_09"
+            },
+            {
+                "File Name": "1731539795807-AIAgentPersonalAssistant.json",
+                "Relative Path": "Raw_copies/1731539795807-AIAgentPersonalAssistant.json",
+                "Asset Title": "AI Agent Personal Assistant Workflow",
+                "Asset Format": "JSON / n8n Workflow",
+                "Size (KB)": 39.39,
+                "Primary Topic": "02_Workflow_Automations_n8n",
+                "Problem Solved": "Automated email triage, classification, and drafting with AI",
+                "Workability Status": "Production-Ready Workflow",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 92,
+                "Tags & Technologies": "n8n, Workflow Automation, Gmail, Twilio, AI Agent",
+                "Content Summary & Logic": "n8n Workflow with 36 nodes. Integrates Gmail trigger, Twilio notifications, and OpenAI Chat Model for automated inbox management.",
+                "IsGolden": false,
+                "DomainId": "dom_02"
+            },
+            {
+                "File Name": "1731539944305-UploadDocumenttoPineconeAgent.json",
+                "Relative Path": "Raw_copies/1731539944305-UploadDocumenttoPineconeAgent.json",
+                "Asset Title": "Upload Document to Pinecone Agent",
+                "Asset Format": "JSON / n8n Workflow",
+                "Size (KB)": 4.19,
+                "Primary Topic": "02_Workflow_Automations_n8n",
+                "Problem Solved": "Indexes documents and vectors into Pinecone / Vector DB for RAG querying",
+                "Workability Status": "Production-Ready Workflow",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 94,
+                "Tags & Technologies": "n8n, Pinecone, Google Drive, Text Splitter, RAG",
+                "Content Summary & Logic": "Automated vector ingestion workflow. Pulls files from Google Drive, performs recursive text chunking, and upserts embeddings into Pinecone.",
+                "IsGolden": false,
+                "DomainId": "dom_02"
+            },
+            {
+                "File Name": "1731548473948-SocialMediaAutomation.json",
+                "Relative Path": "Raw_copies/1731548473948-SocialMediaAutomation.json",
+                "Asset Title": "X, FB, LinkedIn Social Media Automation",
+                "Asset Format": "JSON / n8n Workflow",
+                "Size (KB)": 21.75,
+                "Primary Topic": "07_Content_Creation_and_Media_Engines",
+                "Problem Solved": "Multi-platform automated social media distribution and scheduling",
+                "Workability Status": "Production-Ready Workflow",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 93,
+                "Tags & Technologies": "n8n, Twitter, LinkedIn, Google Sheets, Social Media",
+                "Content Summary & Logic": "Multi-platform automated distribution engine triggered by Google Sheets row updates to simultaneously format and publish to X and LinkedIn.",
+                "IsGolden": false,
+                "DomainId": "dom_07"
+            },
+            {
+                "File Name": "1731557585881-PhoneCallingAgent.json",
+                "Relative Path": "Raw_copies/1731557585881-PhoneCallingAgent.json",
+                "Asset Title": "Phone Calling AI Agent",
+                "Asset Format": "JSON / n8n Workflow",
+                "Size (KB)": 11.63,
+                "Primary Topic": "04_Mobile_and_Android_Ecosystem",
+                "Problem Solved": "Automated voice agent telephony with Telegram triggers and Vapi API integration",
+                "Workability Status": "Production-Ready Workflow",
+                "Actionable Rating": "Must Keep - High Reusability",
+                "Reusability Score": 91,
+                "Tags & Technologies": "n8n, Vapi, Telephony, Telegram, Voice AI",
+                "Content Summary & Logic": "Telephony orchestration workflow connecting Telegram command triggers with Vapi phone call endpoints and OpenAI conversational models.",
+                "IsGolden": false,
+                "DomainId": "dom_04"
+            },
+            {
+                "File Name": "my_api_keys_backup.md",
+                "Relative Path": "01_Vault_Private/credentials_and_keys/my_api_keys_backup.md",
+                "Asset Title": "API Credentials & Secret Keys Backup",
+                "Asset Format": "Markdown Note",
+                "Size (KB)": 2.45,
+                "Primary Topic": "Personal Vault & Credentials",
+                "Problem Solved": "Private API token backups and credentials storage",
+                "Workability Status": "Private Vault",
+                "Actionable Rating": "Sensitive (Private Vault)",
+                "Reusability Score": 10,
+                "Tags & Technologies": "Credentials, API Keys, Private Vault, Security",
+                "Content Summary & Logic": "Quarantined secret credentials and API tokens protected by .gitignore and private vault isolation.",
+                "IsGolden": false,
+                "DomainId": "vault"
+            },
+            {
+                "File Name": "Account_Statement_2024.pdf",
+                "Relative Path": "01_Vault_Private/financial_statements/Account_Statement_2024.pdf",
+                "Asset Title": "Bank Account Statement 2024",
+                "Asset Format": "PDF Document",
+                "Size (KB)": 813.72,
+                "Primary Topic": "Personal Vault & Financials",
+                "Problem Solved": "Personal financial transactions and tax records",
+                "Workability Status": "Private Vault",
+                "Actionable Rating": "Sensitive (Private Vault)",
+                "Reusability Score": 5,
+                "Tags & Technologies": "Bank Statement, Finance, Private Vault, Taxes",
+                "Content Summary & Logic": "Quarantined personal bank statements protected by .gitignore.",
+                "IsGolden": false,
+                "DomainId": "vault"
+            },
+            {
+                "File Name": "Adhar.pdf",
+                "Relative Path": "01_Vault_Private/personal_identity/Adhar.pdf",
+                "Asset Title": "Aadhaar Card KYC Document",
+                "Asset Format": "PDF Document",
+                "Size (KB)": 625.83,
+                "Primary Topic": "Personal Vault & Identity",
+                "Problem Solved": "Personal KYC identification record",
+                "Workability Status": "Private Vault",
+                "Actionable Rating": "Sensitive (Private Vault)",
+                "Reusability Score": 5,
+                "Tags & Technologies": "KYC, Aadhaar, Identity, Private Vault",
+                "Content Summary & Logic": "Quarantined personal identification document protected by .gitignore.",
+                "IsGolden": false,
+                "DomainId": "vault"
+            },
+            {
+                "File Name": "! Inbox.md",
+                "Relative Path": "Raw_copies/! Inbox.md",
+                "Asset Title": "Raw Inbox & Trading Brainstorm Mine",
+                "Asset Format": "Markdown Note",
+                "Size (KB)": 10.63,
+                "Primary Topic": "10_R_and_D_Incubator_Half_Baked_Ideas",
+                "Problem Solved": "Early-stage architecture ideas, trading algorithms, and subbroking brainstorms",
+                "Workability Status": "Conceptual Idea / R&D",
+                "Actionable Rating": "Half-Baked Idea (R&D Mine)",
+                "Reusability Score": 75,
+                "Tags & Technologies": "Trading, Finance, Brainstorm, R&D Mine",
+                "Content Summary & Logic": "Unprocessed research notes and strategy ideas synthesized into Golden Master Playbooks in Domains 06, 08, and 10.",
+                "IsGolden": false,
+                "DomainId": "dom_10"
+            }
+        ];
+
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        function renderCards() {
+            const grid = document.getElementById('assetGrid');
+            grid.innerHTML = '';
+            
+            const q = searchQuery.toLowerCase().trim();
+            const filtered = rawData.filter(item => {
+                let passCategory = true;
+                if (currentFilter === 'golden_master') passCategory = item.IsGolden === true;
+                else if (currentFilter === 'dom_01') passCategory = (item['Primary Topic'] || '').includes('01_AI_Agents') || (item['DomainId'] === 'dom_01');
+                else if (currentFilter === 'dom_02') passCategory = (item['Primary Topic'] || '').includes('02_Workflow') || (item['DomainId'] === 'dom_02');
+                else if (currentFilter === 'dom_03') passCategory = (item['Primary Topic'] || '').includes('03_Prompt') || (item['DomainId'] === 'dom_03');
+                else if (currentFilter === 'dom_04') passCategory = (item['Primary Topic'] || '').includes('04_Mobile') || (item['DomainId'] === 'dom_04');
+                else if (currentFilter === 'dom_05') passCategory = (item['Primary Topic'] || '').includes('05_Code') || (item['DomainId'] === 'dom_05');
+                else if (currentFilter === 'dom_06') passCategory = (item['Primary Topic'] || '').includes('06_Quant') || (item['DomainId'] === 'dom_06');
+                else if (currentFilter === 'dom_07') passCategory = (item['Primary Topic'] || '').includes('07_Content') || (item['DomainId'] === 'dom_07');
+                else if (currentFilter === 'dom_08') passCategory = (item['Primary Topic'] || '').includes('08_Business') || (item['DomainId'] === 'dom_08');
+                else if (currentFilter === 'dom_09') passCategory = (item['Primary Topic'] || '').includes('09_LLM') || (item['DomainId'] === 'dom_09');
+                else if (currentFilter === 'dom_10') passCategory = (item['Primary Topic'] || '').includes('10_R_and_D') || (item['DomainId'] === 'dom_10');
+                else if (currentFilter === 'half-baked') passCategory = (item['Actionable Rating'] || '').includes('Half-Baked');
+                else if (currentFilter === 'prompts') passCategory = (item['Primary Topic'] || '').includes('Prompt') || (item['Asset Title'] || '').includes('Prompt');
+                else if (currentFilter === 'automations') passCategory = (item['Workability Status'] || '').match(/Production|Deployable|Workflow/i) || (item['Asset Format'] || '').includes('JSON');
+                else if (currentFilter === 'trading') passCategory = (item['Primary Topic'] || '').match(/Trading|Finance|Quant/i);
+                else if (currentFilter === 'reference') passCategory = (item['Asset Format'] || '').match(/PDF|Word|Doc/i);
+                else if (currentFilter === 'vault') passCategory = (item['Actionable Rating'] || '').match(/Sensitive|Private/i) || item.DomainId === 'vault';
+
+                if (!passCategory) return false;
+
+                if (!q) return true;
+                const matchStr = (item['Asset Title'] + ' ' + item['File Name'] + ' ' + item['Primary Topic'] + ' ' + item['Problem Solved'] + ' ' + item['Tags & Technologies'] + ' ' + item['Content Summary & Logic']).toLowerCase();
+                return matchStr.includes(q);
+            });
+
+            document.getElementById('resultsCount').innerText = `Showing ${filtered.length} of ${rawData.length} assets`;
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `asset-card ${item.IsGolden ? 'card-golden' : ''}`;
+
+                let statusClass = 'status-ref';
+                if (item.IsGolden) statusClass = 'status-gold';
+                else if ((item['Workability Status'] || '').match(/Production|Deployable/i)) statusClass = 'status-ready';
+                else if ((item['Actionable Rating'] || '').includes('Half-Baked')) statusClass = 'status-draft';
+                else if ((item['Actionable Rating'] || '').match(/Sensitive|Private/i)) statusClass = 'status-vault';
+
+                const tags = (item['Tags & Technologies'] || '').split(',').map(t => t.trim()).filter(Boolean).slice(0, 4);
+
+                let titleHtml = escapeHtml(item['Asset Title']);
+                let problemHtml = escapeHtml(item['Problem Solved']);
+                let summaryHtml = escapeHtml(item['Content Summary & Logic']);
+
+                if (q) {
+                    titleHtml = highlightText(titleHtml, q);
+                    problemHtml = highlightText(problemHtml, q);
+                    summaryHtml = highlightText(summaryHtml, q);
+                }
+
+                const scoreBadge = item['Reusability Score'] ? `<span class="reusability-meter">⭐ ${item['Reusability Score']}/100</span>` : '';
+
+                card.innerHTML = `
+                    <div class="card-top">
+                        <div class="card-title">${titleHtml}</div>
+                        <span class="card-format ${item.IsGolden ? 'format-golden' : ''}">${escapeHtml(item['Asset Format'])}</span>
+                    </div>
+                    ${scoreBadge}
+                    <div class="problem-box ${item.IsGolden ? 'golden-border' : ''}">
+                        <strong>🎯 Problem Solved:</strong> ${problemHtml}
+                    </div>
+                    <div class="card-summary">
+                        ${summaryHtml}
+                    </div>
+                    <div class="card-tags">
+                        <span class="status-badge ${statusClass}">${escapeHtml(item['Workability Status'])}</span>
+                        ${tags.map(t => `<span class="tag-pill">${escapeHtml(t)}</span>`).join('')}
+                    </div>
+                    <div class="card-footer">
+                        <span>${escapeHtml(item['File Name'])}</span>
+                        <span>${item['Size (KB)']} KB</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function setFilter(filterName, btn) {
+            currentFilter = filterName;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderCards();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderCards();
+        });
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function highlightText(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        // Initialize Chart.js Visualizations
+        const topicCtx = document.getElementById('topicChart').getContext('2d');
+        new Chart(topicCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['01 Agents', '02 n8n Automations', '03 Prompts', '04 Mobile', '05 Dev Tools', '06 Quant Finance', '07 Media', '08 Business', '09 LLM Synthesis', '10 R&D Incubator'],
+                datasets: [{
+                    data: [52, 145, 48, 16, 38, 42, 56, 34, 24, 34],
+                    backgroundColor: ['#38BDF8', '#818CF8', '#A78BFA', '#2DD4BF', '#F472B6', '#F59E0B', '#EC4899', '#10B981', '#6366F1', '#F43F5E'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { color: '#94A3B8', font: { size: 10 } } }
+                }
+            }
+        });
+
+        const workCtx = document.getElementById('workChart').getContext('2d');
+        new Chart(workCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Production-Ready', 'Deployable Config', 'Algorithmic Rules', 'Reference / Docs', 'Conceptual R&D', 'Private Vault'],
+                datasets: [{
+                    label: 'Asset Count',
+                    data: [224, 68, 42, 92, 19, 44],
+                    backgroundColor: '#06B6D4',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94A3B8', font: { size: 9 } }, grid: { display: false } },
+                    y: { ticks: { color: '#94A3B8', font: { size: 10 } }, grid: { color: '#232E42' } }
+                }
+            }
+        });
+
+        const reusabilityCtx = document.getElementById('reusabilityChart').getContext('2d');
+        new Chart(reusabilityCtx, {
+            type: 'bar',
+            data: {
+                labels: ['90-100 (Tier 1)', '75-89 (High)', '50-74 (Moderate)', '<50 (Vault/Raw)'],
+                datasets: [{
+                    label: 'Score Distribution',
+                    data: [270, 110, 65, 44],
+                    backgroundColor: '#F59E0B',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94A3B8', font: { size: 9 } }, grid: { display: false } },
+                    y: { ticks: { color: '#94A3B8', font: { size: 10 } }, grid: { color: '#232E42' } }
+                }
+            }
+        });
+
+        renderCards();
+    </script>
+</body>
+</html>

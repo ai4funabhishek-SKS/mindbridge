@@ -1,0 +1,75 @@
+{
+  "name": "Universal Prompt Creator Bot",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Trigger (Webhook / Manual)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "fields": {
+          "field1": "What do you want to achieve?",
+          "field2": "Expected Output Format",
+          "field3": "LLM Preference (OpenAI, Claude, etc.)"
+        }
+      },
+      "id": "2",
+      "name": "User Input Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "text": "You are an expert AI prompt engineer. Convert the user's idea into a structured, optimized prompt based on best practices and their preferred LLM. Always ask clarifying questions if context is missing.",
+        "promptType": "define"
+      },
+      "id": "3",
+      "name": "Clarify & Analyze",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "text": "Based on the clarified input, generate a system prompt with sections: Role, Inputs, Constraints, Tools, Instructions, Output Format.",
+        "promptType": "define"
+      },
+      "id": "4",
+      "name": "Generate Prompt",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "prompt": "={{$json.text}}"
+        }
+      },
+      "id": "5",
+      "name": "Display Prompt",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Trigger (Webhook / Manual)": {
+      "main": [[{"node": "User Input Form", "type": "main", "index": 0}]]
+    },
+    "User Input Form": {
+      "main": [[{"node": "Clarify & Analyze", "type": "main", "index": 0}]]
+    },
+    "Clarify & Analyze": {
+      "main": [[{"node": "Generate Prompt", "type": "main", "index": 0}]]
+    },
+    "Generate Prompt": {
+      "main": [[{"node": "Display Prompt", "type": "main", "index": 0}]]
+    }
+  }
+}

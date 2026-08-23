@@ -1,0 +1,83 @@
+Instructions for UI Designer: Landing Page Design for Motilal Oswal
+1. Social Media Links
+•	Display a list of social media handles with clickable hyperlinks:
+•	Twitter
+•	Instagram
+•	WhatsApp
+•	Facebook
+•	Telegram
+•	YouTube
+•	Use recognizable icons with text labels. Links should open in new tabs.
+2. Call to Action (CTA) - Google Form
+•	Add a prominent button labeled "Get Free Indian Market PDFs".
+•	Clicking opens a Google Form for customer details.
+•	After submission, users can download three free PDFs about the Indian market.
+•	Suggestion: Use a modal popup or redirect to form page for smooth UX.
+3. Barcode (QR Code)
+•	Show a QR code linking directly to the Motilal Oswal registration page with your referral link embedded.
+•	Add a caption like: "Scan to Register with Motilal Oswal".
+4. Products Section
+•	Add a button titled "Products We Specialize In / ہم جن مصنوعات میں مہارت رکھتے ہیں".
+•	Clicking expands or navigates to a list of all products offered by Motilal Oswal.
+5. List of Motilal Oswal Products (For Designer’s Reference)
+Motilal Oswal offers a wide range of financial products and services. Below is a simplified list to help you understand what the "Products We Specialize In" section should cover:
+Products We Specialize In/ we deal in 
+Motilal Oswal is your one-stop solution for all investment and financial needs. Explore our wide range of products and services, designed for every type of investor.
+1. Equity & Derivatives Trading
+•	Cash Market: Buy and sell shares of companies listed on Indian stock exchanges.
+•	Derivatives: Trade in futures and options for advanced strategies, hedging, or speculation.
+•	Commodity & Currency Trading: Trade in commodities (gold, silver, oil, etc.) and currencies (forex), including both cash and futures segments.
+2. Global Investing
+•	Invest in US Stocks: Seamlessly invest in leading US companies and global markets while residing in India. Diversify your portfolio internationally with ease.
+3. Mutual Funds
+•	Personalized Recommendations: Our expert fund managers assess your risk appetite and future goals to recommend the best funds.
+•	Wide Selection:
+•	Large Cap, Mid Cap, Small Cap Funds
+•	Balanced Funds
+•	Flexi Cap Funds
+•	Thematic & Industry-Focused Funds
+•	Index Funds
+•	Systematic Investment Plans (SIPs): Invest regularly for disciplined wealth creation.
+4. Intelligent Advisory Portfolio (IAP)
+•	Professionally managed portfolios, similar to PMS, designed for intelligent wealth creation.
+•	Managed by experienced fund managers, with benchmarking and regular performance reviews.
+•	Ideal for investors seeking expert guidance and consistent returns.
+5. Portfolio Management Services (PMS)
+•	Customized portfolios for high net-worth individuals, managed by seasoned professionals to maximize returns and manage risk.
+6. Wealth Management & Investment Advisory
+•	Comprehensive financial planning, tax and retirement planning, estate management, and personalized investment advice.
+7. Initial Public Offerings (IPOs)
+•	Early access to promising companies going public, with expert insights and guidance.
+8. Asset Management & Private Equity
+•	Professional management of investment funds and private equity opportunities for long-term growth.
+9. Fixed Income Products
+•	Fixed Deposits, Bonds, NCDs: Secure, fixed-income options for steady returns.
+10. Home Finance
+•	Loans for home purchase, construction, renovation, or extension at competitive rates.
+11. Insurance Solutions
+•	Life Insurance:
+•	Term Insurance
+•	Guaranteed Return Plans
+•	Market-Linked Unit Plans (ULIPs)
+•	Health Insurance:
+•	Comprehensive health cover
+•	Specialized disease and critical illness plans
+•	Motor Insurance:
+•	Two-wheelers, private petrol/diesel vehicles, electric vehicles, commercial vehicles
+12. Automated & Algorithmic Trading
+•	Tredek (Algo Trading):
+•	Automated trading platform where algorithms execute trades on your behalf for consistent returns.
+•	Simply set your preferences—our system does the rest, saving you time and effort.
+13. Search & Research Tools
+•	Access powerful research tools and market insights to make informed decisions.
+•	Multiple search products to help you discover investment opportunities tailored to your interests and goals.
+14. Investment Banking
+•	Mergers & acquisitions, capital raising, and strategic advisory for businesses.
+
+
+6. Design & UX Suggestions
+•	Use consistent branding colors and fonts aligned with Motilal Oswal’s identity.
+•	Ensure mobile responsiveness for all elements.
+•	Use hover effects on buttons and links for better interactivity.
+•	Keep the layout clean with enough white space for readability.
+•	Consider an accordion or dropdown for the product list to avoid clutter.

@@ -1,0 +1,123 @@
+{
+  "name": "ZeroClaw_Master_AI_Agent_Army",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent-army-orchestrator",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "node-webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.user_prompt }}",
+        "options": {
+          "systemMessage": "You are the Master Autonomous Orchestrator. Break down the user's objective into distinct subtasks, invoke the specialized tools (Research Agent, Content Agent, Database Agent), synthesize their outputs, and provide a verified final response."
+        }
+      },
+      "id": "node-ai-agent-core",
+      "name": "Master AI Agent Core",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.5-flash",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "node-model-provider",
+      "name": "Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [360, 520]
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "node-memory-buffer",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [480, 520]
+    },
+    {
+      "parameters": {
+        "name": "research_subagent_tool",
+        "description": "Call this tool to perform web research, market analysis, and knowledge retrieval.",
+        "workflowId": {
+          "__rl": true,
+          "value": "sub_workflow_research_id",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "values": {
+            "query": "={{ $fromAI('query', 'The exact research query string') }}"
+          }
+        }
+      },
+      "id": "node-tool-research",
+      "name": "Research Subagent Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [620, 520]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Master AI Agent Core",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Master AI Agent Core",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Master AI Agent Core",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Subagent Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master AI Agent Core",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,841 @@
+{
+  "name": "AIS Inspiration long videos",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -260,
+        800
+      ],
+      "id": "98d446b8-0f7a-4d2f-8aa9-84c37599b079",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Video Title: {{ $json.idea }}\nVideo Description: {{ $json.caption }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=ROLE:  \nYou are an expert prompt engineer. Your task is to create sequential voiceover and image prompts for a flowing video. These must follow the narrative arc of a short video:\n\nIntro (Scene 1–3)  \nBuild-up (Scene 4–6)  \nConclusion (Scene 7–10)\n\nThe user will provide you the title and description of the video they are making.\n\n***\n\nTASK:  \nReturn a JSON array of 10 objects with the following format:\n\n***\n\nvoiceText OUTPUT  \nvoiceText: a 2-sentence voiceover. Each voiceText needs to be 11 to 15 words strictly. It must connect with the previous scene and help the story flow. These voiceTexts need to adhere to the channel's niche, topic and style which is provided below:\n\nstyle and topic  \n{{ $json.channel_style_prompt }}\n\nEach voiceText is delicately and intellectually crafted, but is not difficult to understand.  \nYou use metaphors and analogies using the main character below when it's relevant.\n\n***\n\nimage_prompt OUTPUT  \nimage_prompt: A vivid, cinematic, and highly descriptive visual prompt. The prompt should describe the environment, subject, lighting, mood, and composition in detail. It also describes the foreground and background. At the end of each image prompt, it must also explicity include the Style below verbatim. When you need to include a character in the prompt, use the main character description below. The image prompts are at least 700 characters in length. You over-describe the details especially that of the background of every character.\n\nMain Character Description: {{ $json.character_style_prompt }}\n\n***\n\nCRITICAL REQUIREMENT  \nAll scenes must connect smoothly—the voiceovers and visuals should flow like a single story. Think of the viewer watching this as one seamless video. Avoid repetition across prompts.\n\nDo not include explanations. Just return the array.  \nDo not include double-quotes in your output\n"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        200,
+        800
+      ],
+      "id": "955bfe19-ba8a-4dd1-a6dc-1b35ee0a202e",
+      "name": "Prompts"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"voiceText\": \"You’re at rock bottom? Good. That’s where warriors are made. Now dig in.\",\n    \"image_prompt\": \"A lone figure in soaked athletic gear, kneeling on a cracked pavement under a brutal rainstorm, fists clenched, eyes burning with defiance.\"\n  },\n  {\n    \"voiceText\": \"The fire inside you doesn’t quit—it’s forged in the dark, not the light.\",\n    \"image_prompt\": \"A gritty basement gym lit by a single hanging bulb, a lone athlete doing pull-ups, muscles straining, sweat dripping to the floor.\"\n  },\n  {\n    \"voiceText\": \"Silence ain't weakness—it’s the sound of you loading up your next punch.\",\n    \"image_prompt\": \"Close-up of a fighter in a dark room, wrapping their hands with focus, eyes locked forward, face bruised but unbroken.\"\n  },\n  {\n    \"voiceText\": \"Every step you take in pain—every single one—is building your legacy.\",\n    \"image_prompt\": \"Mud-caked boots pounding through a forest trail in the rain, legs scratched, breath steaming in the cold air.\"\n  },\n  {\n    \"voiceText\": \"You’re not alone—but no one’s coming to save you. Handle it.\",\n    \"image_prompt\": \"A silhouette standing before a wall of black-and-white photos—veterans, athletes, survivors—all staring back with battle-tested eyes.\"\n  },\n  {\n    \"voiceText\": \"Struggle is your sharpening stone. Every rep, every failure—it’s the grind that defines you.\",\n    \"image_prompt\": \"A nearly empty weight room, barbell mid-air, lifter’s face contorted in effort, shadows dancing on concrete walls.\"\n  },\n  {\n    \"voiceText\": \"Pain is a teacher. Listen close—it’s cutting away your weakness.\",\n    \"image_prompt\": \"A craftsman chiseling stone with brutal precision, hands raw, face streaked with grime, muscles tight with tension.\"\n  },\n  {\n    \"voiceText\": \"You want change? Get uncomfortable. Sunrise don’t mean peace—it means another fight begins.\",\n    \"image_prompt\": \"First light over a deserted street, lone figure sprinting uphill, breath visible, city below still asleep.\"\n  },\n  {\n    \"voiceText\": \"Storms don’t stop you. You *become* the storm.\",\n    \"image_prompt\": \"Torrential rain, wind howling, a figure stands firm on a cliff edge, coat whipping, lightning cracking behind them.\"\n  },\n  {\n    \"voiceText\": \"You think you’re tired? Good. That’s when the real you shows up.\",\n    \"image_prompt\": \"An athlete climbing a steep stairwell at night, sweat and rain mingling, muscles trembling but moving forward.\"\n  },\n  {\n    \"voiceText\": \"This ain’t the end. It’s the part where legends are born.\",\n    \"image_prompt\": \"Rusty gates swinging open to a track field at dawn, a runner crouched at the line, expression locked in.\"\n  },\n  {\n    \"voiceText\": \"Keep pushing. That tunnel? The light’s not the end—it’s just your next mission.\",\n    \"image_prompt\": \"Silhouette jogging through a dark tunnel toward a glowing exit, every step echoing off the cold walls.\"\n  },\n  {\n    \"voiceText\": \"Adversity ain’t your enemy—it’s your proving ground.\",\n    \"image_prompt\": \"Boxer in the corner of a ring, head down, breathing heavy, then rising with fire in their eyes, spotlight on them.\"\n  },\n  {\n    \"voiceText\": \"Every scar you carry is a chapter you wrote in blood. Own it.\",\n    \"image_prompt\": \"Close-up of a scarred hand flipping through a rugged journal, dried mud on the cover, candlelight flickering nearby.\"\n  },\n  {\n    \"voiceText\": \"You’re one rep away, one more mile, one more second from everything you’ve ever wanted.\",\n    \"image_prompt\": \"Person reaching out to tap a glowing map on a dark street, sweat and rain on their face, teeth gritted in focus.\"\n  }\n]\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        360,
+        1060
+      ],
+      "id": "87972d3d-77b8-4313-b9c0-2ba99abd5c14",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": "deepseek/deepseek-chat-v3-0324:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        1080
+      ],
+      "id": "a3159be3-9739-4add-a0d4-82d65c7cceb9",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "cek1PP8cr536DkaS",
+          "name": "AIS OpenRouter ac"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jGQiWgGeOIwUmmAPR6YWGanKoot5hnkI0bteInvD_u8",
+          "mode": "list",
+          "cachedResultName": "AIS Longform Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jGQiWgGeOIwUmmAPR6YWGanKoot5hnkI0bteInvD_u8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jGQiWgGeOIwUmmAPR6YWGanKoot5hnkI0bteInvD_u8/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "production_status",
+              "lookupValue": "for production"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -40,
+        800
+      ],
+      "id": "b48d6b2c-cf7f-4f04-bbb9-77728f53444e",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wDCPrHGEkZlwJuw2",
+          "name": "AIS Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Input Topic & Prompts",
+        "height": 460,
+        "width": 820,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        740
+      ],
+      "id": "37166c25-57d9-4545-915b-3976b89a6f7c",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "# Video Rendering\n## Around 3 - 4 minutes per video",
+        "height": 460,
+        "width": 700,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        920,
+        740
+      ],
+      "typeVersion": 1,
+      "id": "0e03936d-b886-49c7-9b46-af50a0eb3bbe",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "# Call JSON2Video\n",
+        "height": 460,
+        "width": 320,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        580,
+        740
+      ],
+      "typeVersion": 1,
+      "id": "93889ae5-a3f4-4cc5-a3d2-5da009f318dd",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "# Upload To Youtube\n",
+        "height": 640,
+        "width": 340,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        620
+      ],
+      "id": "4330db36-7696-4af3-a5bb-9f949e6da2cb",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.movie.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        680
+      ],
+      "id": "f85ec7cf-9b28-4e01-bdf5-3f4604da39b6",
+      "name": "Download Video"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1jGQiWgGeOIwUmmAPR6YWGanKoot5hnkI0bteInvD_u8",
+          "mode": "list",
+          "cachedResultName": "AIS Longform Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jGQiWgGeOIwUmmAPR6YWGanKoot5hnkI0bteInvD_u8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jGQiWgGeOIwUmmAPR6YWGanKoot5hnkI0bteInvD_u8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get row(s) in sheet').item.json.row_number }}",
+            "error_log": "error"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "idea",
+              "displayName": "idea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channel_style_prompt",
+              "displayName": "channel_style_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "character_style_prompt",
+              "displayName": "character_style_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "production_status",
+              "displayName": "production_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "final_output",
+              "displayName": "final_output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "publishing_status",
+              "displayName": "publishing_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error_log",
+              "displayName": "error_log",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2000,
+        1320
+      ],
+      "id": "af58d0a6-b983-4c41-883b-32fdeefcebfb",
+      "name": "Update Error",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wDCPrHGEkZlwJuw2",
+          "name": "AIS Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Error",
+        "height": 220,
+        "width": 340,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        1280
+      ],
+      "id": "f35a94cf-15a8-4d20-b8e0-35b5be1d46dd",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.json2video.com/v2/movies",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "=json",
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "jsonBody": "={\n  \"template\": \"HtDxJfIsAOygUyfRveeB\",\n  \"variables\": {\n    \"voiceModel\": \"azure\",\n    \"voiceID\": \"en-US-AdamMultilingualNeural\",\n    \"image_model\": \"flux-schnell\",\n    \"introText\": \"{{ $('Get row(s) in sheet').item.json.idea }}\",\n    \"clips\": [\n      {\n        \"voiceText\": \"{{ $('Prompts').first().json.output[0].voiceText }}\",\n        \"image_prompt\": \"{{ $('Prompts').first().json.output[0].image_prompt }}\"\n      },\n      {\n        \"voiceText\": \"{{ $('Prompts').first().json.output[1].voiceText }}\",\n        \"image_prompt\": \"{{ $('Prompts').first().json.output[1].image_prompt }}\"\n      },\n      {\n        \"voiceText\": \"{{ $('Prompts').first().json.output[2].voiceText }}\",\n        \"image_prompt\": \"{{ $('Prompts').first().json.output[2].image_prompt }}\"\n      },\n      {\n        \"voiceText\": \"{{ $('Prompts').first().json.output[3].voiceText }}\",\n        \"image_prompt\": \"{{ $('Prompts').first().json.output[3].image_prompt }}\"\n      },\n      {\n        \"voiceText\": \"{{ $('Prompts').first().json.output[4].voiceText }}\",\n        \"image_prompt\": \"{{ $('Prompts').first().json.output[4].image_prompt }}\"\n      },\n      {\n        \"voiceText\": \"{{ $('Prompts').first().json.output[5].voiceText }}\",\n        \"image_prompt\": \"{{ $('Prompts').first().json.output[5].image_prompt }}\"\n      },\n      {\n        \"voiceText\": \"{{ $('Prompts').first().json.output[6].voiceText }}\",\n        \"image_prompt\": \"{{ $('Prompts').first().json.output[6].image_prompt }}\"\n      },\n      {\n        \"voiceText\": \"{{ $('Prompts').first().json.output[7].voiceText }}\",\n        \"image_prompt\": \"{{ $('Prompts').first().json.output[7].image_prompt }}\"\n      },\n      {\n        \"voiceText\": \"{{ $('Prompts').first().json.output[8].voiceText }}\",\n        \"image_prompt\": \"{{ $('Prompts').first().json.output[8].image_prompt }}\"\n      },\n      {\n        \"voiceText\": \"{{ $('Prompts').first().json.output[9].voiceText }}\",\n        \"image_prompt\": \"{{ $('Prompts').first().json.output[9].image_prompt }}\"\n      }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        960
+      ],
+      "id": "c3ecc93f-2e98-461f-895a-69cb188f6f55",
+      "name": "Submit Render Job",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1nIKE9EH1D8gNf1o",
+          "name": "AIS JSON2Video Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1000,
+        940
+      ],
+      "id": "2cdcf2ab-cabe-48ec-b028-1bdf6831e640",
+      "name": "Wait",
+      "webhookId": "ccb77f90-0b47-42fe-96b4-22d35ba46b46"
+    },
+    {
+      "parameters": {
+        "url": "https://api.json2video.com/v2/movies",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "project",
+              "value": "={{ $('Submit Render Job').item.json.project }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1220,
+        940
+      ],
+      "id": "3eedcca0-ed61-411d-8a29-b64628255ee9",
+      "name": "Check Completion",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1nIKE9EH1D8gNf1o",
+          "name": "AIS JSON2Video Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.movie.status }}",
+                    "rightValue": "done",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "done"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "17c132d0-6142-4a07-b132-f28027949bec",
+                    "leftValue": "={{ $json.movie.status }}",
+                    "rightValue": "error",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "error"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b6381708-9a0d-4b23-9efc-fdfaccb2cbac",
+                    "leftValue": "={{ $json.movie.status }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "running"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1440,
+        940
+      ],
+      "id": "8f8eda2a-9ad8-46eb-9718-dde3557d0bbc",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Get row(s) in sheet').item.json.idea }}",
+        "regionCode": "US",
+        "categoryId": "1",
+        "options": {
+          "privacyStatus": "private"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        1980,
+        860
+      ],
+      "id": "46166a31-bd80-4175-b603-a577f00f5c73",
+      "name": "Upload",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "94nZoATrDKnQP0iO",
+          "name": "FBS Youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1jGQiWgGeOIwUmmAPR6YWGanKoot5hnkI0bteInvD_u8",
+          "mode": "list",
+          "cachedResultName": "AIS Longform Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jGQiWgGeOIwUmmAPR6YWGanKoot5hnkI0bteInvD_u8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jGQiWgGeOIwUmmAPR6YWGanKoot5hnkI0bteInvD_u8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get row(s) in sheet').item.json.row_number }}",
+            "publishing_status": "done",
+            "production_status": "done"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "idea",
+              "displayName": "idea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channel_style_prompt",
+              "displayName": "channel_style_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "character_style_prompt",
+              "displayName": "character_style_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "production_status",
+              "displayName": "production_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "final_output",
+              "displayName": "final_output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "publishing_status",
+              "displayName": "publishing_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error_log",
+              "displayName": "error_log",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1980,
+        1080
+      ],
+      "id": "001a0a8f-5802-4e5e-9fb5-b64f750a8f4d",
+      "name": "Update To Done",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wDCPrHGEkZlwJuw2",
+          "name": "AIS Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Prompts",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Prompts",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompts": {
+      "main": [
+        [
+          {
+            "node": "Submit Render Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit Render Job": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Check Completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Completion": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload": {
+      "main": [
+        [
+          {
+            "node": "Update To Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "32dff33c-868c-4f8a-afb3-0a56eb9e7f4b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "mXnwoBnMjLHeRHAy",
+  "tags": []
+}

@@ -1,0 +1,270 @@
+{
+  "name": "AIS Analyst Helper",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Technical Analyst Workflow\n",
+        "height": 240,
+        "width": 1580,
+        "color": 3
+      },
+      "id": "b9705f9d-3ad4-407f-aa52-e1a0477a46d6",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -752,
+        144
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"chatid\": 1234567891,\n  \"ticker\": \"TSLA\"\n}"
+      },
+      "id": "5bd5fce8-833d-4db3-8e6b-60e3cddf7110",
+      "name": "Workflow Input Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -640,
+        224
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fdf7e016-7082-4146-9038-454139023990",
+              "name": "response",
+              "type": "string",
+              "value": "={{ $('Technical Analysis').item.json.choices[0].message.content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9ac87344-73a4-429b-a266-efd331b2c6b4",
+      "name": "response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        656,
+        224
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "=Role\nYou are an expert financial analyst with over 50 years of experience gained from working at the New York Stock Exchange (NYSE) and the London Stock Exchange (LSE). Your expertise in technical analysis of stock charts is unparalleled, having witnessed and analyzed countless market cycles, bull runs, bear markets, and economic shifts across multiple decades.\n\nYour role is to analyze financial charts provided to you and offer comprehensive insights into the technical aspects, including candlestick patterns, MACD indicators, volume trends, and overall market sentiment. You must provide a detailed breakdown of the chart, highlighting key areas of interest and actionable insights drawn from your extensive market experience.\n\nWhen analyzing a stock chart, always include the following:\n\nCandlestick Analysis:\n\nIdentify and explain any significant candlestick patterns (e.g., bullish engulfing, doji, hammer).\n\nComment on the overall trend (bullish, bearish, or sideways).\n\nHighlight any breakout or pullback zones.\n\nDraw upon your decades of experience to contextualize these patterns within broader market conditions.\n\nMACD Analysis:\n\nDescribe the current state of the MACD line and Signal line (e.g., bullish crossover, bearish crossover).\n\nDiscuss the MACD histogram and its implications for momentum.\n\nIdentify any divergences between the MACD and the price action.\n\nReference similar patterns you've observed throughout your career at major exchanges.\n\nVolume Analysis:\n\nHighlight any significant changes in trading volume.\n\nExplain how volume supports or contradicts price movements.\n\nIndicate any unusual spikes in volume that may suggest institutional activity.\n\nApply your institutional knowledge from working at NYSE and LSE to interpret volume patterns.\n\nSupport and Resistance Levels:\n\nIdentify key support and resistance zones based on the chart.\n\nDiscuss the importance of these levels for potential reversals or breakouts.\n\nLeverage your experience to assess the strength and reliability of these levels.\n\nActionable Insights & Final Verdict:\n\nProvide clear guidance on potential buy, sell, or hold strategies based on your extensive experience.\n\nSuggest what to watch for in the near term, including confirmation signals or potential risks.\n\nCRITICAL: Based on your comprehensive analysis and 50+ years of market experience, provide your final verdict: BUY, SELL, or HOLD. While this is not financial advice, use your utmost analytical skills and decades of market wisdom to give a definitive recommendation with clear reasoning.\n\nOther Observations:\n\nNote any patterns or indicators that are relevant to the analysis.\n\nOffer insights into market sentiment or other broader trends based on the chart.\n\nShare any relevant historical parallels or market wisdom gained from your extensive career.\n\nFinal Verdict Requirement: Always conclude your analysis with a clear, confident recommendation (BUY/SELL/HOLD) supported by your technical analysis and decades of market experience. Explain the key factors that led to this decision and any conditions that might change your outlook.\n\nBe clear, concise, and data-driven in your analysis. Your goal is to provide actionable information that traders and investors can use to make informed decisions. Always explain your reasoning for any conclusions you draw from the chart, backing them with your unparalleled experience from working at the world's most prestigious stock exchanges",
+        "inputType": "base64",
+        "simplify": false,
+        "options": {
+          "detail": "auto"
+        }
+      },
+      "id": "79219eff-577a-4d71-98f0-974899fc5415",
+      "name": "Technical Analysis",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        256,
+        224
+      ],
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "jVCpXQHd8woXOE4D",
+          "name": "AIS OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "035489da-df39-4415-8ece-7458c597cacf",
+      "name": "Download Chart",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        48,
+        224
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Workflow Input Trigger').item.json.chatid }}",
+        "file": "={{ $('Get Chart1').item.json.url }}",
+        "additionalFields": {}
+      },
+      "id": "d9c5ac09-933f-4b06-9c53-4bd5a51a5b4d",
+      "name": "Send Chart",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        448,
+        224
+      ],
+      "webhookId": "1550885a-9ac2-4c0e-887a-da7b3e466509",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "bTH5mUmx8kqE7Iqf",
+          "name": "AIS Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cf5f7210-5b54-4f4a-abf7-87873be82df4",
+              "name": "ticker",
+              "type": "string",
+              "value": "={{ $json.ticker }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f63c20d6-88e1-4ff3-9a5c-c931246ca4ef",
+      "name": "Set Stock Ticker",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -400,
+        224
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.chart-img.com/v2/tradingview/advanced-chart/storage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"theme\": \"dark\",\n  \"interval\": \"1W\",\n  \"symbol\": \"NASDAQ:{{ $json.ticker }}\",\n  \"override\": {\n    \"showStudyLastValue\": false\n  },\n  \"studies\": [\n    {\n      \"name\": \"Volume\",\n      \"forceOverlay\": true\n    },\n    {\n      \"name\": \"MACD\",\n      \"override\": {\n        \"Signal.linewidth\": 2,\n        \"Signal.color\": \"rgb(255,65,129)\"\n      }\n    }\n  ]\n}\n",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "508b7038-9da8-4038-bb0e-d57dc5af3221",
+      "name": "Get Chart1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -192,
+        224
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "DTa0kpWsnS8njq0G",
+          "name": "AIS Chart-IMG Credentials"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Stock Ticker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Technical Analysis": {
+      "main": [
+        [
+          {
+            "node": "Send Chart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Chart": {
+      "main": [
+        [
+          {
+            "node": "Technical Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Chart": {
+      "main": [
+        [
+          {
+            "node": "response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Stock Ticker": {
+      "main": [
+        [
+          {
+            "node": "Get Chart1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chart1": {
+      "main": [
+        [
+          {
+            "node": "Download Chart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d38ada79-5475-4d90-9c1f-eda74c4ca26a",
+  "meta": {
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "bH8h3hih8N5SXuia",
+  "tags": []
+}

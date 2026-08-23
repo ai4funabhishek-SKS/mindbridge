@@ -1,0 +1,171 @@
+This resource merges high-level guidance on n8n node JSON configurations with deep dives into tools across the stack—ranging from chat triggers, sticky notes, and AI agents to integrations with Pinecone, Airtable, PostgreSQL, Google Workspace, Telegram, HTTP, SerpAPI, and internal workflow orchestration nodes. Special focus is placed on using and validating JSON structures, memory integration, and prompt design for AI agents.
+
+n8n NODE JSON BASICS
+Structure Overview:
+• Each node is a JSON object following a shared schema.
+• Applies universally across logic, annotation, and integration nodes.
+
+Top-Level Keys:
+– id: Unique node UUID.
+– name: Descriptive label (e.g., "Chat Start", "Update Airtable").
+– type: Determines node logic, like:
+• @n8n/n8n-nodes-langchain.chatTrigger
+• n8n-nodes-base.stickyNote
+– typeVersion: Version of the node spec (e.g., 1, 1.1).
+– position: [x, y] coordinates on canvas.
+– parameters: Contains node-specific config (actions, inputs, auth).
+
+Tips:
+• Keep names clean and organize positions for readability.
+• Use expressions like ={{ $json["field"] }} for dynamic behavior.
+• Validate against JSON errors: improper quotes, trailing commas, etc.
+
+CHAT TRIGGERS
+Type: @n8n/n8n-nodes-langchain.chatTrigger
+
+Function:
+• Captures inbound messages to initiate workflows.
+
+Key Params:
+• webhookId: Connects to frontend chat interface.
+• mode: Use "webhook".
+• public: Boolean toggle for open access.
+• initialMessages: Markdown-compatible greeting.
+• options:
+– responseMode, allowedOrigins, title, subtitle, file upload, session loading.
+
+Details:
+• Use unique webhookIds.
+• Customize greetings using expressions.
+• Watch for feature differences across typeVersions.
+
+STICKY NOTES
+Type: n8n-nodes-base.stickyNote
+
+Function:
+• Non-executing node for notes/documentation.
+
+Parameters:
+• content: Markdown-supported text.
+• width/height: Visual sizing.
+• color: Optional background styling.
+
+Best Use:
+• Group by functionality.
+• Update as logic evolves.
+
+AI AGENT MODULE
+Type: @n8n/n8n-nodes-langchain.agent
+
+Function:
+• Handles dynamic input and routes to tools or memory modules.
+
+Key Params:
+• text: Usually ={{ $json.chatInput }}.
+• options: Includes systemMessage—the AI agent’s operating logic.
+• promptType: Use "define".
+
+Connections:
+• Works with ai_tool, ai_memory, ai_languageModel outputs.
+
+Design Tips:
+• Craft tailored system messages.
+• Consider memory context requirements.
+
+Examples:
+
+{
+  "id": "agent-1",
+  "name": "Chat Agent",
+  "type": "@n8n/n8n-nodes-langchain.agent",
+  "position": [100, 100],
+  "parameters": {
+    "text": "={{ $json.chatInput }}",
+    "options": { "systemMessage": "=You are a helpful assistant." },
+    "promptType": "define"
+  },
+  "typeVersion": 1.7
+}
+
+MEMORY MANAGEMENT NODES
+Type: n8n-nodes-langchain.memoryBufferWindow
+
+Function:
+• Short-term memory for conversations.
+
+Key Fields:
+• sessionKey: Can be static or dynamic.
+• contextWindowLength: Number of retained messages.
+
+Advice:
+• Tune length based on use case complexity.
+
+TOOL INTEGRATION BREAKDOWN
+6.1 PINECONE:
+• Vector DB for embedding storage and retrieval.
+• Actions: createIndex, upsert, query.
+• Sync schema + credentials.
+
+6.2 AIRTABLE:
+• CRUD ops on Airtable.
+• Match field names exactly.
+
+6.3 POSTGRESQL:
+• Raw SQL execution.
+• Validate syntax; use parameters.
+
+6.4 GOOGLE DOCS:
+• Fetch/edit documents.
+• Requires OAuth and field mapping.
+
+6.5 GOOGLE CALENDAR:
+• Event creation/query.
+• Use ISO time; validate mappings.
+
+6.6 TELEGRAM:
+• Send/receive text, files.
+• Set webhookId, chatId, file URL.
+
+6.7 HTTP REQUEST:
+• Call external APIs.
+• Ensure valid method, headers, payloads.
+
+6.8 SERPAPI:
+• Search result API.
+• Secure key and pass dynamic input.
+
+6.9 WORKFLOW TOOL:
+• Trigger internal flows.
+• Pass structured inputSchema.
+
+6.10 GMAIL TOOL:
+• Send dynamic emails.
+• Requires OAuth and JSON payload.
+
+6.11 SUPABASE:
+• DB ops on Supabase tables.
+• Map JSON to field structure.
+
+6.12 AUXILIARY NODES:
+• Merge, Split, Set, If, Respond nodes.
+• Enable full logical control.
+
+AI AGENT BEST PRACTICES
+• Structure systemMessage to cover edge cases.
+• Leverage memory where appropriate.
+• Test flows end-to-end for logic/data integrity.
+• Validate all dynamic values.
+
+JSON VALIDATION REMINDERS
+• Quotes: Always use ".
+• Trailing commas: Never.
+• Booleans/Numeric values: No quotes.
+• Case sensitivity: Match schema.
+• Structure: Balanced {} and [].
+• Prompt LLMs: Specify strict JSON output.
+
+SUMMARY
+• Use Chat Triggers for entry, Sticky Notes for clarity.
+• Configure AI Agents with memory and external tools.
+• Follow tight schema rules per integration.
+• Validate all JSON before use.

@@ -1,0 +1,237 @@
+{
+  "name": "Employee Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "253e44d3-4ee0-4c61-a6ea-c0abe5c509e5",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        340
+      ],
+      "webhookId": "78da2967-5bfa-4f8d-b036-3f47397ef67a"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "d42af428-f0ec-4076-a42a-e84333b127a3",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        680,
+        540
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "gXgJEgJjDzYaPnsd",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "14f9d615-89f4-4628-bc16-85366d99351b",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        820,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "name": "company_handbook",
+        "description": "Call this tool to access company information to answer user question"
+      },
+      "id": "d6baf4b5-3866-4da0-b831-03354e8e9f0f",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        960,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "9bcf0d53-b305-4bb9-b468-364a59e3a638",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1140,
+        720
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "gXgJEgJjDzYaPnsd",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "724e7b2a-6eb5-49d4-a739-ceba50a6a179",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        880,
+        940
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "gXgJEgJjDzYaPnsd",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "reprisehandbook",
+          "mode": "list",
+          "cachedResultName": "reprisehandbook"
+        },
+        "options": {
+          "pineconeNamespace": "Company Data"
+        }
+      },
+      "id": "41d408f8-a0fc-4114-aba2-8bd235764206",
+      "name": "Pinecone Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        880,
+        720
+      ],
+      "credentials": {
+        "pineconeApi": {
+          "id": "OiVEH7v9nXPMKgFQ",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Agent Context and Instructions:\n\nYou are a smart AI assistant integrated with multiple tools and models designed to respond to user queries in a concise and effective manner. Your goal is to provide clear and direct answers to user questions based on the context provided and the available resources. You use the following components in your workflow:\n\nOpenAI Chat Model: Used for generating responses based on user input and the context provided.\nWindow Buffer Memory: Retains short-term memory of the conversation to keep responses relevant.\nVector Store Tool: Stores and retrieves semantic information using a vector database.\nPinecone Vector Store: Acts as your main vector database for querying contextual embeddings and handling more complex queries.\nOpenAI Embeddings: Converts text into numerical representations, enabling better search and recall of context.\nInstructions for Answering:\n\nConcise and Direct Responses: Answer queries with concise, direct information. Avoid lengthy explanations unless explicitly requested.\nContextual Awareness: Use memory and vector store information to maintain context and recall previous inputs to provide coherent and contextually accurate responses.\nHandling User Inquiries: Use embeddings and vector search to enhance accuracy for complex or ambiguous queries. If the context is lacking, politely ask for clarification.\nTool Use: Leverage the OpenAI Chat Model primarily for conversational responses. For questions requiring deeper knowledge or context matching, query the Pinecone Vector Store and adjust your response based on the retrieved results.\nExample Interaction:\n\nUser: \"What is the status of my recent order?\"\nAgent: \"Based on the information stored, your order was shipped on October 1st and should arrive by October 5th.\"\nFocus on delivering value in as few words as possible, ensuring clarity and relevance in every interaction."
+        }
+      },
+      "id": "0aed14b7-12dc-494c-a94c-b3bc6f1a2e53",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        700,
+        340
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6c97f5c5-2fb8-4a99-8c39-904d25b00b5e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80868c6faaefe32f23363c3593878f9dc4b2470f6611e5a958f476842a987c73"
+  },
+  "id": "9F4UebnUx5GpOZHD",
+  "tags": []
+}

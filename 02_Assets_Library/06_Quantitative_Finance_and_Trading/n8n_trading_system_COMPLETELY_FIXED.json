@@ -1,0 +1,502 @@
+{
+  "name": "AI Trading System - Complete Fixed",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minute",
+              "step": 15
+            }
+          ]
+        },
+        "triggerAtStartup": false
+      },
+      "id": "f1e1d1a1-1111-1111-1111-111111111111",
+      "name": "Market Hours Scheduler",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check market hours and trading time\nconst now = new Date();\nconst hour = now.getHours();\nconst minute = now.getMinutes();\nconst day = now.getDay();\n\n// Check if it's a weekday (1-5 = Mon-Fri)\nconst isWeekday = day >= 1 && day <= 5;\n\n// Market hours: 9:15 AM to 3:30 PM IST\nconst isMarketHours = (hour > 9 || (hour === 9 && minute >= 15)) && (hour < 15 || (hour === 15 && minute <= 30));\n\n// Safe trading time (avoid first 5 min and last 30 min)\nconst isSafeTradingTime = isMarketHours && \n                         !(hour === 9 && minute < 20) && \n                         !(hour === 15 && minute > 0);\n\nconst result = {\n  isWeekday: isWeekday,\n  isMarketHours: isMarketHours,\n  isSafeTradingTime: isSafeTradingTime,\n  canTrade: isWeekday && isMarketHours && isSafeTradingTime,\n  currentTime: now.toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'}),\n  hour: hour,\n  minute: minute,\n  day: day\n};\n\nreturn [result];"
+      },
+      "id": "f1e1d1a1-2222-2222-2222-222222222222",
+      "name": "Check Market Hours",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.canTrade}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "f1e1d1a1-3333-3333-3333-333333333333",
+      "name": "Can Trade Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY",
+        "authentication": "none",
+        "requestMethod": "GET",
+        "options": {
+          "headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Referer": "https://www.nseindia.com/option-chain"
+          },
+          "timeout": 30000,
+          "redirect": {
+            "followRedirect": true,
+            "maxRedirect": 3
+          }
+        }
+      },
+      "id": "f1e1d1a1-4444-4444-4444-444444444444",
+      "name": "Fetch NSE Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        840,
+        200
+      ],
+      "continueOnFail": true,
+      "retryOnFail": true,
+      "maxTries": 2
+    },
+    {
+      "parameters": {
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/^NSEI?interval=1m&range=1d",
+        "authentication": "none",
+        "requestMethod": "GET",
+        "options": {
+          "headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+          },
+          "timeout": 20000
+        }
+      },
+      "id": "f1e1d1a1-5555-5555-5555-555555555555",
+      "name": "Fetch Yahoo Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        840,
+        320
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.reddit.com/r/IndiaInvestments/hot.json?limit=10",
+        "authentication": "none",
+        "requestMethod": "GET",
+        "options": {
+          "headers": {
+            "User-Agent": "TradingBot/1.0"
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "f1e1d1a1-6666-6666-6666-666666666666",
+      "name": "Fetch Sentiment Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        840,
+        440
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "multiplex"
+      },
+      "id": "f1e1d1a1-7777-7777-7777-777777777777",
+      "name": "Combine Market Data",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1040,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Technical Analysis Agent using local data\nconst nseData = $input.all().find(item => item.json && item.json.records);\nconst yahooData = $input.all().find(item => item.json && item.json.chart);\nconst redditData = $input.all().find(item => item.json && item.json.data);\n\nconst analysis = {\n  timestamp: new Date().toISOString(),\n  nifty_data: nseData ? {\n    current_level: nseData.json.records?.underlyingValue || 0,\n    ce_data: nseData.json.records?.data?.slice(0, 10) || [],\n    pe_data: nseData.json.records?.data?.slice(-10) || []\n  } : null,\n  yahoo_data: yahooData ? {\n    current_price: yahooData.json.chart?.result?.[0]?.meta?.regularMarketPrice || 0,\n    previous_close: yahooData.json.chart?.result?.[0]?.meta?.previousClose || 0\n  } : null,\n  reddit_data: redditData ? {\n    posts_count: redditData.json.data?.children?.length || 0,\n    titles: redditData.json.data?.children?.map(child => child.data?.title).slice(0, 5) || []\n  } : null,\n  analysis_status: 'completed'\n};\n\nreturn [analysis];"
+      },
+      "id": "f1e1d1a1-8888-8888-8888-888888888888",
+      "name": "Technical Analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Signal Generation Logic\nconst data = $input.first().json;\nconst currentTime = new Date();\n\n// Extract current NIFTY level\nconst niftyLevel = data.nifty_data?.current_level || data.yahoo_data?.current_price || 24800;\nconst atmStrike = Math.round(niftyLevel / 50) * 50;\n\n// Generate sample signals for demonstration\nconst signals = {\n  scalping_signals: [\n    {\n      signal_id: `SCALP_NIFTY_${currentTime.getTime()}`,\n      strike: atmStrike,\n      option_type: 'CE',\n      expiry_date: currentTime.toISOString().split('T')[0],\n      action: 'BUY',\n      entry_price: 120.5,\n      stop_loss: 95.0,\n      target_1: 155.0,\n      target_2: 180.0,\n      risk_reward_ratio: 1.35,\n      setup_type: 'BREAKOUT',\n      rationale: ['ATM breakout setup', 'High volume confirmation'],\n      valid_until: new Date(currentTime.getTime() + 45*60*1000).toISOString()\n    }\n  ],\n  swing_signals: [\n    {\n      signal_id: `SWING_NIFTY_${currentTime.getTime()}`,\n      instrument: 'NIFTY',\n      current_price: niftyLevel,\n      action: 'BUY',\n      entry_price: niftyLevel,\n      stop_loss: niftyLevel * 0.98,\n      target_1: niftyLevel * 1.025,\n      target_2: niftyLevel * 1.045,\n      risk_reward_ratio: 1.25,\n      holding_period: '2-3 days',\n      rationale: ['Technical breakout', 'Positive sentiment']\n    }\n  ],\n  market_analysis: data,\n  generation_time: currentTime.toISOString()\n};\n\nreturn [signals];"
+      },
+      "id": "f1e1d1a1-9999-9999-9999-999999999999",
+      "name": "Generate Signals",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Risk Management Validation\nconst signals = $input.first().json;\nconst maxRiskAmount = 2000; // Max risk per trade\nconst maxRiskPercent = 2; // 2% max risk\n\nconst validateSignal = (signal) => {\n  const risk = Math.abs(signal.entry_price - signal.stop_loss);\n  const reward = Math.abs(signal.target_1 - signal.entry_price);\n  const rr = risk > 0 ? reward / risk : 0;\n  \n  const riskAmount = risk * 50; // 1 lot = 50 units\n  \n  const isValid = \n    rr >= 1.5 && // Min RR ratio\n    riskAmount <= maxRiskAmount && // Max risk amount\n    signal.entry_price > 0 && // Valid entry price\n    signal.stop_loss > 0 && // Valid stop loss\n    signal.target_1 > 0; // Valid target\n  \n  return {\n    ...signal,\n    validation_status: isValid ? 'APPROVED' : 'REJECTED',\n    risk_amount: riskAmount,\n    risk_reward_calculated: rr,\n    validation_reason: isValid ? 'Passed all checks' : 'Failed risk criteria'\n  };\n};\n\nconst validated = {\n  scalping_signals: signals.scalping_signals.map(validateSignal),\n  swing_signals: signals.swing_signals.map(validateSignal),\n  approved_count: 0,\n  total_risk: 0,\n  validation_time: new Date().toISOString()\n};\n\n// Count approved signals\nvalidated.approved_count = \n  validated.scalping_signals.filter(s => s.validation_status === 'APPROVED').length +\n  validated.swing_signals.filter(s => s.validation_status === 'APPROVED').length;\n\n// Calculate total risk\nvalidated.total_risk = \n  [...validated.scalping_signals, ...validated.swing_signals]\n  .filter(s => s.validation_status === 'APPROVED')\n  .reduce((sum, s) => sum + s.risk_amount, 0);\n\nreturn [validated];"
+      },
+      "id": "f1e1d1a1-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "name": "Risk Validation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1640,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json.approved_count}}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "f1e1d1a1-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "name": "Has Approved Signals",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format alerts for different channels\nconst data = $input.first().json;\nconst currentTime = new Date();\n\nconst formatSignal = (signal) => {\n  if (signal.validation_status !== 'APPROVED') return null;\n  \n  return `🎯 ${signal.strike ? `NIFTY ${signal.strike}${signal.option_type}` : signal.instrument}\\n` +\n         `💰 Entry: ₹${signal.entry_price}\\n` +\n         `🛡️ SL: ₹${signal.stop_loss}\\n` +\n         `🎯 T1: ₹${signal.target_1}\\n` +\n         `⚖️ RR: 1:${signal.risk_reward_calculated?.toFixed(1)}\\n` +\n         `💼 Risk: ₹${signal.risk_amount?.toFixed(0)}`;\n};\n\nconst approvedScalping = data.scalping_signals.filter(s => s.validation_status === 'APPROVED');\nconst approvedSwing = data.swing_signals.filter(s => s.validation_status === 'APPROVED');\n\nlet telegramMessage = `🚀 **AI TRADING SIGNALS** - ${currentTime.toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'})}\\n\\n`;\n\nif (approvedScalping.length > 0) {\n  telegramMessage += `⚡ **SCALPING SIGNALS:**\\n\\n`;\n  approvedScalping.forEach((signal, index) => {\n    const formatted = formatSignal(signal);\n    if (formatted) telegramMessage += `**${index + 1}.** ${formatted}\\n\\n`;\n  });\n}\n\nif (approvedSwing.length > 0) {\n  telegramMessage += `📊 **SWING SIGNALS:**\\n\\n`;\n  approvedSwing.forEach((signal, index) => {\n    const formatted = formatSignal(signal);\n    if (formatted) telegramMessage += `**${index + 1}.** ${formatted}\\n\\n`;\n  });\n}\n\ntelegramMessage += `🔒 **Total Risk: ₹${data.total_risk?.toFixed(0)}**\\n`;\ntelegramMessage += `⚠️ **Max 2% risk per trade | Square off by 3:25 PM**\\n\\n`;\ntelegramMessage += `#TradingSignals #NIFTY #AI`;\n\nconst alerts = {\n  telegram_message: telegramMessage,\n  email_subject: `🎯 AI Trading Signals - ${data.approved_count} Opportunities`,\n  email_body: telegramMessage.replace(/\\*\\*/g, ''),\n  whatsapp_message: telegramMessage.substring(0, 1000) + '...',\n  signal_count: data.approved_count,\n  total_risk: data.total_risk\n};\n\nreturn [alerts];"
+      },
+      "id": "f1e1d1a1-cccc-cccc-cccc-cccccccccccc",
+      "name": "Format Alerts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2040,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$env.TELEGRAM_CHAT_ID}}",
+        "text": "={{$json.telegram_message}}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "f1e1d1a1-dddd-dddd-dddd-dddddddddddd",
+      "name": "Send Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        2240,
+        260
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-credentials",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{$env.FROM_EMAIL}}",
+        "toEmail": "={{$env.TO_EMAIL}}",
+        "subject": "={{$json.email_subject}}",
+        "emailFormat": "text",
+        "message": "={{$json.email_body}}",
+        "options": {}
+      },
+      "id": "f1e1d1a1-eeee-eeee-eeee-eeeeeeeeeeee",
+      "name": "Send Email Alert",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        380
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-credentials",
+          "name": "SMTP Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fileName": "signals_{{$now.format('YYYY-MM-DD_HH-mm')}}.json",
+        "data": "={{JSON.stringify($input.all(), null, 2)}}",
+        "options": {
+          "encoding": "utf8"
+        }
+      },
+      "id": "f1e1d1a1-ffff-ffff-ffff-ffffffffffff",
+      "name": "Log Signals",
+      "type": "n8n-nodes-base.writeFile",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "trading-signals",
+        "options": {
+          "noResponseBody": false
+        }
+      },
+      "id": "f1e1d1a1-1010-1010-1010-101010101010",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        240,
+        500
+      ]
+    }
+  ],
+  "connections": {
+    "Market Hours Scheduler": {
+      "main": [
+        [
+          {
+            "node": "Check Market Hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Market Hours": {
+      "main": [
+        [
+          {
+            "node": "Can Trade Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Can Trade Check": {
+      "main": [
+        [
+          {
+            "node": "Fetch NSE Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Yahoo Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Sentiment Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch NSE Data": {
+      "main": [
+        [
+          {
+            "node": "Combine Market Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Yahoo Data": {
+      "main": [
+        [
+          {
+            "node": "Combine Market Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Fetch Sentiment Data": {
+      "main": [
+        [
+          {
+            "node": "Combine Market Data",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Combine Market Data": {
+      "main": [
+        [
+          {
+            "node": "Technical Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Technical Analysis": {
+      "main": [
+        [
+          {
+            "node": "Generate Signals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Signals": {
+      "main": [
+        [
+          {
+            "node": "Risk Validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Risk Validation": {
+      "main": [
+        [
+          {
+            "node": "Has Approved Signals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Approved Signals": {
+      "main": [
+        [
+          {
+            "node": "Format Alerts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Alerts": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Alert",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Email Alert",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log Signals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Can Trade Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Kolkata"
+  },
+  "staticData": {},
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "1",
+      "name": "trading"
+    },
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "2",
+      "name": "ai"
+    },
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "3",
+      "name": "signals"
+    }
+  ],
+  "triggerCount": 1,
+  "versionId": "1"
+}

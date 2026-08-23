@@ -1,0 +1,592 @@
+{
+  "name": "Multi-Agent AI Trading System - Indian Markets",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minute",
+              "step": 15
+            }
+          ],
+          "timezone": "Asia/Kolkata"
+        }
+      },
+      "id": "agent-controller-001",
+      "name": "Agent Controller",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        200,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst hour = now.getHours();\nconst minute = now.getMinutes();\nconst day = now.getDay();\n\nconst isWeekday = day >= 1 && day <= 5;\nconst isMarketHours = (hour > 9 || (hour === 9 && minute >= 15)) && hour < 15.5;\nconst canTrade = isWeekday && isMarketHours;\n\nreturn [{\n  canProceed: canTrade,\n  currentSession: hour < 10 ? 'OPENING' : hour < 12 ? 'MORNING' : hour < 14 ? 'AFTERNOON' : 'CLOSING',\n  marketPhase: canTrade ? 'ACTIVE' : 'CLOSED',\n  timestamp: now.toISOString()\n}];"
+      },
+      "id": "session-manager-002",
+      "name": "Session Manager",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.canProceed}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "agent-orchestrator-003",
+      "name": "Agent Orchestrator",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        600,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://apiconnect.angelbroking.com/rest/secure/angelbroking/market/v1/quote/",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "requestMethod": "POST",
+        "sendBody": true,
+        "specifyBodyType": "json",
+        "jsonBody": "{\n  \"exchange\": \"NSE\",\n  \"tradingsymbol\": \"NIFTY\",\n  \"symboltoken\": \"99926000\"\n}",
+        "options": {
+          "headers": {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "X-UserType": "USER",
+            "X-SourceID": "WEB",
+            "X-ClientLocalIP": "{{$env.CLIENT_IP}}",
+            "X-ClientPublicIP": "{{$env.PUBLIC_IP}}",
+            "X-MACAddress": "{{$env.MAC_ADDRESS}}"
+          }
+        }
+      },
+      "id": "market-data-agent-004",
+      "name": "Market Data Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        800,
+        200
+      ],
+      "credentials": {
+        "httpHeaderAuth": "angel-api-auth"
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://apiconnect.angelbroking.com/rest/secure/angelbroking/market/v1/optionchain",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "requestMethod": "POST",
+        "sendBody": true,
+        "specifyBodyType": "json",
+        "jsonBody": "{\n  \"exchange\": \"NFO\",\n  \"tradingsymbol\": \"NIFTY\",\n  \"strikeprice\": \"{{$node['Market Data Agent'].json.data.ltp}}\",\n  \"optiontype\": \"BOTH\"\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "option-chain-agent-005",
+      "name": "Option Chain Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        800,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": "angel-api-auth"
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "model": "qwen2:7b-instruct",
+        "prompt": "You are the SENTIMENT ANALYSIS AGENT specializing in Indian market psychology.\n\n**MARKET CONTEXT:**\nCurrent NIFTY: {{$node['Market Data Agent'].json.data.ltp}}\nSession: {{$node['Session Manager'].json.currentSession}}\nMarket Data: {{$node['Market Data Agent'].json}}\n\n**YOUR SPECIALIZED ANALYSIS:**\n\nAnalyze current market sentiment using multiple indicators:\n1. Option Chain Put-Call Ratio implications\n2. Volume vs Average Volume patterns\n3. Volatility expansion/contraction signals\n4. Institutional vs Retail behavior indicators\n\n**REQUIRED OUTPUT (JSON ONLY):**\n```json\n{\n  \"agent_id\": \"sentiment_specialist\",\n  \"analysis_timestamp\": \"{{$now}}\",\n  \"market_sentiment\": {\n    \"overall_score\": number, // -1 to +1\n    \"sentiment_label\": \"EXTREME_FEAR|FEAR|NEUTRAL|GREED|EXTREME_GREED\",\n    \"confidence_level\": number, // 0 to 1\n    \"key_indicators\": [\n      {\n        \"indicator\": \"PUT_CALL_RATIO\",\n        \"value\": number,\n        \"interpretation\": \"BULLISH|BEARISH|NEUTRAL\"\n      },\n      {\n        \"indicator\": \"VOLUME_ANALYSIS\", \n        \"value\": \"HIGH|NORMAL|LOW\",\n        \"interpretation\": \"BULLISH|BEARISH|NEUTRAL\"\n      }\n    ]\n  },\n  \"trading_implications\": {\n    \"bias_recommendation\": \"BULLISH|BEARISH|NEUTRAL\",\n    \"volatility_expectation\": \"INCREASING|STABLE|DECREASING\",\n    \"risk_appetite\": \"HIGH|MEDIUM|LOW\"\n  },\n  \"agent_memory_update\": {\n    \"similar_conditions\": \"description_of_similar_past_conditions\",\n    \"learning_insight\": \"key_learning_from_current_analysis\"\n  }\n}\n```\n\n**AGENT SPECIALIZATION:**\n- Focus ONLY on sentiment and behavioral analysis\n- Cross-reference with option chain data for institutional positioning\n- Maintain memory of similar market conditions for learning\n- Provide clear trading bias for other agents",
+        "options": {
+          "temperature": 0.2,
+          "topP": 0.9,
+          "maxTokens": 1500
+        }
+      },
+      "id": "sentiment-agent-006",
+      "name": "Sentiment Analysis Agent",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        200
+      ],
+      "credentials": {
+        "ollamaApi": "ollama-local"
+      }
+    },
+    {
+      "parameters": {
+        "model": "mistral:7b-instruct",
+        "prompt": "You are the TECHNICAL ANALYSIS AGENT - expert in Indian market technical patterns.\n\n**MARKET DATA INPUT:**\nNIFTY Data: {{$node['Market Data Agent'].json}}\nOption Chain: {{$node['Option Chain Agent'].json}}\nSentiment Context: {{$node['Sentiment Analysis Agent'].json}}\n\n**YOUR SPECIALIZED ROLE:**\n\nPerform deep technical analysis focusing on:\n1. Support/Resistance levels for NIFTY\n2. Chart patterns and breakout/breakdown zones\n3. Volume-price relationship analysis\n4. Momentum indicators and trend strength\n5. Option chain technical signals (Max Pain, OI buildup)\n\n**REQUIRED OUTPUT (JSON ONLY):**\n```json\n{\n  \"agent_id\": \"technical_specialist\",\n  \"analysis_timestamp\": \"{{$now}}\",\n  \"technical_analysis\": {\n    \"current_trend\": \"STRONG_BULLISH|BULLISH|SIDEWAYS|BEARISH|STRONG_BEARISH\",\n    \"trend_strength\": number, // 1-10\n    \"key_levels\": {\n      \"immediate_support\": number,\n      \"strong_support\": number,\n      \"immediate_resistance\": number,\n      \"strong_resistance\": number\n    },\n    \"pattern_analysis\": {\n      \"primary_pattern\": \"BREAKOUT|BREAKDOWN|CONSOLIDATION|REVERSAL\",\n      \"pattern_completion\": \"CONFIRMED|DEVELOPING|POTENTIAL\",\n      \"target_projection\": number\n    },\n    \"momentum_indicators\": {\n      \"rsi_equivalent\": number,\n      \"momentum_direction\": \"BULLISH|BEARISH|NEUTRAL\",\n      \"divergence_alert\": \"BULLISH_DIVERGENCE|BEARISH_DIVERGENCE|NONE\"\n    }\n  },\n  \"option_technical_signals\": {\n    \"max_pain_level\": number,\n    \"oi_buildup_analysis\": \"CALL_HEAVY|PUT_HEAVY|BALANCED\",\n    \"option_momentum\": \"BULLISH|BEARISH|NEUTRAL\"\n  },\n  \"trading_levels\": {\n    \"scalping_zones\": [number, number],\n    \"swing_entry_levels\": [number, number],\n    \"stop_loss_suggestions\": [number, number]\n  },\n  \"agent_confidence\": number, // 0 to 1\n  \"memory_update\": {\n    \"pattern_similarity\": \"description_of_similar_historical_patterns\",\n    \"technical_learning\": \"key_technical_insight_gained\"\n  }\n}\n```\n\n**SPECIALIZATION FOCUS:**\n- Provide SPECIFIC price levels, not ranges\n- Consider option chain for technical confirmation\n- Learn from similar technical setups in memory\n- Focus on actionable technical signals for trading",
+        "options": {
+          "temperature": 0.15,
+          "topP": 0.9,
+          "maxTokens": 2000
+        }
+      },
+      "id": "technical-agent-007",
+      "name": "Technical Analysis Agent",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        300
+      ],
+      "credentials": {
+        "ollamaApi": "ollama-local"
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.reddit.com/r/IndiaInvestments/hot.json?limit=15",
+        "authentication": "none",
+        "requestMethod": "GET",
+        "options": {
+          "headers": {
+            "User-Agent": "NewsAgent/1.0"
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "news-fundamental-agent-008",
+      "name": "News & Fundamental Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1000,
+        400
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "model": "deepseek-r1:7b",
+        "prompt": "You are the RISK ASSESSMENT AGENT - responsible for all risk management decisions.\n\n**COMPREHENSIVE AGENT INPUT:**\nMarket Data: {{$node['Market Data Agent'].json}}\nSentiment Analysis: {{$node['Sentiment Analysis Agent'].json}}\nTechnical Analysis: {{$node['Technical Analysis Agent'].json}}\nNews Context: {{$node['News & Fundamental Agent'].json}}\nSession Info: {{$node['Session Manager'].json}}\n\n**YOUR CRITICAL RISK ROLE:**\n\nAssess all risk factors and provide trading guidelines:\n1. Market volatility risk assessment\n2. Position sizing recommendations\n3. Stop-loss and take-profit calculations\n4. Maximum exposure limits\n5. Correlation and portfolio risk\n\n**REQUIRED OUTPUT (JSON ONLY):**\n```json\n{\n  \"agent_id\": \"risk_specialist\",\n  \"assessment_timestamp\": \"{{$now}}\",\n  \"risk_assessment\": {\n    \"overall_risk_level\": \"LOW|MODERATE|HIGH|EXTREME\",\n    \"volatility_risk\": {\n      \"current_vol_regime\": \"LOW|NORMAL|HIGH|EXTREME\",\n      \"vol_direction\": \"EXPANDING|CONTRACTING|STABLE\",\n      \"risk_multiplier\": number // 0.5 to 2.0\n    },\n    \"market_risk_factors\": [\n      {\n        \"factor\": \"LIQUIDITY|VOLATILITY|CORRELATION|NEWS\",\n        \"severity\": \"LOW|MEDIUM|HIGH\",\n        \"impact\": \"risk_impact_description\"\n      }\n    ]\n  },\n  \"position_management\": {\n    \"max_position_size\": {\n      \"scalping_lots\": number,\n      \"swing_lots\": number,\n      \"capital_allocation_pct\": number\n    },\n    \"risk_per_trade\": {\n      \"max_loss_amount\": number,\n      \"max_loss_percentage\": number,\n      \"position_sizing_multiplier\": number\n    },\n    \"stop_loss_framework\": {\n      \"atr_multiplier\": number,\n      \"technical_based_sl\": \"TIGHT|NORMAL|WIDE\",\n      \"time_based_exit\": \"minutes_to_exit\"\n    }\n  },\n  \"portfolio_risk\": {\n    \"max_total_exposure\": number,\n    \"correlation_warning\": \"HIGH|MEDIUM|LOW\",\n    \"diversification_score\": number, // 1-10\n    \"heat_level\": \"COLD|WARM|HOT|OVERHEATED\"\n  },\n  \"risk_approval\": {\n    \"trading_allowed\": True,\n    \"conditions\": [\"condition1\", \"condition2\"],\n    \"restrictions\": [\"restriction1\", \"restriction2\"]\n  },\n  \"memory_update\": {\n    \"risk_scenario\": \"description_of_current_risk_environment\",\n    \"historical_comparison\": \"similar_past_risk_conditions_and_outcomes\"\n  }\n}\n```\n\n**RISK AGENT MANDATE:**\n- ALWAYS prioritize capital preservation\n- Provide specific numerical risk parameters\n- Learn from past risk scenarios stored in memory\n- Coordinate with other agents for holistic risk view",
+        "options": {
+          "temperature": 0.05,
+          "topP": 0.8,
+          "maxTokens": 2000
+        }
+      },
+      "id": "risk-agent-009",
+      "name": "Risk Assessment Agent",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        250
+      ],
+      "credentials": {
+        "ollamaApi": "ollama-local"
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:8b-instruct-q4_0",
+        "prompt": "You are the SIGNAL GENERATION AGENT - synthesizing all agent inputs into actionable trading signals.\n\n**ALL AGENT INTELLIGENCE:**\nSentiment Agent: {{$node['Sentiment Analysis Agent'].json}}\nTechnical Agent: {{$node['Technical Analysis Agent'].json}}\nRisk Agent: {{$node['Risk Assessment Agent'].json}}\nMarket Data: {{$node['Market Data Agent'].json}}\nOption Chain: {{$node['Option Chain Agent'].json}}\n\n**YOUR SYNTHESIS ROLE:**\n\nCombine all agent insights to generate high-conviction trading signals:\n1. Multi-agent consensus analysis\n2. Signal quality scoring\n3. Specific entry/exit recommendations\n4. Risk-adjusted position sizing\n5. Time-based execution guidance\n\n**REQUIRED OUTPUT (JSON ONLY):**\n```json\n{\n  \"agent_id\": \"signal_generator\",\n  \"generation_timestamp\": \"{{$now}}\",\n  \"multi_agent_consensus\": {\n    \"sentiment_bias\": \"{{sentiment_agent_bias}}\",\n    \"technical_bias\": \"{{technical_agent_bias}}\",\n    \"risk_approval\": \"{{risk_agent_approval}}\",\n    \"consensus_strength\": number, // 0 to 1\n    \"conflicting_signals\": [\"conflict1\", \"conflict2\"]\n  },\n  \"generated_signals\": [\n    {\n      \"signal_id\": \"MULTI_AGENT_SIGNAL_{{timestamp}}\",\n      \"signal_type\": \"SCALPING|SWING|POSITIONAL\",\n      \"instrument\": \"NIFTY_OPTION\",\n      \"strike_price\": number,\n      \"option_type\": \"CE|PE\",\n      \"action\": \"BUY|SELL\",\n      \"conviction_level\": number, // 1-10\n      \"agent_agreement_score\": number, // 0 to 1\n      \"entry_parameters\": {\n        \"entry_price\": number,\n        \"entry_zone\": [number, number],\n        \"optimal_entry_time\": \"immediate|next_5min|next_15min\"\n      },\n      \"risk_management\": {\n        \"stop_loss\": number,\n        \"take_profit_1\": number,\n        \"take_profit_2\": number,\n        \"position_size\": number,\n        \"max_loss_amount\": number,\n        \"risk_reward_ratio\": number\n      },\n      \"supporting_factors\": {\n        \"sentiment_support\": \"factor_from_sentiment_agent\",\n        \"technical_support\": \"factor_from_technical_agent\",\n        \"risk_validation\": \"factor_from_risk_agent\"\n      },\n      \"execution_guidelines\": {\n        \"time_validity\": \"minutes\",\n        \"market_conditions\": [\"condition1\", \"condition2\"],\n        \"execution_tips\": [\"tip1\", \"tip2\"]\n      }\n    }\n  ],\n  \"signal_quality_metrics\": {\n    \"total_signals_generated\": number,\n    \"high_conviction_count\": number,\n    \"agent_consensus_average\": number,\n    \"expected_win_rate\": number\n  },\n  \"learning_synthesis\": {\n    \"multi_agent_pattern\": \"description_of_agent_collaboration_pattern\",\n    \"signal_quality_learning\": \"insight_about_signal_generation_quality\"\n  }\n}\n```\n\n**SIGNAL GENERATION EXCELLENCE:**\n- Only generate signals when multiple agents agree\n- Prioritize quality over quantity\n- Incorporate risk agent constraints strictly\n- Learn from multi-agent collaboration patterns",
+        "options": {
+          "temperature": 0.3,
+          "topP": 0.9,
+          "maxTokens": 3000
+        }
+      },
+      "id": "signal-generator-010",
+      "name": "Signal Generation Agent",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        300
+      ],
+      "credentials": {
+        "ollamaApi": "ollama-local"
+      }
+    },
+    {
+      "parameters": {
+        "query": "INSERT INTO agent_memory (timestamp, agent_id, market_context, analysis_data, learning_insight, similarity_hash) VALUES (?, ?, ?, ?, ?, ?)",
+        "values": {
+          "timestamp": "={{$now}}",
+          "agent_id": "={{$json.agent_id}}",
+          "market_context": "={{JSON.stringify({nifty: $node['Market Data Agent'].json.data.ltp, session: $node['Session Manager'].json.currentSession})}}",
+          "analysis_data": "={{JSON.stringify($json)}}",
+          "learning_insight": "={{$json.memory_update?.learning_insight || $json.learning_synthesis?.signal_quality_learning}}",
+          "similarity_hash": "={{$json.agent_id}}_{{Math.floor($node['Market Data Agent'].json.data.ltp / 100)}}_{{$node['Session Manager'].json.currentSession}}"
+        }
+      },
+      "id": "memory-manager-011",
+      "name": "Memory Manager",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        200
+      ],
+      "credentials": {
+        "sqlite": "trading-memory-db"
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$node['Signal Generation Agent'].json.signal_quality_metrics.high_conviction_count}}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "quality-gate-012",
+      "name": "Multi-Agent Quality Gate",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": "phi3:latest",
+        "prompt": "You are the ALERT COMPOSITION AGENT - creating professional trading alerts from multi-agent analysis.\n\n**MULTI-AGENT INPUT:**\nSignal Data: {{$node['Signal Generation Agent'].json}}\nRisk Assessment: {{$node['Risk Assessment Agent'].json}}\nTechnical Levels: {{$node['Technical Analysis Agent'].json}}\nSentiment Context: {{$node['Sentiment Analysis Agent'].json}}\n\n**ALERT COMPOSITION MISSION:**\n\nCraft institutional-grade alerts that showcase multi-agent intelligence:\n\n**REQUIRED OUTPUT:**\n```json\n{\n  \"alert_composition\": {\n    \"telegram_alert\": {\n      \"header\": \"\ud83e\udd16 **MULTI-AGENT SIGNAL** - {{current_time}}\",\n      \"agent_consensus\": \"\ud83d\udc65 **Agent Consensus:** {{consensus_percentage}}% Agreement\",\n      \"signal_details\": \"\ud83d\udcca **Signal:** NIFTY {{strike}}{{option_type}}\\n\ud83d\udcb0 Entry: \u20b9{{entry}} | SL: \u20b9{{sl}} | Target: \u20b9{{target}}\\n\u2696\ufe0f RR: 1:{{rr}} | Conviction: {{conviction}}/10\",\n      \"agent_insights\": \"\ud83c\udfad Sentiment: {{sentiment_bias}}\\n\ud83d\udcc8 Technical: {{technical_bias}}\\n\ud83d\udee1\ufe0f Risk: {{risk_level}}\",\n      \"execution_guide\": \"\u26a1 **Execute:** {{execution_timing}}\\n\u23f0 Valid: {{validity_period}}\\n\ud83c\udfaf Lots: {{position_size}}\",\n      \"footer\": \"\ud83e\udde0 Multi-Agent AI System\\n#TradingSignals #MultiAgent\"\n    },\n    \"email_report\": {\n      \"subject\": \"Multi-Agent Trading Signal: {{signal_count}} Opportunities\",\n      \"executive_summary\": \"comprehensive_multi_agent_analysis_summary\",\n      \"agent_breakdown\": \"detailed_breakdown_of_each_agent_contribution\",\n      \"risk_analysis\": \"comprehensive_risk_assessment_from_risk_agent\",\n      \"execution_plan\": \"step_by_step_execution_guidelines\"\n    }\n  },\n  \"alert_metadata\": {\n    \"agent_collaboration_score\": number,\n    \"signal_confidence\": number,\n    \"multi_agent_validation\": True\n  }\n}\n```\n\n**COMPOSITION EXCELLENCE:**\n- Highlight multi-agent collaboration in alerts\n- Show consensus and confidence levels\n- Make agent contributions visible to user\n- Maintain professional institutional tone",
+        "options": {
+          "temperature": 0.2,
+          "maxTokens": 2000
+        }
+      },
+      "id": "alert-composer-013",
+      "name": "Alert Composition Agent",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        300
+      ],
+      "credentials": {
+        "ollamaApi": "ollama-local"
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$env.TELEGRAM_CHAT_ID}}",
+        "text": "={{$json.alert_composition.telegram_alert.header}}\\n\\n={{$json.alert_composition.telegram_alert.agent_consensus}}\\n\\n={{$json.alert_composition.telegram_alert.signal_details}}\\n\\n**Agent Analysis:**\\n={{$json.alert_composition.telegram_alert.agent_insights}}\\n\\n**Execution:**\\n={{$json.alert_composition.telegram_alert.execution_guide}}\\n\\n={{$json.alert_composition.telegram_alert.footer}}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "telegram-delivery-014",
+      "name": "Multi-Agent Alert Delivery",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        250
+      ],
+      "credentials": {
+        "telegramApi": "telegram-credentials"
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{$env.TRADING_EMAIL}}",
+        "toEmail": "={{$env.SUBSCRIBER_EMAIL}}",
+        "subject": "={{$json.alert_composition.email_report.subject}}",
+        "emailFormat": "html",
+        "message": "={{$json.alert_composition.email_report.executive_summary}}"
+      },
+      "id": "email-delivery-015",
+      "name": "Research Report Delivery",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        350
+      ],
+      "credentials": {
+        "smtp": "smtp-credentials"
+      }
+    },
+    {
+      "parameters": {
+        "query": "INSERT INTO trading_signals (timestamp, signal_data, agent_consensus, risk_metrics, performance_tracking_id) VALUES (?, ?, ?, ?, ?)",
+        "values": {
+          "timestamp": "={{$now}}",
+          "signal_data": "={{JSON.stringify($node['Signal Generation Agent'].json)}}",
+          "agent_consensus": "={{$node['Signal Generation Agent'].json.multi_agent_consensus.consensus_strength}}",
+          "risk_metrics": "={{JSON.stringify($node['Risk Assessment Agent'].json)}}",
+          "performance_tracking_id": "={{$now}}_{{$node['Signal Generation Agent'].json.signal_quality_metrics.high_conviction_count}}"
+        }
+      },
+      "id": "performance-tracker-016",
+      "name": "Performance Tracker",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        450
+      ],
+      "credentials": {
+        "sqlite": "trading-memory-db"
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "multi-agent-analysis",
+        "options": {
+          "noResponseBody": false
+        }
+      },
+      "id": "manual-trigger-017",
+      "name": "Manual Agent Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        600
+      ]
+    }
+  ],
+  "connections": {
+    "Agent Controller": {
+      "main": [
+        [
+          {
+            "node": "Session Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Session Manager": {
+      "main": [
+        [
+          {
+            "node": "Agent Orchestrator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Orchestrator": {
+      "main": [
+        [
+          {
+            "node": "Market Data Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Option Chain Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "News & Fundamental Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Market Data Agent": {
+      "main": [
+        [
+          {
+            "node": "Option Chain Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sentiment Analysis Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Option Chain Agent": {
+      "main": [
+        [
+          {
+            "node": "Technical Analysis Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentiment Analysis Agent": {
+      "main": [
+        [
+          {
+            "node": "Risk Assessment Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Memory Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Technical Analysis Agent": {
+      "main": [
+        [
+          {
+            "node": "Risk Assessment Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Memory Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "News & Fundamental Agent": {
+      "main": [
+        [
+          {
+            "node": "Risk Assessment Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Risk Assessment Agent": {
+      "main": [
+        [
+          {
+            "node": "Signal Generation Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Memory Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signal Generation Agent": {
+      "main": [
+        [
+          {
+            "node": "Multi-Agent Quality Gate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Memory Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Multi-Agent Quality Gate": {
+      "main": [
+        [
+          {
+            "node": "Alert Composition Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Composition Agent": {
+      "main": [
+        [
+          {
+            "node": "Multi-Agent Alert Delivery",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Research Report Delivery",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Performance Tracker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Agent Trigger": {
+      "main": [
+        [
+          {
+            "node": "Agent Orchestrator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "timezone": "Asia/Kolkata"
+  },
+  "staticData": {},
+  "tags": [
+    {
+      "name": "multi-agent"
+    },
+    {
+      "name": "specialized-agents"
+    },
+    {
+      "name": "indian-markets"
+    },
+    {
+      "name": "angel-api"
+    }
+  ],
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z"
+}

@@ -1,0 +1,61 @@
+{
+  "name": "Enterprise_Global_Error_Handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "node-error-trigger",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const errorData = $json.execution.error;\nconst workflowName = $json.workflow.name;\nconst executionId = $json.execution.id;\nconst retryUrl = `${$json.execution.url}`;\n\nreturn {\n  json: {\n    alert_title: `🚨 Automation Failure: ${workflowName}`,\n    execution_id: executionId,\n    error_message: errorData.message || 'Unknown runtime error',\n    error_node: errorData.node?.name || 'Unassigned',\n    timestamp: new Date().toISOString(),\n    debug_url: retryUrl\n  }\n};"
+      },
+      "id": "node-format-error",
+      "name": "Format Error Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_ADMIN_CHAT_ID }}",
+        "text": "=<b>{{ $json.alert_title }}</b>\n\n<b>Node:</b> <code>{{ $json.error_node }}</code>\n<b>Message:</b> <code>{{ $json.error_message }}</code>\n<b>Execution ID:</b> {{ $json.execution_id }}\n\n<a href=\"{{ $json.debug_url }}\">View Execution Log</a>",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-alert",
+      "name": "Telegram SRE Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [690, 300]
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format Error Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Error Payload": {
+      "main": [
+        [
+          {
+            "node": "Telegram SRE Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

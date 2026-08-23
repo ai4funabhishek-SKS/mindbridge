@@ -1,0 +1,729 @@
+{
+  "name": "AIS Social Media Reels Sheet",
+  "nodes": [
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Create a script of a social media video about the topic included below.\n\nThe video will be organized in scenes. Each scene has a voice over and an image.\nThe voice over text must be at least 20 words.\nThere should be not more than 4 scenes.\nYour response must be in JSON format following this schema:\n{\n   \"scenes\": [{\n      \"voiceOverText\": \"\",\n      \"imagePrompt\": \"\"\n    }]\n}\n\nThe image prompt must be written in ENGLISH, being detailed and photo realistic. In the image prompt, you MUST AVOID describing any situation in the image that can be considered unappropriate (violence, disgusting, gore, sex, nudity, NSFW, etc) as it may be rejected by the AI service.\n",
+              "role": "system"
+            },
+            {
+              "content": "=Topic: \"{{ $json.Topic }}\".\nTarget language: \"{{ $json.Language }}\"."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        288,
+        208
+      ],
+      "id": "f2a38385-1d2f-42a8-8b6b-227da0c5718c",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "jVCpXQHd8woXOE4D",
+          "name": "AIS OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.movie.status }}",
+                    "rightValue": "done",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "5fcd31ad-728d-4091-899f-c3f6fa709302"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "17c132d0-6142-4a07-b132-f28027949bec",
+                    "leftValue": "={{ $json.movie.status }}",
+                    "rightValue": "error",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b6381708-9a0d-4b23-9efc-fdfaccb2cbac",
+                    "leftValue": "={{ $json.movie.status }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1360,
+        208
+      ],
+      "id": "af461098-a5c9-40ce-a36e-fb9d3fb2dcff",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ $json.movie.message }}"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        400
+      ],
+      "id": "b7b55f60-951f-4207-8ea9-1306de5bd732",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "content": "## Wait for rendering\nYou can expect about 2 - 4 minutes per video",
+        "height": 600,
+        "width": 700,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        848,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "7a004b35-e396-40d2-9b7d-00e20eef8864",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "url": "https://api.json2video.com/v2/movies",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "project",
+              "value": "={{ $('Submit a new job').item.json.project }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        208
+      ],
+      "id": "915d6d02-9e88-4371-96d0-febd975fe79c",
+      "name": "Check status",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1nIKE9EH1D8gNf1o",
+          "name": "AIS JSON2Video Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.json2video.com/v2/movies",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"template\": \"AIcZbwCFFe4v0MfvKYDC\",\n    \"variables\": {\n        \"voice\": \"{{ $('Get row(s) in sheet').item.json['Voice Name'] }}\",\n        \"voiceModel\": \"{{ $('Get row(s) in sheet').item.json['Voice Model'] }}\",\n\"imageModel\": \"{{ $('Get row(s) in sheet').item.json['Image Model'] }}\",\n        \"subtitlesModel\": \"{{ $('Get row(s) in sheet').item.json['Subtitles Model'] }}\",\n\n        \"scenes\": {{ JSON.stringify($json.message.content.scenes) }},\n        \"fontFamily\": \"{{ $('Get row(s) in sheet').item.json['Subtitles Font'] }}\"\n    }\n}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        208
+      ],
+      "id": "0f30465a-be3c-427b-bc8e-7758edc70442",
+      "name": "Submit a new job",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1nIKE9EH1D8gNf1o",
+          "name": "AIS JSON2Video Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Ask ChatGPT",
+        "height": 600,
+        "width": 300,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        272,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "aaff50a6-e6d6-43b6-8732-c90b970d7c46",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Get video topic",
+        "height": 600,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "8b9782bc-e6fb-4fe2-a3bc-a2eb4b7cf484",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Submit job",
+        "height": 600,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        592,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "012e1fd8-724f-4b44-983b-c14c3408b3ba",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Update row",
+        "height": 280,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2128,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "6950a4bc-357c-490b-bf2a-ed54ef89702c",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Error",
+        "height": 284
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1632,
+        320
+      ],
+      "typeVersion": 1,
+      "id": "7093fc7c-9200-4354-88f7-8ebcc062deac",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        928,
+        208
+      ],
+      "id": "67e7b36a-3335-40e2-b996-4bfb667f71ef",
+      "name": "Wait 2 min",
+      "webhookId": "ef4ecb7c-cdcc-4bb9-9c73-6be4f370dccd"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        400
+      ],
+      "id": "5bf259b2-0de9-49ac-99d0-9ab208753b57",
+      "name": "Wait 20 sec",
+      "webhookId": "ef4ecb7c-cdcc-4bb9-9c73-6be4f370dccd"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jJbemBcyoeCa31tJfTJ6SkAK6R9ofY3YjMPgxGNj4B8",
+          "mode": "list",
+          "cachedResultName": "AIS Social Media Reels",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jJbemBcyoeCa31tJfTJ6SkAK6R9ofY3YjMPgxGNj4B8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jJbemBcyoeCa31tJfTJ6SkAK6R9ofY3YjMPgxGNj4B8/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "To Do"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        64,
+        208
+      ],
+      "id": "e328a5e6-27cc-4713-8ffb-87adbc063958",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wDCPrHGEkZlwJuw2",
+          "name": "AIS Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1jJbemBcyoeCa31tJfTJ6SkAK6R9ofY3YjMPgxGNj4B8",
+          "mode": "list",
+          "cachedResultName": "AIS Social Media Reels",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jJbemBcyoeCa31tJfTJ6SkAK6R9ofY3YjMPgxGNj4B8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jJbemBcyoeCa31tJfTJ6SkAK6R9ofY3YjMPgxGNj4B8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get row(s) in sheet').item.json.row_number }}",
+            "Result": "={{ $('Check status').item.json.movie.url }}",
+            "Status": "Done"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Voice Name",
+              "displayName": "Voice Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Voice Model",
+              "displayName": "Voice Model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image Model",
+              "displayName": "Image Model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Subtitles Model",
+              "displayName": "Subtitles Model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Subtitles Font",
+              "displayName": "Subtitles Font",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Result",
+              "displayName": "Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        2192,
+        112
+      ],
+      "id": "a89c0562-e4ae-4423-8af4-1b954b21e32d",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wDCPrHGEkZlwJuw2",
+          "name": "AIS Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Get row(s) in sheet').item.json.Topic }}",
+        "regionCode": "US",
+        "categoryId": "24",
+        "options": {
+          "privacyStatus": "private"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        112
+      ],
+      "id": "1e08b31e-658a-4cef-927a-70e19a5faf57",
+      "name": "Upload a video",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "94nZoATrDKnQP0iO",
+          "name": "FBS Youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Upload Video",
+        "height": 280,
+        "width": 416,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1632,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "13637a51-2a66-4e97-831f-ca586b3a67ab",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.movie.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        112
+      ],
+      "id": "c172ba4e-589f-46b5-b6a6-eb176c8ac603",
+      "name": "Download video"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -208,
+        208
+      ],
+      "id": "9f87b7f4-c45e-4e75-b98b-8e05720177a9",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Submit a new job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Download video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 20 sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check status": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit a new job": {
+      "main": [
+        [
+          {
+            "node": "Wait 2 min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2 min": {
+      "main": [
+        [
+          {
+            "node": "Check status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 20 sec": {
+      "main": [
+        [
+          {
+            "node": "Check status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload a video": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download video": {
+      "main": [
+        [
+          {
+            "node": "Upload a video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "64a9d9fb-2610-4b23-afbc-d8bdeb304bd8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "XfzQAt1pMpmuA2PW",
+  "tags": []
+}

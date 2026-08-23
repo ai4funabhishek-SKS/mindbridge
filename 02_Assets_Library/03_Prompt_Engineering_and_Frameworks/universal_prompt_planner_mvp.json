@@ -1,0 +1,246 @@
+{
+  "name": "Universal Prompt\u2011Planner Agent (MVP)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        100,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "path": "prompt-engineer",
+        "options": {}
+      },
+      "id": "2",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        100,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "updates": []
+        }
+      },
+      "id": "3",
+      "name": "Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2,
+      "position": [
+        100,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "updateKey": "none",
+        "mode": "passThrough"
+      },
+      "id": "4",
+      "name": "Merge Inputs",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 1,
+      "position": [
+        320,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "text": "You are an expert AI consultant and prompt engineer. Carefully read the user's request and ask clarifying questions only if essential information is missing. Respond in JSON with keys: \"clarified_request\" and \"llm_choice\" (choose from: openai-gpt-3.5, gemini-flash, local-llama) based on task complexity, cost (\u20b9100 cap), and language preference. If unsure, pick openai-gpt-3.5."
+      },
+      "id": "5",
+      "name": "Clarify & Analyze",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1,
+      "position": [
+        540,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "text": "Using {{$json[\"clarified_request\"]}}, draft a bullet\u2011point step\u2011by\u2011step project roadmap from start to finish. Keep each step short, numbered, and executable."
+      },
+      "id": "6",
+      "name": "Plan Roadmap",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1,
+      "position": [
+        760,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "text": "Craft the optimal prompt for {{$json[\"llm_choice\"]}} that will accomplish {{$json[\"clarified_request\"]}}. Use the pattern:\n<role>\n\u2026\n</role>\n<instructions>\n\u2026\n</instructions>\n<output_format>\n\u2026\n</output_format>"
+      },
+      "id": "7",
+      "name": "Generate Prompt",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1,
+      "position": [
+        760,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "plan": "={{$node[\"Plan Roadmap\"].json[\"text\"]}}",
+          "prompt": "={{$node[\"Generate Prompt\"].json[\"text\"]}}"
+        }
+      },
+      "id": "8",
+      "name": "Assemble Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        980,
+        260
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "9",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "<YOUR_TELEGRAM_CHAT_ID>",
+        "content": "=\ud83d\udcdd *Plan*:\\n{{$json.plan}}\\n\\n\u2699\ufe0f *Prompt*:\\n```{{$json.prompt}}```",
+        "options": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "10",
+      "name": "Telegram Sender",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        380
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Merge Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Merge Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Merge Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Inputs": {
+      "main": [
+        [
+          {
+            "node": "Clarify & Analyze",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clarify & Analyze": {
+      "main": [
+        [
+          {
+            "node": "Plan Roadmap",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Roadmap": {
+      "main": [
+        [
+          {
+            "node": "Assemble Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Prompt": {
+      "main": [
+        [
+          {
+            "node": "Assemble Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assemble Response": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

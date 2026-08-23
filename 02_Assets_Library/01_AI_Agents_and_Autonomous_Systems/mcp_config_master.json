@@ -1,0 +1,59 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "env": {
+        "ALLOWED_DIRECTORIES": "C:\\knowledgeBase_staging"
+      }
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"],
+      "env": {
+        "GIT_REPOSITORY_PATH": "C:\\knowledgeBase_staging"
+      }
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sqlite"],
+      "env": {
+        "SQLITE_DB_PATH": "C:\\knowledgeBase_staging\\Processed_Assets\\my_rag_data.db"
+      }
+    },
+    "terminal": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-terminal"],
+      "env": {
+        "ALLOWED_COMMANDS": "safe,moderate",
+        "SAFE_COMMANDS": "ls,dir,get-location,pwd,echo,type,cat,head,tail,git status,git log",
+        "MODERATE_COMMANDS": "copy,move,new-item,python,pytest,pip list",
+        "CRITICAL_COMMANDS": "remove-item,rmdir,format,shutdown"
+      }
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "env": {
+        "HEADLESS": "true",
+        "VIEWPORT_WIDTH": "1920",
+        "VIEWPORT_HEIGHT": "1080"
+      }
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {
+        "MEMORY_STORAGE_PATH": "C:\\knowledgeBase_staging\\.agents\\mcp_memory"
+      }
+    },
+    "ollama": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-ollama"],
+      "env": {
+        "OLLAMA_HOST": "http://127.0.0.1:11434",
+        "ALLOWED_MODELS": "deepseek-r1:14b,llama3.1:8b,qwen2.5-coder:7b"
+      }
+    }
+  }
+}

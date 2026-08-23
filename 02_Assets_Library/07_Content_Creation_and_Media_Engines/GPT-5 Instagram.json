@@ -1,0 +1,509 @@
+{
+  "name": "GPT-5 Instagram",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# GPT-5 Content System Instagram",
+        "height": 808,
+        "width": 704,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        544,
+        64
+      ],
+      "typeVersion": 1,
+      "id": "1f318140-3d7d-4edd-8783-d57feb2017de",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate materials for my next post.\n\nHere is the idea for it: {{ $json.text }}\n\nBegin:",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=ROLE: You're an expert in creating viral, high-value Instagram feed posts for any B2B or B2C niche. You’ve been doing it for 10+ years, generating posts that consistently deliver measurable business results, drive saves & shares, and spark massive engagement.\n\nOBJECTIVE: Write a 1) name, 2) idea, 3) title, 4) text, and 5) image description for my next Instagram feed post. The post must be informative, punchy, and high-value, while being engaging enough to encourage comments, saves, and shares.\n\nSCENARIO: I run an Instagram account in any chosen B2B or B2C niche (e.g., marketing, SaaS, finance, e-commerce, consulting, manufacturing, hospitality, etc.). My audience includes business owners, decision-makers, industry professionals, and ambitious individuals. My goal is to help them gain practical, actionable insights they can apply immediately to improve their business, brand, or career.\n\nEXPECTATION:\n\nLength: Up to 15 sentences in the caption.\n\nTone: Informative, viral, and highly valuable — every post must offer actionable insights, not fluff.\n\nHook: Strong first 1–2 lines in the caption to grab attention and make people click “more.”\n\nStructure: Short, digestible lines for Instagram readability.\n\nContent: Must provide real, applicable takeaways (frameworks, strategies, lessons, data-backed points).\n\nNo filler: Every sentence should add value.\n\nImage: Keep the same style — black/dark grainy film background, white and salad green (#cff150), minimalistic, aesthetic, easy to generate.\n\nFormat: 1×1 square (1080×1080 px).\n\nOutput in JSON format.\n\nExample output:\n{\n  \"name\": \"The 3-Second Rule in Marketing\",\n  \"idea\": \"Timeless principle: You have 3 seconds to hook someone before they scroll away. This applies to ads, emails, sales pitches, and even Instagram captions. Here's how to make those seconds count.\",\n  \"title\": \"You have 3 seconds to win attention — here’s how to use them\",\n  \"text\": \"In marketing, your first 3 seconds decide everything.\\n\\nOn Instagram, those 3 seconds are your opening line + your visual.\\n\\nTo hook someone, combine clarity, relevance, and intrigue in your first line.\\n\\nClarity: Tell them exactly what you’re about. No fluff.\\n\\nRelevance: Speak directly to their problem, in their language.\\n\\nIntrigue: Give them a reason to read the rest.\\n\\nExample: 'This 5-minute tweak doubled our leads last month.'\\n\\nYour hook’s job isn’t to sell — it’s to earn the right to explain.\\n\\nOnce you’ve got their attention, deliver value and make it easy to save.\\n\\nEnd with a clear next step or question to drive engagement.\\n\\nAttention is expensive — but if you master the first 3 seconds, you’ll never run out of it.\",\n  \"image\": \"1x1 square. Black background with dark grainy film texture. Large bold white text in the center: '3 SECONDS'. Below it in smaller salad green text (#cff150): 'Decide if they read or scroll'. Clean, minimal design with generous empty space.\"\n}\n\nUse the web research tool to find relevant ideas and facts."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        624,
+        368
+      ],
+      "id": "a9c77af6-b6a7-414e-a17e-521b02c6dc92",
+      "name": "GPT-5 AGENT",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        560
+      ],
+      "id": "ab6eff82-0774-4b31-a4ef-3e89e9841a25",
+      "name": "GPT-5",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "web_search",
+        "description": "Call this tool to make a web search query using Perplexity AI. It will automatically look at multiple relevant websites and combine all the valuable information in one clean response.",
+        "workflowId": {
+          "__rl": true,
+          "value": "eALld0YaOZuUCU5q",
+          "mode": "list",
+          "cachedResultName": "Perplexity Research"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        768,
+        560
+      ],
+      "id": "05fa9017-e6cb-4d52-97e8-2d91b620003d",
+      "name": "PERPLEXITY"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"name\": \"name\",\n    \"idea\": \"idea\",\n    \"title\": \"title\",\n    \"text\": \"text\",\n    \"image\": \"image\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        560
+      ],
+      "id": "0271e7e7-cb7f-42ff-b9bf-7e853b1aa08b",
+      "name": "JSON"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/media",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"https://drive.google.com/uc?export=download&id={{ $json.id }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        688
+      ],
+      "id": "7d0e9664-14eb-4a1d-b75c-d77247676c32",
+      "name": "UPLOAD"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"post\": {\n    \"target\": {\n      \"targetType\": \"instagram\"\n    },\n    \"content\": {\n      \"text\": \"{{ $('GPT-5 AGENT').item.json.output.text.replace(/[\"“”]/g, \"'\").replace(/\\n/g, '\\\\n') }}\",\n      \"platform\": \"instagram\",\n      \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"9107\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        688
+      ],
+      "id": "59798aad-65fd-4ead-beb0-5fd2002ec74a",
+      "name": "POST"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        176
+      ],
+      "id": "74ae23d0-e8d1-45a2-a425-e01be73f83f8",
+      "name": "TELEGRAM",
+      "webhookId": "19f495b3-3890-4f13-9624-857277b710bc",
+      "credentials": {
+        "telegramApi": {
+          "id": "FYKZIeN0dEVEm1zq",
+          "name": "Content Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        832,
+        176
+      ],
+      "id": "dcc16126-c578-4a54-a19a-56f62030e189",
+      "name": "GET VOICE",
+      "webhookId": "bb321eb5-2a37-4c7b-88e6-87cb5c7fedb4",
+      "alwaysOutputData": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "FYKZIeN0dEVEm1zq",
+          "name": "Content Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1040,
+        176
+      ],
+      "id": "32bcf95c-4175-433b-8172-f5ea292a4728",
+      "name": "TRANSCRIBE",
+      "alwaysOutputData": false,
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "=https://drive.google.com/file/d/1wm4anhC6ygXl4ZJAjJryWfEXTG-VeH8s/view?usp=sharing",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        896,
+        368
+      ],
+      "id": "ebb67657-e13c-4dbd-8e48-7a907a082537",
+      "name": "STYLE",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8hVOKDMYZjWdZHGO",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "prompt",
+              "value": "=You're a professional graphic designer.\n\nMake a new funny, instantly meme-able image in the style similar to the reference.\n\nCopy the style, spacing, minimalistic structure, and especially the fonts and layout from the reference.\n\nUse black and dark grainy film (mainly for the background), white and salad green (#cff150) for key elements.\n\nMake the image super aesthetic, minimalistic, and instantly understandable at a glance — perfect for going viral on Social Media.\n\nFormat: square 1:1.\n\nIt will be an image for a Social Media blog.\n\nHere is the description of the new image:\n{{ $('GPT-5 AGENT').item.json.output.image }}"
+            },
+            {
+              "name": "size",
+              "value": "1024x1024"
+            },
+            {
+              "name": "quality",
+              "value": "high"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        368
+      ],
+      "id": "08bdb1d5-6010-4ce8-9235-81a5d794be28",
+      "name": "GEN IMAGE",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "6x7IrPveBq7Vegst",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        688
+      ],
+      "id": "051bdf92-51ac-4353-95a6-ae3c1945f662",
+      "name": "MAKE FILE"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('GPT-5 AGENT').item.json.output.name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "10YeK20wd-Pd9cysyA2w8In2WMfOi9YVd",
+          "mode": "list",
+          "cachedResultName": "TWITTER GPT5",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/10YeK20wd-Pd9cysyA2w8In2WMfOi9YVd"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        752,
+        688
+      ],
+      "id": "bd6aaa57-db02-4eac-b8a1-b92dd9752339",
+      "name": "UPLOAD1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8hVOKDMYZjWdZHGO",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GPT-5 AGENT": {
+      "main": [
+        [
+          {
+            "node": "STYLE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "GPT-5 AGENT",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PERPLEXITY": {
+      "ai_tool": [
+        [
+          {
+            "node": "GPT-5 AGENT",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "GPT-5 AGENT",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UPLOAD": {
+      "main": [
+        [
+          {
+            "node": "POST",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TELEGRAM": {
+      "main": [
+        [
+          {
+            "node": "GET VOICE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET VOICE": {
+      "main": [
+        [
+          {
+            "node": "TRANSCRIBE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TRANSCRIBE": {
+      "main": [
+        [
+          {
+            "node": "GPT-5 AGENT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "STYLE": {
+      "main": [
+        [
+          {
+            "node": "GEN IMAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GEN IMAGE": {
+      "main": [
+        [
+          {
+            "node": "MAKE FILE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MAKE FILE": {
+      "main": [
+        [
+          {
+            "node": "UPLOAD1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UPLOAD1": {
+      "main": [
+        [
+          {
+            "node": "UPLOAD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "46bc9525-50a9-438c-ba2d-3cd2817c99cf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69f54ab0f1afba7dd61c0a7a7609df8a8bd98642cf42d92572ea26f947c9a1d8"
+  },
+  "id": "DYkk1ApHsNxNH0gD",
+  "tags": []
+}

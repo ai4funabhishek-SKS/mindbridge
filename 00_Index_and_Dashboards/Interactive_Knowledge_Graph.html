@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Brain Interactive Knowledge Graph Explorer</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #0B0F17;
+            color: #F8FAFC;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        header {
+            background: #151D2C;
+            border-bottom: 1px solid #232E42;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .brand h1 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #0B0F17;
+            border: 1px solid #232E42;
+            border-radius: 8px;
+            padding: 6px 12px;
+        }
+        .search-container input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #F8FAFC;
+            font-size: 13px;
+            font-family: inherit;
+            width: 220px;
+        }
+        .legend {
+            display: flex;
+            gap: 12px;
+            font-size: 11.5px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+        }
+        .box-icon {
+            width: 9px;
+            height: 9px;
+            border-radius: 2px;
+        }
+        #network {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            background: #0B0F17;
+        }
+        .info-panel {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(21, 29, 44, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid #232E42;
+            border-radius: 12px;
+            padding: 16px 20px;
+            max-width: 400px;
+            font-size: 13px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            z-index: 20;
+            transition: all 0.2s;
+        }
+        .info-panel h4 {
+            color: #38BDF8;
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+        .info-panel p {
+            color: #94A3B8;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .toolbar {
+            position: absolute;
+            top: 70px;
+            left: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 20;
+        }
+        .tool-btn {
+            background: #151D2C;
+            border: 1px solid #232E42;
+            color: #94A3B8;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .tool-btn:hover {
+            background: #1C263A;
+            border-color: #38BDF8;
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>🕸️ Interactive Knowledge Graph Explorer</h1>
+        </div>
+
+        <div class="search-container">
+            <span style="color: #64748B;">🔍</span>
+            <input type="text" id="graphSearch" placeholder="Find node (e.g. n8n, ZeroClaw, DeepSeek)..." onkeyup="searchGraphNode(event)">
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="dot" style="background:#EC4899;"></div> Domain Hub</div>
+            <div class="legend-item"><div class="box-icon" style="background:#F59E0B;"></div> Golden Master</div>
+            <div class="legend-item"><div class="dot" style="background:#38BDF8;"></div> Tool / Automation</div>
+            <div class="legend-item"><div class="dot" style="background:#818CF8;"></div> AI Provider</div>
+            <div class="legend-item"><div class="dot" style="background:#C084FC;"></div> AI Model</div>
+            <div class="legend-item"><div class="dot" style="background:#34D399;"></div> Vector DB</div>
+            <div class="legend-item"><div class="dot" style="background:#FBBF24;"></div> Platform</div>
+            <div class="legend-item"><div class="dot" style="background:#2DD4BF;"></div> Communication</div>
+            <div class="legend-item"><div class="box-icon" style="background:#64748B;"></div> Raw Asset</div>
+        </div>
+    </header>
+
+    <div class="toolbar">
+        <button class="tool-btn" onclick="fitGraph()">⛶ Fit View</button>
+        <button class="tool-btn" onclick="togglePhysics()" id="physicsBtn">⚡ Toggle Physics</button>
+        <button class="tool-btn" onclick="filterNodeType('Golden Master Playbook')">🏆 Focus Golden Masters</button>
+        <button class="tool-btn" onclick="resetGraphFilter()">🔄 Show All Nodes</button>
+    </div>
+
+    <div id="network"></div>
+
+    <div class="info-panel" id="infoPanel">
+        <h4>Interactive Graph Navigation</h4>
+        <p>• Scroll to zoom in/out<br>• Click & drag nodes to reorganize layout<br>• Click any node to inspect connected entities, tools, and playbooks.</p>
+    </div>
+
+    <script type="text/javascript">
+        // 1. Predefined Technology & Canonical Domain Entities
+        const entities = [
+            // Canonical Domain Hubs
+            { id: "dom_01", label: "01 AI Agents", group: "Domain Hub", color: "#EC4899", shape: "diamond", size: 32, details: "Domain: Autonomous Systems, Memory & Multi-Agent Swarms" },
+            { id: "dom_02", label: "02 n8n Workflows", group: "Domain Hub", color: "#EC4899", shape: "diamond", size: 32, details: "Domain: Workflow Automation, Webhooks & Enterprise Integration" },
+            { id: "dom_03", label: "03 Prompt Engineering", group: "Domain Hub", color: "#EC4899", shape: "diamond", size: 32, details: "Domain: Frontier Prompt Frameworks, Meta-Prompting & Decks" },
+            { id: "dom_04", label: "04 Mobile & Android", group: "Domain Hub", color: "#EC4899", shape: "diamond", size: 32, details: "Domain: Voice AI, Telephony, WhatsApp & Android CLI" },
+            { id: "dom_05", label: "05 Dev Tools", group: "Domain Hub", color: "#EC4899", shape: "diamond", size: 32, details: "Domain: Docker Runtime, Document Parsers & Search Engines" },
+            { id: "dom_06", label: "06 Quant Finance", group: "Domain Hub", color: "#EC4899", shape: "diamond", size: 32, details: "Domain: Algorithmic Trading, Screeners & SEBI Regulations" },
+            { id: "dom_07", label: "07 Media & Content", group: "Domain Hub", color: "#EC4899", shape: "diamond", size: 32, details: "Domain: Faceless YouTube, Avatar Video & Social Syndication" },
+            { id: "dom_08", label: "08 Business Operations", group: "Domain Hub", color: "#EC4899", shape: "diamond", size: 32, details: "Domain: Subbroking Funnels, B2B Outreach & Freelance Mastery" },
+            { id: "dom_09", label: "09 LLM Syntheses", group: "Domain Hub", color: "#EC4899", shape: "diamond", size: 32, details: "Domain: DeepSeek Reasoning, Free Model Routing & Audits" },
+            { id: "dom_10", label: "10 R&D Incubator", group: "Domain Hub", color: "#EC4899", shape: "diamond", size: 32, details: "Domain: Audio Intelligence, Skool Scrapers & Nascent Prototypes" },
+
+            // Core Technology Entities
+            { id: "n8n", label: "n8n", group: "Tool", color: "#38BDF8", shape: "dot", size: 24, details: "Tool | Workflow Automation Platform" },
+            { id: "openai", label: "OpenAI", group: "AI Provider", color: "#818CF8", shape: "dot", size: 24, details: "AI Provider | GPT-4, o1, ChatGPT APIs" },
+            { id: "pinecone", label: "Pinecone", group: "Vector DB", color: "#34D399", shape: "dot", size: 24, details: "Vector DB | Vector Database for RAG" },
+            { id: "deepseek", label: "DeepSeek", group: "AI Model", color: "#C084FC", shape: "dot", size: 24, details: "AI Model | DeepSeek R1 & V3 Reasoning Models" },
+            { id: "google_gemini", label: "Google Gemini", group: "AI Provider", color: "#818CF8", shape: "dot", size: 24, details: "AI Provider | Google Multi-modal LLMs" },
+            { id: "tradingview", label: "TradingView", group: "Platform", color: "#FBBF24", shape: "dot", size: 24, details: "Platform | Charting & PineScript Platform" },
+            { id: "python", label: "Python", group: "Language", color: "#F472B6", shape: "dot", size: 24, details: "Language | Core Scripting & Data Engineering" },
+            { id: "youtube", label: "YouTube", group: "Platform", color: "#FBBF24", shape: "dot", size: 24, details: "Platform | Video & Media Distribution" },
+            { id: "playwright", label: "Playwright", group: "Tool", color: "#38BDF8", shape: "dot", size: 24, details: "Tool | Browser Automation Engine" },
+            { id: "sqlite", label: "SQLite", group: "Database", color: "#34D399", shape: "dot", size: 24, details: "Database | Local Relational & FTS5 Storage" },
+            { id: "telegram", label: "Telegram", group: "Communication", color: "#2DD4BF", shape: "dot", size: 24, details: "Communication | Bot API & Notification Gateway" },
+            { id: "whatsapp", label: "WhatsApp", group: "Communication", color: "#2DD4BF", shape: "dot", size: 24, details: "Communication | Messaging Gateway" },
+            { id: "vapi", label: "Vapi AI", group: "Tool", color: "#38BDF8", shape: "dot", size: 24, details: "Tool | Voice AI Telephony Platform" },
+            { id: "docker", label: "Docker", group: "Tool", color: "#38BDF8", shape: "dot", size: 24, details: "Tool | Containerization & Runtime Environment" }
+        ];
+
+        // 2. Synthesized Golden Master Playbook Nodes (46 Nodes)
+        const goldenPlaybooks = [
+            // Domain 1
+            { id: "gm_01_zeroclaw", label: "GM: ZeroClaw MultiAgent", dom: "dom_01", tools: ["python", "sqlite", "openai"], details: "Apex Multi-Agent Workforce Architecture (ZeroClaw)" },
+            { id: "gm_01_agentzero", label: "GM: Agent Zero Runtime", dom: "dom_01", tools: ["python", "docker", "openai"], details: "Agent Zero Core Runtime & Subordinate Tooling" },
+            { id: "gm_01_memory", label: "GM: Hierarchical Memory", dom: "dom_01", tools: ["sqlite", "pinecone", "python"], details: "Hierarchical Agent Memory & Context Consolidation" },
+            { id: "gm_01_mcp", label: "GM: MCP Integration", dom: "dom_01", tools: ["python", "openai"], details: "Model Context Protocol (MCP) & Superpowers Integration" },
+            { id: "gm_01_appfactory", label: "GM: AI App Factory", dom: "dom_01", tools: ["python", "docker"], details: "Autonomous AI App Factory: 20-Stage Lifecycle" },
+            // Domain 2
+            { id: "gm_02_n8n_arch", label: "GM: n8n Foundations", dom: "dom_02", tools: ["n8n", "docker"], details: "n8n Enterprise Foundations & Node Execution Guide" },
+            { id: "gm_02_agent_army", label: "GM: AI Agent Army", dom: "dom_02", tools: ["n8n", "openai", "google_gemini"], details: "AI Agent Army Generation & Subworkflow Orchestration" },
+            { id: "gm_02_mega_lib", label: "GM: Mega Automations", dom: "dom_02", tools: ["n8n"], details: "Mega Automation Library & Production Templates" },
+            { id: "gm_02_rag_pinecone", label: "GM: RAG Pinecone Flows", dom: "dom_02", tools: ["n8n", "pinecone", "openai"], details: "RAG Vector Ingestion & Pinecone Workflows" },
+            { id: "gm_02_hitl_inbox", label: "GM: HITL Inbox Gate", dom: "dom_02", tools: ["n8n", "telegram", "openai"], details: "Human-in-the-Loop & Executive Inbox Automation" },
+            // Domain 3
+            { id: "gm_03_frontier_prompt", label: "GM: Frontier Prompts", dom: "dom_03", tools: ["openai", "deepseek", "google_gemini"], details: "Frontier Prompt Engineering Principles & Mental Models" },
+            { id: "gm_03_prompt_gen", label: "GM: Prompt Generators", dom: "dom_03", tools: ["openai", "python"], details: "Automated Prompt Generators & Dynamic Forms" },
+            { id: "gm_03_prompt_sync", label: "GM: Prompt Repo Sync", dom: "dom_03", tools: ["n8n", "python"], details: "Dynamic Prompt Repository Sync & n8n Injection" },
+            { id: "gm_03_microprompt", label: "GM: MicroPrompt Deck", dom: "dom_03", tools: ["openai", "deepseek"], details: "Universal MicroPrompt Deck & Text Transformation Catalog" },
+            { id: "gm_03_dev_system", label: "GM: Dev System Prompts", dom: "dom_03", tools: ["openai", "python"], details: "Developer Assistant System Prompts & Custom Instructions" },
+            // Domain 4
+            { id: "gm_04_vapi_voice", label: "GM: Voice AI Telephony", dom: "dom_04", tools: ["vapi", "n8n", "openai"], details: "Voice AI Telephony & Vapi Calling Engines" },
+            { id: "gm_04_whatsapp_bot", label: "GM: Mobile Messaging", dom: "dom_04", tools: ["whatsapp", "n8n", "telegram"], details: "Mobile Messaging Agents: WhatsApp & Twilio Gateways" },
+            { id: "gm_04_mobile_ui", label: "GM: Mobile-First UI/UX", dom: "dom_04", tools: ["python"], details: "Mobile-First Responsive UI/UX Architecture" },
+            { id: "gm_04_android_cli", label: "GM: Android DevOps CLI", dom: "dom_04", tools: ["python", "docker"], details: "Android DevOps CLI Automation & Emulation Playbook" },
+            // Domain 5
+            { id: "gm_05_local_dev", label: "GM: Dev Scaffolding", dom: "dom_05", tools: ["python", "docker"], details: "Local Dev Scaffolding & IDE Configuration Mastery" },
+            { id: "gm_05_docker_arch", label: "GM: Docker Runtime", dom: "dom_05", tools: ["docker", "n8n", "sqlite"], details: "Containerized Docker Runtime & Networking Architecture" },
+            { id: "gm_05_powershell", label: "GM: PowerShell DevOps", dom: "dom_05", tools: ["python"], details: "PowerShell DevOps & Repository Automation Playbook" },
+            { id: "gm_05_doc_extract", label: "GM: Document Extraction", dom: "dom_05", tools: ["python", "sqlite"], details: "Universal Document & Code Extraction Pipelines" },
+            { id: "gm_05_search_engine", label: "GM: Hybrid Search & KG", dom: "dom_05", tools: ["sqlite", "python"], details: "Knowledge Graph & Hybrid Search Engine Architecture" },
+            // Domain 6
+            { id: "gm_06_multiagent_trade", label: "GM: MultiAgent Trading", dom: "dom_06", tools: ["tradingview", "n8n", "python"], details: "Multi-Agent Algorithmic Trading System Architecture" },
+            { id: "gm_06_stock_screener", label: "GM: Stock Screeners", dom: "dom_06", tools: ["tradingview", "python"], details: "Automated Stock Screening & Technical Analysis Pipelines" },
+            { id: "gm_06_scalping_prompts", label: "GM: Scalping Prompts", dom: "dom_06", tools: ["tradingview", "openai"], details: "High-Probability Intraday & Scalping Prompt Frameworks" },
+            { id: "gm_06_sebi_nism", label: "GM: SEBI / NISM Standards", dom: "dom_06", tools: ["python"], details: "SEBI & NISM Research Analyst Regulatory & Valuation Standards" },
+            // Domain 7
+            { id: "gm_07_youtube_engine", label: "GM: Faceless YouTube", dom: "dom_07", tools: ["youtube", "n8n", "openai"], details: "Faceless YouTube Production Engine & Script Generation" },
+            { id: "gm_07_avatar_video", label: "GM: AI Avatar Video", dom: "dom_07", tools: ["n8n", "youtube", "openai"], details: "Generative AI Video & Avatar Cloning Workflows" },
+            { id: "gm_07_thumbnail_gen", label: "GM: Thumbnail Engine", dom: "dom_07", tools: ["python", "youtube"], details: "Automated Graphic Design & YouTube Thumbnail Engines" },
+            { id: "gm_07_social_syndicate", label: "GM: Social Media Syndication", dom: "dom_07", tools: ["n8n"], details: "Omnichannel Social Media Syndication & Repurposing" },
+            { id: "gm_07_seo_blog", label: "GM: SEO Blog Engine", dom: "dom_07", tools: ["openai", "n8n"], details: "SEO Blog Generation & Content Strategy Playbook" },
+            // Domain 8
+            { id: "gm_08_subbroking_funnel", label: "GM: Subbroking Funnels", dom: "dom_08", tools: ["n8n", "python"], details: "Financial Subbroking Client Acquisition & Funnel Architecture" },
+            { id: "gm_08_b2b_outreach", label: "GM: B2B Outreach", dom: "dom_08", tools: ["n8n", "openai"], details: "B2B Client Outreach: LinkedIn & Email Automation" },
+            { id: "gm_08_freelance_upwork", label: "GM: Upwork Mastery", dom: "dom_08", tools: ["openai"], details: "Freelance Skill Arbitrage & Upwork Mastery" },
+            { id: "gm_08_business_ops", label: "GM: Business Ops & Compliance", dom: "dom_08", tools: ["python"], details: "Business Operations, Compliance & Document Workflows" },
+            // Domain 9
+            { id: "gm_09_deepseek_arch", label: "GM: DeepSeek R1 MoE", dom: "dom_09", tools: ["deepseek", "python"], details: "DeepSeek Architecture, Reasoning Models & Ecosystem Synthesis" },
+            { id: "gm_09_free_routing", label: "GM: Zero-Cost LLM Routing", dom: "dom_09", tools: ["google_gemini", "deepseek", "python"], details: "Zero-Cost Multi-Provider LLM Routing & OmniRoute Matrix" },
+            { id: "gm_09_brutal_audit", label: "GM: Architecture Audit", dom: "dom_09", tools: ["python"], details: "Brutal Architectural Audit & Solo Founder Execution Blueprint" },
+            { id: "gm_09_ai_search", label: "GM: AI Search Engines", dom: "dom_09", tools: ["python", "playwright"], details: "AI Search & Web Extraction Engines: Exa, Firecrawl & Tavily" },
+            // Domain 10
+            { id: "gm_10_financial_growth", label: "GM: Financial Growth Engine", dom: "dom_10", tools: ["tradingview", "n8n"], details: "Autonomous Financial Content & Subbroking Growth Engine" },
+            { id: "gm_10_skool_scraper", label: "GM: Skool & LLM Scraper", dom: "dom_10", tools: ["playwright", "python"], details: "Skool Resource Downloader & LLM Thread Collator" },
+            { id: "gm_10_flowscribe", label: "GM: FlowScribe Audio", dom: "dom_10", tools: ["python", "youtube"], details: "Project FlowScribe: Autonomous Audio Intelligence Engine" },
+            { id: "gm_10_nocode_factory", label: "GM: Non-Coder AI Factory", dom: "dom_10", tools: ["n8n", "openai"], details: "Non-Coder's AI Web Application Factory Playbook" },
+            { id: "gm_10_rnd_backlog", label: "GM: R&D Incubator Backlog", dom: "dom_10", tools: ["python"], details: "R&D Incubator Backlog & Experimental Prototypes" }
+        ];
+
+        // 3. Anchor Raw Document Nodes
+        const rawDocs = [
+            { id: "raw_agents_md", label: "AGENTS.md", dom: "dom_01", details: "Raw Agent Specification (17.2 KB)" },
+            { id: "raw_n8n_docx", label: "complete-n8n-doc.docx", dom: "dom_02", details: "Complete n8n documentation (1.75 MB)" },
+            { id: "raw_multiagent_json", label: "MULTI_AGENT_TRADING.json", dom: "dom_06", details: "Multi-Agent Trading n8n JSON (44.1 KB)" },
+            { id: "raw_nism_pdf", label: "NISM-Series-XV.pdf", dom: "dom_06", details: "NISM Research Analyst Workbook (3.84 MB)" },
+            { id: "raw_deepseek_docx", label: "DeepSeek-LLM-threads.docx", dom: "dom_09", details: "DeepSeek Research Threads (48.6 KB)" },
+            { id: "raw_pinecone_json", label: "UploadToPinecone.json", dom: "dom_02", details: "Pinecone Ingestion Workflow (4.19 KB)" },
+            { id: "raw_vapi_json", label: "PhoneCallingAgent.json", dom: "dom_04", details: "Vapi Calling Agent Workflow (11.6 KB)" },
+            { id: "raw_social_json", label: "SocialMediaAutomation.json", dom: "dom_07", details: "X & LinkedIn Syndication Workflow (21.7 KB)" }
+        ];
+
+        // Build Vis.js Nodes
+        const nodesArray = [];
+        const edgesArray = [];
+
+        // Add Entities
+        entities.forEach(e => {
+            nodesArray.push({
+                id: e.id,
+                label: e.label,
+                group: e.group,
+                title: `<b>${e.label}</b><br>Type: ${e.group}<br>${e.details}`,
+                color: e.color,
+                shape: e.shape,
+                size: e.size,
+                font: { color: '#FFFFFF', size: 12, face: 'Plus Jakarta Sans', strokeWidth: 2, strokeColor: '#0B0F17' }
+            });
+        });
+
+        // Add Golden Master Nodes & Edges
+        goldenPlaybooks.forEach(gm => {
+            nodesArray.push({
+                id: gm.id,
+                label: gm.label,
+                group: "Golden Master Playbook",
+                title: `<b>🏆 ${gm.label}</b><br>Type: Golden Master Playbook<br>${gm.details}`,
+                color: "#F59E0B",
+                shape: "box",
+                size: 16,
+                font: { color: '#FFFFFF', size: 11, face: 'JetBrains Mono', bold: true }
+            });
+
+            // Edge to Domain Hub
+            edgesArray.push({
+                from: gm.id,
+                to: gm.dom,
+                color: { color: "#EC4899", highlight: "#F472B6" },
+                width: 2,
+                title: "BELONGS_TO_DOMAIN"
+            });
+
+            // Edges to Tools
+            gm.tools.forEach(toolId => {
+                edgesArray.push({
+                    from: gm.id,
+                    to: toolId,
+                    color: { color: "#38BDF8", opacity: 0.7 },
+                    width: 1.2,
+                    dashes: [4, 4],
+                    title: "USES_OR_REFERENCES"
+                });
+            });
+        });
+
+        // Add Raw Document Nodes & Edges
+        rawDocs.forEach(rd => {
+            nodesArray.push({
+                id: rd.id,
+                label: rd.label,
+                group: "Raw Document",
+                title: `<b>📄 ${rd.label}</b><br>Type: Raw Asset<br>${rd.details}`,
+                color: "#64748B",
+                shape: "box",
+                size: 12,
+                font: { color: '#CBD5E1', size: 10, face: 'Plus Jakarta Sans' }
+            });
+
+            // Connect to Domain Hub
+            edgesArray.push({
+                from: rd.id,
+                to: rd.dom,
+                color: { color: "#475569", opacity: 0.5 },
+                width: 1,
+                title: "INDEXED_UNDER_DOMAIN"
+            });
+        });
+
+        // Connect Domain Hubs in Circular Knowledge Topology
+        for (let i = 1; i <= 10; i++) {
+            const next = i === 10 ? 1 : i + 1;
+            edgesArray.push({
+                from: `dom_${String(i).padStart(2, '0')}`,
+                to: `dom_${String(next).padStart(2, '0')}`,
+                color: { color: "#334155", opacity: 0.3 },
+                width: 1,
+                dashes: true,
+                title: "DOMAIN_TAXONOMY_BRIDGE"
+            });
+        }
+
+        const nodes = new vis.DataSet(nodesArray);
+        const edges = new vis.DataSet(edgesArray);
+
+        const container = document.getElementById('network');
+        const data = { nodes: nodes, edges: edges };
+        
+        let physicsEnabled = true;
+        const options = {
+            nodes: {
+                borderWidth: 1.5,
+                shadow: true
+            },
+            edges: {
+                smooth: { type: 'continuous' }
+            },
+            physics: {
+                solver: 'forceAtlas2Based',
+                forceAtlas2Based: {
+                    gravitationalConstant: -50,
+                    centralGravity: 0.01,
+                    springLength: 100,
+                    springConstant: 0.08
+                },
+                maxVelocity: 50,
+                minVelocity: 0.1,
+                stabilization: { iterations: 150 }
+            },
+            interaction: {
+                hover: true,
+                tooltipDelay: 100,
+                navigationButtons: false
+            }
+        };
+
+        const network = new vis.Network(container, data, options);
+
+        network.on("click", function (params) {
+            if (params.nodes.length > 0) {
+                const nodeId = params.nodes[0];
+                const node = nodes.get(nodeId);
+                
+                // Get connected edges
+                const connectedEdges = network.getConnectedEdges(nodeId);
+                const connectedNodes = network.getConnectedNodes(nodeId);
+
+                document.getElementById('infoPanel').innerHTML = `
+                    <h4>${node.label}</h4>
+                    <p style="color:#CBD5E1; margin-bottom:6px;"><strong>Type:</strong> ${node.group}</p>
+                    <p style="color:#94A3B8; margin-bottom:8px;">${node.title ? node.title.replace(/<[^>]*>?/gm, ' ') : ''}</p>
+                    <div style="font-size:11px; color:#38BDF8; font-family:'JetBrains Mono',monospace;">
+                        Connected Links: ${connectedNodes.length} entities
+                    </div>
+                `;
+            }
+        });
+
+        function fitGraph() {
+            network.fit({ animation: { duration: 500, easingFunction: 'easeInOutQuad' } });
+        }
+
+        function togglePhysics() {
+            physicsEnabled = !physicsEnabled;
+            network.setOptions({ physics: { enabled: physicsEnabled } });
+            document.getElementById('physicsBtn').innerText = physicsEnabled ? "⚡ Toggle Physics (ON)" : "⏸️ Toggle Physics (OFF)";
+        }
+
+        function searchGraphNode(event) {
+            const query = document.getElementById('graphSearch').value.toLowerCase().trim();
+            if (!query) return;
+
+            const matching = nodesArray.filter(n => n.label.toLowerCase().includes(query) || (n.details && n.details.toLowerCase().includes(query)));
+            if (matching.length > 0) {
+                const targetId = matching[0].id;
+                network.focus(targetId, {
+                    scale: 1.2,
+                    animation: { duration: 500, easingFunction: 'easeInOutQuad' }
+                });
+                network.selectNodes([targetId]);
+                const node = nodes.get(targetId);
+                document.getElementById('infoPanel').innerHTML = `
+                    <h4>${node.label}</h4>
+                    <p style="color:#CBD5E1; margin-bottom:6px;"><strong>Type:</strong> ${node.group}</p>
+                    <p style="color:#94A3B8;">${node.title ? node.title.replace(/<[^>]*>?/gm, ' ') : ''}</p>
+                `;
+            }
+        }
+
+        function filterNodeType(targetGroup) {
+            const filteredNodes = nodesArray.map(n => {
+                if (n.group === targetGroup || n.group === "Domain Hub") {
+                    return { ...n, hidden: false };
+                }
+                return { ...n, hidden: true };
+            });
+            nodes.update(filteredNodes);
+            fitGraph();
+        }
+
+        function resetGraphFilter() {
+            const allNodes = nodesArray.map(n => ({ ...n, hidden: false }));
+            nodes.update(allNodes);
+            fitGraph();
+        }
+    </script>
+</body>
+</html>

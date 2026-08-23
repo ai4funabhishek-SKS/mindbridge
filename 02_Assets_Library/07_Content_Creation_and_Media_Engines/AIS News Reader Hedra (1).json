@@ -1,0 +1,922 @@
+{
+  "name": "AIS News Reader Hedra",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -2920,
+        0
+      ],
+      "id": "c16c0bb6-f326-42e1-80da-0d198f36b190",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const binaryItem = items.find(i => i.binary && Object.keys(i.binary).length > 0);\nconst metadataItem = items.find(i => i.json && i.json.id && i.json.type);\n\nreturn [\n  {\n    json: {\n      id: metadataItem.json.id,\n      type: metadataItem.json.type,\n      name: metadataItem.json.name || 'uploaded-asset'\n    },\n    binary: {\n      data: binaryItem.binary.data\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2460,
+        0
+      ],
+      "id": "15848d36-6930-4827-a543-655c060079b2",
+      "name": "Code"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -2740,
+        -780
+      ],
+      "id": "57ba7b07-11ab-4b9e-be9a-db3bf0926392",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const binaryItem = items.find(i => i.binary && Object.keys(i.binary).length > 0);\nconst metadataItem = items.find(i => i.json && i.json.id && i.json.type);\n\nreturn [\n  {\n    json: {\n      id: metadataItem.json.id,\n      type: metadataItem.json.type,\n      name: metadataItem.json.name || 'uploaded-asset'\n    },\n    binary: {\n      data: binaryItem.binary.data\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2480,
+        -780
+      ],
+      "id": "049981fc-75ef-4528-aa02-f5f1d3f1f957",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Generate a newsreader-style monologue in the voice of Anderson Cooper on the latest headlines. The tone should be clear, authoritative, and professional, presenting the key facts, context, and impact concisely, just like a live news broadcast. Avoid commentary or personal opinions. Do not include line breaks or special formatting. Deliver the entire monologue as one JSON object named 'headlines', capped at exactly 500 characters. Here are the search results:  \n{{ $json.results[0].content }},{{ $json.results[1].content }},{{ $json.results[2].content }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -3800,
+        -800
+      ],
+      "id": "1414ac2d-6897-49aa-ab95-b31e7c828707",
+      "name": "OpenAI audio",
+      "credentials": {
+        "openAiApi": {
+          "id": "jVCpXQHd8woXOE4D",
+          "name": "AIS OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/3gsg3cxXyFLcGIfNbM6C",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $json.message.content.headlines }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3420,
+        -800
+      ],
+      "id": "10d67d17-6d5d-4a2c-84b3-d1a4ad1aa3ca",
+      "name": "11 labs text 2 speech",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "46Jx3GFXsu6HmmJR",
+          "name": "AIS 11labs Custom Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hedra.com/web-app/public/assets",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"name\": \"news-reader-image\",\n  \"type\": \"image\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3380,
+        -220
+      ],
+      "id": "b1347c8b-f7d2-4af1-8af8-5aac49c7c4d1",
+      "name": "Hedra Image",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "tOkFNkI2GB5tA1wB",
+          "name": "AIS Hedra Custom Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hedra.com/web-app/public/assets",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"name\": \"news-reader-audio\",\n  \"type\": \"audio\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3060,
+        -940
+      ],
+      "id": "ac34fbb3-64dd-4f8b-8211-d038d835ef6a",
+      "name": "Hedra audio",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "tOkFNkI2GB5tA1wB",
+          "name": "AIS Hedra Custom Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.hedra.com/web-app/public/assets/{{ $json.id }}/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2200,
+        0
+      ],
+      "id": "815d8a77-c80f-415c-9d52-e5310a610916",
+      "name": "Upload Image To Hedra",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "tOkFNkI2GB5tA1wB",
+          "name": "AIS Hedra Custom Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.hedra.com/web-app/public/assets/{{ $json.id }}/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2240,
+        -780
+      ],
+      "id": "11d09813-3619-4dfc-a132-6f3c8e32a26a",
+      "name": "Upload Audio To Hedra",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "tOkFNkI2GB5tA1wB",
+          "name": "AIS Hedra Custom Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -1940,
+        -420
+      ],
+      "id": "905d4fc3-1809-4af6-9dde-e7eebb8a25b7",
+      "name": "Merge audio image"
+    },
+    {
+      "parameters": {
+        "jsCode": "let image_asset_id = null;\nlet audio_asset_id = null;\nlet image_url = null;\nlet audio_url = null;\n\nfor (const item of items) {\n  const { type, id, asset } = item.json;\n\n  if (type === 'image') {\n    image_asset_id = id;\n    image_url = asset?.url || null;\n  } else if (type === 'audio') {\n    audio_asset_id = id;\n    audio_url = asset?.url || null;\n  }\n}\n\nreturn [\n  {\n    json: {\n      image_asset_id,\n      audio_asset_id,\n      image_url,\n      audio_url\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1760,
+        -860
+      ],
+      "id": "0af4f95d-e8f4-4d32-93e2-4dad2233b99c",
+      "name": "split  audio image Ids"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hedra.com/web-app/public/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"video\",\n  \"ai_model_id\": \"d1dd37a3-e39a-4854-a298-6510289f9cf2\",\n  \"start_keyframe_id\": \"{{ $json.image_asset_id }}\",\n  \"audio_id\": \"{{ $json.audio_asset_id }}\",\n  \"generated_video_inputs\": {\n    \"text_prompt\": \"A confident news anchor speaking directly to the audience, maintaining steady eye contact and delivering the latest headlines in a clear and professional tone. The anchor’s facial expressions are natural and engaging, as if addressing viewers in a live news broadcast.\",\n    \"resolution\": \"720p\",\n    \"aspect_ratio\": \"16:9\",\n    \"duration_ms\": 5000\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1540,
+        -860
+      ],
+      "id": "f65af9bc-2d75-497e-8837-2aa7137dc35e",
+      "name": "Create Video",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "tOkFNkI2GB5tA1wB",
+          "name": "AIS Hedra Custom Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1320,
+        -860
+      ],
+      "id": "007b0069-c5a3-472d-a5c8-d82c573e97cf",
+      "name": "Wait 5 Min",
+      "webhookId": "01e52041-ec11-4def-ab1f-a411d541a1b8"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.hedra.com/web-app/public/assets?type=video&ids{{ $json.asset_id}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1100,
+        -860
+      ],
+      "id": "9529cc2b-f3b8-46d4-a4ff-e54b080e6e76",
+      "name": "Fetch Video URL",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "tOkFNkI2GB5tA1wB",
+          "name": "AIS Hedra Custom Authorization"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -840,
+        -860
+      ],
+      "id": "af31f9ff-40a5-4399-8036-503afded487e",
+      "name": "Wait 10 sec",
+      "webhookId": "4c0f6717-a91a-4e57-89eb-2281f12015d2"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1540,
+        -220
+      ],
+      "id": "a8a1fdb9-fe8a-423a-b0b8-3dcd3fd9b8c6",
+      "name": "Download video"
+    },
+    {
+      "parameters": {
+        "jsCode": "$input.item.binary.data.fileName = 'text-to-speech.mp3'\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3060,
+        -640
+      ],
+      "id": "b301034b-c24b-473f-81a2-0cdfaadd0f1b",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1_1eAoNfkaI9ZZQGEhJXcyTr1N0sI21Bu",
+          "mode": "list",
+          "cachedResultName": "Demo Videos",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1_1eAoNfkaI9ZZQGEhJXcyTr1N0sI21Bu"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1220,
+        -220
+      ],
+      "id": "11f51307-099c-4122-83ed-9db7303be079",
+      "name": "Upload GDrive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "tPsnde9OKArMWQDT",
+          "name": "AIS Google Drive credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -920,
+        -220
+      ],
+      "id": "cd1de6d5-3bf8-40ac-acb1-7454ce66629b",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "tPsnde9OKArMWQDT",
+          "name": "AIS Google Drive credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all input items (each row)\nconst items = $input.all();\n\n// Filter for items that have a download_url\nconst withDownloadUrl = items.filter(item => item.json.asset?.url);\n\n// If no such item found, return nothing\nif (withDownloadUrl.length === 0) {\n  return [];\n}\n\n// Sort by created_at (if available) or use last item\nwithDownloadUrl.sort((a, b) => {\n  const timeA = new Date(a.json.created_at || 0).getTime();\n  const timeB = new Date(b.json.created_at || 0).getTime();\n  return timeB - timeA; // latest first\n});\n\n// Get the latest one\nconst latest = withDownloadUrl[0];\n\n// Return the url only\nreturn [\n  {\n    json: {\n      url: latest.json.asset.url\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -580,
+        -860
+      ],
+      "id": "b94aae2c-82ba-407d-ac82-3d70234b7128",
+      "name": "Latest Video"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "=Get The Latest News",
+        "regionCode": "US",
+        "categoryId": "25",
+        "options": {
+          "privacyStatus": "private"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        -620,
+        -220
+      ],
+      "id": "4114be98-9536-4ebc-b5a2-5c2c8a93edbe",
+      "name": "Upload a video",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "94nZoATrDKnQP0iO",
+          "name": "FBS Youtube"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Prepare Image & Upload",
+        "height": 520,
+        "width": 2120,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4160,
+        -280
+      ],
+      "id": "ac69554c-7755-4a66-b3af-5eed67bbcfc6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Prepare Audio & Upload",
+        "height": 580,
+        "width": 2120,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4160,
+        -1020
+      ],
+      "id": "165c85f5-86a6-4444-815e-d700a102a97f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Video",
+        "height": 340,
+        "width": 1440,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1820,
+        -960
+      ],
+      "id": "7072f77b-4f30-4a18-b080-cc8cf782c561",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Upload Video",
+        "height": 300,
+        "width": 1260,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1640,
+        -300
+      ],
+      "id": "ac1824c0-9d30-47e0-a335-201393ae4651",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "formTitle": "News Reader",
+        "formDescription": "News Reader",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "News Topic",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "US Politics"
+                  },
+                  {
+                    "option": "Sports"
+                  },
+                  {
+                    "option": "Entertainment"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -4440,
+        -420
+      ],
+      "id": "1b0f7dd5-dd62-4ba2-b543-fc18a174bccf",
+      "name": "On form submission",
+      "webhookId": "ba70daab-80be-40b2-be65-70c64be854f1"
+    },
+    {
+      "parameters": {
+        "fileSelector": "C:/n8ndata/appdata/aisn8nnewsreader2img.png",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -4060,
+        -80
+      ],
+      "id": "6f051aff-e130-4f80-971a-f11ae2e15ded",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"Search the web for {{ $json['News Topic'] }}\",\n  \"topic\": \"news\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 3,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4080,
+        -800
+      ],
+      "id": "8d34a7c5-2119-48e9-bb84-ca76677a4ee8",
+      "name": "Tavily",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "bDwPS88eYPwQ6Hwi",
+          "name": "AIS Tavily Header Auth account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "OpenAI audio": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "headlines": "Good evening. I'm Anderson Cooper. Tonight: Vice President JD Vance responds to Donald Trump's recent remarks regarding his potential successor, with Senator Marco Rubio also mentioned as a possible collaborator. In international news, airdrops continue over the Gaza Strip as foreign nations step up humanitarian aid. The move follows Israel's announcement of plans to retake Gaza City, drawing increased global condemnation and escalating tensions in the region."
+            },
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Upload Image To Hedra",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Upload Audio To Hedra",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI audio": {
+      "main": [
+        [
+          {
+            "node": "11 labs text 2 speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "11 labs text 2 speech": {
+      "main": [
+        [
+          {
+            "node": "Hedra audio",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hedra Image": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hedra audio": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image To Hedra": {
+      "main": [
+        [
+          {
+            "node": "Merge audio image",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Upload Audio To Hedra": {
+      "main": [
+        [
+          {
+            "node": "Merge audio image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge audio image": {
+      "main": [
+        [
+          {
+            "node": "split  audio image Ids",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split  audio image Ids": {
+      "main": [
+        [
+          {
+            "node": "Create Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Video": {
+      "main": [
+        [
+          {
+            "node": "Wait 5 Min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5 Min": {
+      "main": [
+        [
+          {
+            "node": "Fetch Video URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Video URL": {
+      "main": [
+        [
+          {
+            "node": "Wait 10 sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 10 sec": {
+      "main": [
+        [
+          {
+            "node": "Latest Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Upload GDrive": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Upload a video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download video": {
+      "main": [
+        [
+          {
+            "node": "Upload GDrive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Latest Video": {
+      "main": [
+        [
+          {
+            "node": "Download video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Tavily",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Hedra Image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Tavily": {
+      "main": [
+        [
+          {
+            "node": "OpenAI audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a4c5ea1c-af94-4861-9c61-6f0bf5bb8538",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "QKB9jsC9liaucjZw",
+  "tags": []
+}

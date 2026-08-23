@@ -1,0 +1,34 @@
+{
+  "total_manifest_entries": 186,
+  "total_domain_copied": 135,
+  "total_archived": 51,
+  "missing_files_count": 0,
+  "missing_files": [],
+  "errors_count": 0,
+  "errors": [],
+  "domain_counts": {
+    "02_Workflow_Automations_n8n": 20,
+    "04_Mobile_and_Android_Ecosystem": 1,
+    "07_Content_Creation_and_Media_Engines": 21,
+    "03_Prompt_Engineering_and_Frameworks": 31,
+    "01_AI_Agents_and_Autonomous_Systems": 22,
+    "06_Quantitative_Finance_and_Trading": 13,
+    "08_Business_Operations_and_Subbroking": 4,
+    "10_R_and_D_Incubator_Half_Baked_Ideas": 4,
+    "09_LLM_Conversations_and_Syntheses": 5,
+    "05_Code_Snippets_and_Dev_Tools": 14
+  },
+  "actual_domain_counts_on_disk": {
+    "01_AI_Agents_and_Autonomous_Systems": 24,
+    "02_Workflow_Automations_n8n": 23,
+    "03_Prompt_Engineering_and_Frameworks": 33,
+    "04_Mobile_and_Android_Ecosystem": 3,
+    "05_Code_Snippets_and_Dev_Tools": 16,
+    "06_Quantitative_Finance_and_Trading": 15,
+    "07_Content_Creation_and_Media_Engines": 23,
+    "08_Business_Operations_and_Subbroking": 6,
+    "09_LLM_Conversations_and_Syntheses": 7,
+    "10_R_and_D_Incubator_Half_Baked_Ideas": 6
+  },
+  "actual_archive_count_on_disk": 51
+}

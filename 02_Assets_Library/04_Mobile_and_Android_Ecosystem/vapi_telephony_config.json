@@ -1,0 +1,24 @@
+{
+  "assistant": {
+    "name": "Maya - Financial Telephony Advisor",
+    "model": {
+      "provider": "google",
+      "model": "gemini-2.5-flash",
+      "temperature": 0.3,
+      "systemPrompt": "You are Maya, an AI Client Advisor for Motilal Oswal Financial Services. Keep responses under 2 sentences. Be professional, concise, and helpful."
+    },
+    "voice": {
+      "provider": "11labs",
+      "voiceId": "21m00Tcm4TlvDq8ikWAM"
+    },
+    "transcriber": {
+      "provider": "deepgram",
+      "model": "nova-2",
+      "language": "en-US"
+    },
+    "recordingEnabled": true,
+    "endOfCallWebhook": {
+      "url": "https://n8n.domain.com/webhook/vapi-end-of-call"
+    }
+  }
+}

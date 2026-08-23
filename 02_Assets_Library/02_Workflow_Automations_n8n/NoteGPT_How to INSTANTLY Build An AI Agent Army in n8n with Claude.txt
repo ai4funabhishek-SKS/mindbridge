@@ -1,0 +1,196 @@
+
+00:00:00
+Imagine building an entire army of agents from just one prompt. In this video, I'm going to show you exactly how to use the new Cloud 4 Opus to instantly generate an entire set of workflows. You'll see firsthand how easy it is to spin up a master orchestrating agent, create specialized subworkflows that report to that agent, and lastly, adding tools dynamically to those sub agents without you writing a line of code yourself. And here's the craziest part. This entire process will only take minutes from start to finish. I'm going
+
+
+00:00:32
+to walk you through step by step on the fastest way to build sophisticated agent systems, even if you're completely new to automation. Let's dive in. All right, so we're going to tackle two different ways to assemble your agent army. Both involve only one prompt each, but one of them is going to use a cloud project, and one of them we're going to just send a straight chat message. And before I show you how this prompt works and how this entire system works, let's just prove that it does work. Now if you send
+
+
+00:00:58
+this entire prompt we have here along with a series of files these are all JSON files with one master agent right here called retrofure master assistant then you have all these subworkflows that report to this orchestrating agent. So pretty much we're using Cloud4 opus and the power of extended thinking and web search to be able to look at these files, get a handle for how to create the AI agent module, how they connect together, what kind of tools can be attached, and if we need to supplement this information with additional
+
+
+00:01:33
+information not in Claude's training, we can use web search, which is a newer feature in the past couple months. And if we're using Opus, all we have to do is wait around five to 10 minutes for it to run through this entire workflow. And you'll see it first drafts multiple sets of agents that it could put together. And then if I ask it for just a sample of three of these agents and after 5 to 10 minutes, Claude 4 Opus uses all its tools at its disposal to come up with not just a draft of different agents,
+
+
+00:02:02
+but it will create a draft of the first three agents. And if you want, you can keep going and say create the rest. And the result is you get a series of JSON files like this one. And you can click on the little drop down here. You'll see we've put together all of these different agents with one single prompt. And then we can just go here, copy, and seamlessly go into NANE, paste this, and now you have an agent that isn't just an empty agent. You can double click and you'll see that an entire prompt on how
+
+
+00:02:34
+the agent works and how it should use all of its sub tools is set up for you literally in minutes and ready to go. And if you click out, you'll see all the different sub workflows that it's come up with that it thinks would be suitable for this kind of business or this kind of task they're trying to accomplish. But wait, there's more. We don't just create these subworkflow drafts. It actually can create the subworkflows themselves. So if we click from tab to tab here, this is the first workflow put
+
+
+00:03:03
+together which is called the sustainability impact agent where it has access to different tools that it has decided make the most sense given this agents ambitions. And once again all of these sub agents have instructions of their own with a reference material on how to call their subtools as well. So now we basically are creating agent section where each agent has another agent and both of them have instructions on how they should operate. If we keep going, you'll see all the different agents here from the lodge coordination
+
+
+00:03:32
+agent to the real-time conditions agent, each with not only its own set of tools, but it's smart enough to decide whether or not it should use maybe chat GBT OpenAI or anthropics model for the given task as well. So, we have that dynamic nature there. And then you have your entire set of agents with different tools with different functionalities and ambitions all reporting to the central agent itself. Now, before we get into the nitty-gritty of the prompt itself, I want to walk you through the logic of
+
+
+00:04:02
+how this works and why this works. So, not too long ago, we were all blessed with yet another model. In this case, we got the Cloud 4 model where we have Claude 4 sonnet and Cloud4 opus. Not only that, when you combine Claude 4 with extended thinking, a feature available to all, as well as web search, something also newly available in the past month or so, it becomes a trifecta. this perfect marriage of intelligence with the ability to search as well as an extension of reflection over time. If you've watched my past video, you
+
+
+00:04:34
+already know that it's possible to create out of the box and end workflows just using claude. And previously, I had to supplement it with a cheat sheet, a series of nodes for it to understand. But now that we have web search at our disposal and extended thinking together, we can not only use the power of claude that natively is decent at any workflows, but now we can really supercharge it with examples of these agents and just allow it to do a monkey see monkey do understand the structure, understand how these tools are attached
+
+
+00:05:04
+and understand the relationship of subworkflows to different types of agents. Now the most central concept here is the AI agent module in NAIDEN. And this module is based on something called Langchain which is a framework that really changed the entire course of the NAN community where now you have some central agent that takes in a prompt that can speak to different tools, can use a language model and can use an internal memory. And overall, NADN, like every other automation tool, uses JSON, which stands for JavaScript
+
+
+00:05:35
+object notation to denote and be able to bring these workflows to life the way you see them visually. The fact that they're all based on JSON, allows us to manipulate and generate these JSONs using a language model like Cloudfar Opus to be able to basically be able to create the JSON itself, the entire schema, and import it into any. But unlike typical workflows they would have seen my tutorial and probably tons of other tutorials coming out on this AI agent tool is special not just in the sense of what it can do but how it
+
+
+00:06:07
+operates. So if we take a look at the tools here you can't just use any tool from a specific provider. There are different functionalities or methods available to the AI agent that aren't necessarily the only functionalities you can have. For example, you might have a node that allows you to watch new rows being added to a Google sheet, right? And every time you watch a new row come in, that triggers an entire workflow. Technically, with an AI agent, they wouldn't really play very well. An AI agent would want some form of very
+
+
+00:06:37
+specific action to occur that's triggered externally from the agent itself. So taking the Google Sheets example, it would be able to add a new row, receive new rows, search new rows, something that's very functional and isn't necessarily triggerbased. So, keeping that in mind, if you were just to ask Claude out of the box, build me an AI agent workflow, you could get some results that are decent, but it will basically struggle with understanding what tools it can use, but most likely it will struggle to
+
+
+00:07:06
+delineate between what tools can it use, what are the nodes that I can write JSON for to visualize those tools, and most importantly, what are the different tiers of methods that I can have access to as an AI agent, which is different from a standard workflow you put together and edit it in. And I'm not spoiling the rest of the video by telling you that the crux of being able to do this entire process relies on the ability to create these tools reliably in the exact way that the AI agent node expects. So the overall goal is that
+
+
+00:07:37
+we're able to create a series of JSONs. One that acts as our orchestrator and the others that act as our sub aents. All of which ideally don't have their own subworkflows because then you'll have agents with subworkflows with subworkflows and this entire chain can keep going on. Now you can totally do that if you wish but for simplicity sake I ideally wanted to just go from orchestrating agent to sub workflows that all have tools. So that's the general structure that we're going for at least with our approach. So now that
+
+
+00:08:07
+we have that background, we're safe to dive straight into this prompt. And just for the pure comprehension of every part, I will read through it and basically give a voice over for the parts you should really care about. Okay, so let's give it a read. You are an expert NAND workflow architect and systems designer. Your primary mission is to generate a comprehensive, functional and importable NAN AI agent system based on the provided business description strictly emulating the structural patterns, node types and
+
+
+00:08:37
+connection methods. So in this case, I'm just giving it a series of examples here. So especially for the AI agent nodes and their tools via AI tool. So this here is a part of the underlying JSON that basically denotes to the agent what is attached to that agent and that's where the attachment of the tools comes into play. We then say your paramount goals are to ensure all generated N&N workflow JSON is 100% valid meaning it's not corrupt, importable and entirely free of property value errors. Now what are property
+
+
+00:09:06
+value errors? These errors pop up quite a bit when the JSON is generated by some form of language model, but it's missing key parameters or key components that any is expecting because it's expecting those and it needs those to be able to visualize it the way you see it on a screen. It's not able to actually import it. So, I'm trying to have it reflect using that extended thinking function and make sure that before we import it into NADN, there's a very high likelihood that it's going to actually
+
+
+00:09:32
+work. Next, I instructed that there's going to be two distinct stages. First, after analyzing the business description provided at the end of this message, you must conceptualize and list directly in the chat six to eight potential specialized AI agent names. So, in this case, I'm saying I want you to come up with six to eight ideas. Brainstorm on the types of agents we want to create. This gives us a baseline to actually work from. Now the next part is for each of the conceptual agents provide a
+
+
+00:09:59
+concise one-sensit nodes or verifiable public APIs that your web search for tools not covered in provided examples indicates would be the most appropriate for these tasks. Do not proceed with any unverified or hallucinated tools or APIs. Now what is this last part about here? Hallucinated tools or APIs. Once in a while, even using Opus, it will create a tool that is a fictional non-existent API specific to company X. So imagine you said company X has these services, they have this stack. It might
+
+
+00:10:35
+accidentally create an HTTP request, which is a request to an API and call it company.x.api and basically make it out of thin air, which is not what we want. We want our tools to have a high likelihood of being grounded and being actually functional. And from these six to eight ideas we come up with, we actually just want to start with creating three of the most impactful of these workflows. Now, there's two different reasons why I'm saying three here. First of all, if you let it create six to eight workflows in one shot and
+
+
+00:11:05
+you're just on the Claude Pro plan using Cloud Opus and extended thinking, you might completely use all your credits in one shot. So when I say three, it just gives you the ability to quickly audit whether or not it's working, whether or not it's adding the tools you'd expect before you commit and donate all your credits for the next 6 to 7 hours to Anthropic. And the second reason is obviously time because this will take at least 5 to 10 minutes to put together and you don't want to wait half an hour
+
+
+00:11:32
+all to find out that seven of your workflows are completely not usable. Now, this second stage is completely optional. And if you want to move ahead and complete the remaining of the initial draft of agents they came up with, then you can just say, "Cool, you did a great job. Let's finish off with the rest of the agents." And then with this instruction, it should know exactly what it next step should be. Now, if we scroll down, I want to focus on this specific instruction here that says, "These specialized agents should utilize
+
+
+00:11:59
+two to three with an absolute maximum of five, if genuinely distinct, critical, and verifiable, real tools, and must have correctly connected response and try again set nodes wired to the respective AI agent node success and error outputs." And what does that mean in plain English? If we pop over to the second tab here, all we're asking is that whatever tools you choose, make sure they're legit tools. They're not made up. And number two, connect a set response and a try again step for the AI agent in case something goes wrong, it
+
+
+00:12:31
+can try again in case there's some form of temporary error. And with that, if we go back, we just finish off by adding the business description of the underlying business. And this is what makes this so powerful that you can use this entire prompt and you just change the very bottom. And the reason why I added this business at the very bottom is when it comes to prompt engineering, at least for now, a prompt will typically be paid attention to at the very beginning and the very end of the prompt. So we want to make sure that the
+
+
+00:12:59
+business and the underlying mechanisms of that business are really paid attention to by the language model. In this case, I won't read all of this, but pretty much it goes through this fake business that I came up with that has a series of different operations, and we're just trying to find ways to optimize for those operations. Now, where this becomes super exciting is when we add specifications for what kind of tools are using, and we find a way to create a cloud project to make a much more sophisticated version of this
+
+
+00:13:26
+prompt. But just in case you missed something on this prompt, I'll be making this available in the description below so you can go through it, change it, and do whatever you want to your heart's content to optimize it for your oneshot workflow. Now, for our next three samples we're going to take a look at, we're going to analyze three completely hypothetical businesses. One is called Flexiflow Studios. That's a Tik Tok agency. We're going to look at a dessert place called Unicorn Milkshake. And then
+
+
+00:13:52
+we're going to look at Chaos Coffee. Each of them uses different tools but they have some similarities. So Flexiflow uses things like ClickUp, Air Table and Slack and Google. And then Unicorn Milkshake uses Zoom as well as those tools as well and monday.com. And then Chaos Coffee uses a mixture of what both of these use. Now this is a purposeful example because of the big trick and the big nugget I'm about to show you next. If we pop into our Cloud project, we have quite a few different things going on here. We have a cheat
+
+
+00:14:24
+sheet guide that we put together. We also have a special file here called agents_tools.json. And this is going to be the golden nugget you're going to learn from this video. And then we have just another set of workflows that have some form of master orchestrating agent and sub aents. And what I'll do is along with that prompt I provided you initially, I'll also provide you with a series of files that you can use as well to add to a project or use in a prompt. So you can use this as well without
+
+
+00:14:51
+having to build that initial workflow yourself. Now for this prompt, it took so much time that I refused for it to be copycatted all over YouTube. So this prompt will be available to my early AI adopters community members exclusively in the community. But for the rest, I will walk you through how this agent tools file works because this will open so many doors for you. If we go into this agent tools aen, you'll think that I'm a madman for putting one AI agent with multiple many tools. Now, do I
+
+
+00:15:23
+intend on ever running this workflow? No. What I'm doing is a bit of a cheat code. If you remember before, if you go to something like, let's say, Asana, which is a project management tool, and you go under options, while you can use all of these in any, the AI agent module, like I said before, can't necessarily use all of these tools. It can use a subset of these different methods. So, if I had some form of trigger action, let's go here on a new asana event. Let's just bring this to the board because this is
+
+
+00:15:53
+the easiest way for you to understand what's happening. I physically can't connect this as a tool. It will not accept it because this is a trigger. It's not something that the agent module can actually play nice with. Which is why you'll see that when you add a tool to the agent module and you click on asauna, we won't have as many options as we saw before. I think we had 22 options before, but now we can only do these operations using the agent module, which is where this complexity comes in. that's made me spend hours trying to
+
+
+00:16:26
+figure this out. And knowing that a lot of these different services like Zoho, like Monday, like ClickUp, which are actual services that most businesses use, not all businesses use Air Table and not all businesses use Google Sheets. So what happens if you have these kinds of tools in your toolbox? Well, if we can't use web search reliably to understand how to attach these to the agent, and if we don't have a knowledge base we want to constantly feed of examples of workflows with these exact tools, what we could do is just
+
+
+00:16:57
+put all of the tools that we care about, attach it to one agent, and then download that as a JSON, and technically we can use that as our mini knowledge base now to pseudo fine-tune our agent in Claude to understand how to put together a Slack connection to an agent. How to put together an ASA connection to an agent. Same with Monday, same with Zoho. So, this becomes your cheat code where you can use whatever you want depending on your particular business or service you're offering. You can add
+
+
+00:17:27
+whatever node you wish. Let's say a quadrant node or let's say an airtop tool node. And then you can just hook up all the different functionalities you think you'd want to use and then use that JSON as a part of your knowledge base to allow Claw to have a better understanding of how to put everything together when it comes to the AI agent module. Once you have that put together along with the cheat sheet, you now have something super potent that you only have to just provide a description of a business as well as the tools used in
+
+
+00:17:56
+that business and you can crank out these workflows fairly reliably over and over again. And for our first example, we have Flexiflow Studios, which is a beautiful name. Now, all we have as an instruction is build an agent army for this business. We describe the business itself and all we do is we just drop in the names of the tools. So, we're using Zoom, ClickUp, we're using Slack, some Google Sheets, some Air Table, and then we basically contextualize it in one big paragraph. And with our supercharged
+
+
+00:18:26
+prompt I put together specifically for this claude project, this just takes this specific snippet and then creates a list of hypothetical agents that it could put together. And then it creates a short list of three agents, a client request handler agent, a project setup agent, and a team coordination agent. And then after some contemplation, it puts together the JSON for the master coordinator, the request handler and the rest. And all you have to do is either download the actual text file or you can
+
+
+00:18:59
+copy it and import it directly into any. And what you get is the following where you have the Flexiflow master AI coordinator with all the subworkflows. it's drafted and then you have a draft of those subworkflows where you have things like Air Table, you have Slack, and notice how they're not invalid. They're all valid. We now have monday.com, we have Slack again, and they're not broken because it had that additional training data, that cheat sheet of the different nodes that it could use and repurpose from. And then
+
+
+00:19:30
+if we take a look at the final one here, we now have, you can see here, ClickUp as well as Zoom. And all of these are logical. So this one, a team coordination AI agent has something for scheduling Zoom meetings, team availability checks by sending messages and then creating tasks for that team. And if you so wanted to add more tools, you could just change the underlying prompt and tell it, you know what, draft five tools for each thing. Now, as you add more tools, you might add some more bloat, some unnecessary tooling, but the
+
+
+00:20:02
+whole point of this exercise is to get you started, getting you from zero to 80%. Is this going to be perfect out of the box? Is this going to run on its first try? No. But being able to set the foundation with this head start will help you speed things up and also help you brainstorm in a short amount of time what could be possible. For the second business, we have Pet Pal concurge which is the Uber for pet care connecting busy pet parents with trusted local sitters. In this case, we seem to also be using
+
+
+00:20:29
+Air Table, Slack, Zoom, um, and in this time ASA right here. And then we get the following workflows where we have the master agent with a series of different nodes. We have the emergency care coordinator, the provider management agent, the booking and scheduling agent, and then something like the photo update agent. I would imagine the photos of the pets themselves, maybe their profiles on some form of portal or website. And in terms of the subworkflows, we have the emergency care AI agent that has access
+
+
+00:21:00
+to air table to search available providers for a given dog's doctors. And then we have Slack to alert nearby providers. And then for ASA, now we have create urgent task if needed. So it's trying to come up and rationalize through different workflows. And like I said before, each one has a starter prompt that you can use that's already pretty sophisticated out of the box. And all you can do is kind of just fine-tune it for your specific use case. We also have a provider management AI agent that uses in this case money.com, airtable
+
+
+00:21:31
+and Gmail. And then we have one more which is the booking scheduling that uses a combination of Google Sheets, ASA and scheduling a consultation using Zoom. So now that we have all the puzzle pieces set up, so it can just pick and choose these different nodes and we don't have to obsess over the functionality, the fact that these nodes are connecting properly to the agent. It can now also focus on the higher level business decisions on what is practical. What kind of agents make the most sense for this kind of business given the
+
+
+00:21:59
+profile. And last but not least, we have Chaos Coffee Co. that runs 15 quirky coffee shops known for their organized chaos. And in this case, we mention once again Google Sheets, Air Table, and ClickUp. Obviously, I could have added more. I just wanted to be able to use that one file for all of these use cases. So, just bear with me. And in this case, yet again, we're able to crank out this operator agent here that has its set of instructions. And then we have subworkflows like inventory ingredient discovery, a recipe
+
+
+00:22:29
+innovation agent, and a quality control agent as well as a financial analytics agent as well. So, it's very dynamic to the specific business we have. And if we pop into the subworkflows, we have an interlocation coordinator AI that has access to track deliveries via monday.com, send coordination alerts in Slack, and then create a coordination task in ClickUp. We have an inventory discovery agent that also has the ability to, in this case, also update ingredients in the database in Air Table, update inventory board in
+
+
+00:23:01
+money.com, and yet again create a task. And last but not least, we have my favorite, which is the recipe innovation agent that has access to schedule tasting sessions with Zoom. Document recipes in Google Sheets and announce any big recipes to the whole crew. I think there's 15 locations in this hypothetical company. So, this would be the final result here. And then you have once again yet another prompt orchestrating these agents. You can see it's pretty consistent from workflow to workflow. And that's pretty much it. So
+
+
+00:23:30
+hopefully you found this as cool as I did building it and this will be something useful to you to create your own drafts of AI agent networks to get you off the ground and get you from 0 to 80 as quickly as possible. Once again, if you want access to the very first prompt along with a sample agent network that you can use to try to repurpose this, then I'll make that available in the first link in the description below. But if you want access to the supercharged prompt along with the underlying cheat sheet guide for the
+
+
+00:23:55
+Claude project, then that will be in my community in the second link in the description below where you'll have access to more mad scientist experiments than you can imagine and exclusive content that you'll never see on YouTube. Enjoy building and I'll see you in the next
+

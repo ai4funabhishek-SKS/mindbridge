@@ -1,0 +1,69 @@
+{
+  "prompts": [
+    {
+      "command": "/summarize",
+      "title": "Summarize Content",
+      "template": "Summarize the following text while preserving all key statistics, action items, and technical concepts:\n<input_text>\n{{TEXT_INPUT}}\n</input_text>\nRules:\n1. Provide a 3-bullet executive summary followed by core findings.\n2. Maintain high factual density.\n3. Return only the summary text without conversational preamble."
+    },
+    {
+      "command": "/eli5",
+      "title": "Explain Like I'm 5",
+      "template": "Explain the following concept in clear, simple terms suitable for a 5-year-old:\n<concept>\n{{TEXT_INPUT}}\n</concept>\nRules:\n1. Use an intuitive real-world analogy.\n2. Avoid technical jargon.\n3. Return only the simplified explanation."
+    },
+    {
+      "command": "/fix-grammar",
+      "title": "Fix Grammar and Spelling",
+      "template": "Fix all grammatical, punctuation, and spelling errors in the following text:\n<input_text>\n{{TEXT_INPUT}}\n</input_text>\nRules:\n1. Preserve author's voice and tone.\n2. Return ONLY the corrected text."
+    },
+    {
+      "command": "/glossary",
+      "title": "Generate Glossary",
+      "template": "Extract all technical terms and generate an alphabetical glossary with 1-sentence definitions:\n<input_text>\n{{TEXT_INPUT}}\n</input_text>"
+    },
+    {
+      "command": "/toc",
+      "title": "Generate Table of Contents",
+      "template": "Generate a nested Markdown Table of Contents from headings:\n<document>\n{{TEXT_INPUT}}\n</document>"
+    },
+    {
+      "command": "/make-shorter",
+      "title": "Condense Text",
+      "template": "Condense the text by 50% while retaining all critical facts:\n<input_text>\n{{TEXT_INPUT}}\n</input_text>\nReturn only condensed text."
+    },
+    {
+      "command": "/make-longer",
+      "title": "Elaborate Text",
+      "template": "Elaborate on the text with rigorous technical detail and examples:\n<input_text>\n{{TEXT_INPUT}}\n</input_text>\nReturn only expanded text."
+    },
+    {
+      "command": "/remove-urls",
+      "title": "Strip URLs",
+      "template": "Remove all URLs while keeping anchor text:\n<input_text>\n{{TEXT_INPUT}}\n</input_text>\nReturn only cleaned text."
+    },
+    {
+      "command": "/tweet",
+      "title": "Rewrite as Tweet",
+      "template": "Transform into a high-impact viral tweet under 280 chars:\n<input_text>\n{{TEXT_INPUT}}\n</input_text>"
+    },
+    {
+      "command": "/thread",
+      "title": "Rewrite as Tweet Thread",
+      "template": "Transform into an engaging 5-7 post X thread:\n<input_text>\n{{TEXT_INPUT}}\n</input_text>"
+    },
+    {
+      "command": "/simplify",
+      "title": "Simplify Language",
+      "template": "Rewrite in simple, active business English:\n<input_text>\n{{TEXT_INPUT}}\n</input_text>"
+    },
+    {
+      "command": "/emojify",
+      "title": "Add Contextual Emojis",
+      "template": "Insert emojis at natural breaks. Keep text unchanged:\n<input_text>\n{{TEXT_INPUT}}\n</input_text>"
+    },
+    {
+      "command": "/translate-zh",
+      "title": "Translate to Chinese",
+      "template": "Translate to professional Simplified Chinese:\n<input_text>\n{{TEXT_INPUT}}\n</input_text>"
+    }
+  ]
+}

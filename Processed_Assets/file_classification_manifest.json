@@ -1,0 +1,1862 @@
+[
+  {
+    "raw_path": "Raw_copies/1731539795807-AIAgentPersonalAssistant.json",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".json",
+    "content_summary": "n8n workflow for personal assistant AI agent",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_AI_Agent_Army_Generation_and_Subworkflow_Orchestration.md",
+    "rationale": "High relevance to AI agent orchestration in n8n"
+  },
+  {
+    "raw_path": "Raw_copies/1731539944305-UploadDocumenttoPineconeAgent.json",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".json",
+    "content_summary": "n8n workflow for uploading documents to Pinecone vector DB",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_RAG_Vector_Ingestion_and_Pinecone_Workflows.md",
+    "rationale": "Directly maps to the Pinecone RAG ingestion playbook"
+  },
+  {
+    "raw_path": "Raw_copies/1731539944391-RAGAIAgent.json",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".json",
+    "content_summary": "n8n workflow for a RAG AI Agent",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_RAG_Vector_Ingestion_and_Pinecone_Workflows.md",
+    "rationale": "Relevant for RAG implementations"
+  },
+  {
+    "raw_path": "Raw_copies/1731540016948-LabelEmailsBlueprint.json",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".json",
+    "content_summary": "n8n workflow for labeling and organizing emails",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Human_in_the_Loop_and_Executive_Inbox_Automation.md",
+    "rationale": "Fits inbox management and email labeling automation"
+  },
+  {
+    "raw_path": "Raw_copies/1731548473948-SocialMediaAutomation.json",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".json",
+    "content_summary": "n8n workflow for automating social media posting",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Omnichannel_Social_Media_Syndication_and_Repurposing.md",
+    "rationale": "Core social media workflow useful for the syndication GM"
+  },
+  {
+    "raw_path": "Raw_copies/1731557585964-PhoneCallingTool.json",
+    "domain": "04_Mobile_and_Android_Ecosystem",
+    "file_type": ".json",
+    "content_summary": "Configuration or n8n node for phone calling tools",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Voice_AI_Telephony_and_Vapi_Calling_Engines.md",
+    "rationale": "Telephony and calling tool matches voice AI playbook"
+  },
+  {
+    "raw_path": "Raw_copies/1_post_everywhere.pdf",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".pdf",
+    "content_summary": "Strategy guide for posting content everywhere",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Omnichannel_Social_Media_Syndication_and_Repurposing.md",
+    "rationale": "Conceptual guide for omnichannel strategy"
+  },
+  {
+    "raw_path": "Raw_copies/1_post_everywhere_N8N_TEMPLATE.json",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".json",
+    "content_summary": "n8n template for posting content across platforms",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Omnichannel_Social_Media_Syndication_and_Repurposing.md",
+    "rationale": "Implementation of the omnichannel strategy in n8n"
+  },
+  {
+    "raw_path": "Raw_copies/1fd67311-2f90-80f4-aa29-e8a18a461573.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "Unknown GUID json file, looks like raw data export",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Opaque filename and likely temporary data"
+  },
+  {
+    "raw_path": "Raw_copies/2025-01-18-pdf-1-TechAI-Goolge-whitepaper_Prompt Engineering_v4-af36dcc7a49bb7269a58b1c9b89a8ae1.pdf",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".pdf",
+    "content_summary": "Google whitepaper on prompt engineering best practices",
+    "reusability_score": 9,
+    "action": "reference_only",
+    "target_gm": "",
+    "rationale": "High value reference material, no synthesis needed"
+  },
+  {
+    "raw_path": "Raw_copies/22-promptengg.pdf",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".pdf",
+    "content_summary": "Guide or presentation on prompt engineering",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Frontier_Prompt_Engineering_Principles_and_Mental_Models.md",
+    "rationale": "Useful theoretical guidelines"
+  },
+  {
+    "raw_path": "Raw_copies/24feb2026.txt",
+    "domain": "ARCHIVE",
+    "file_type": ".txt",
+    "content_summary": "Random date text file, likely daily notes",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Too specific/ephemeral to be reused"
+  },
+  {
+    "raw_path": "Raw_copies/4K Video Creator.json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "n8n or config for 4K video creation automation",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Generative_AI_Video_and_Avatar_Cloning_Workflows.md",
+    "rationale": "Directly impacts video generation workflows"
+  },
+  {
+    "raw_path": "Raw_copies/4QsExsft5X.pdf",
+    "domain": "ARCHIVE",
+    "file_type": ".pdf",
+    "content_summary": "Opaque named PDF file",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Cannot identify content from filename, likely transient"
+  },
+  {
+    "raw_path": "Raw_copies/65acf408-6d93-4013-9e7e-5300deef1c0d.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "UUID named JSON payload",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Machine generated payload"
+  },
+  {
+    "raw_path": "Raw_copies/AGENTS.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Overview or documentation of available agents",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_ZeroClaw_Apex_MultiAgent_Workforce_Architecture.md",
+    "rationale": "Core agent architecture documentation"
+  },
+  {
+    "raw_path": "Raw_copies/AI Clone Creator.json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Workflow or config for creating AI clones/avatars",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Generative_AI_Video_and_Avatar_Cloning_Workflows.md",
+    "rationale": "Essential for avatar cloning generation"
+  },
+  {
+    "raw_path": "Raw_copies/AI Marketing Team.json",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".json",
+    "content_summary": "Configuration for a multi-agent marketing team",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_ZeroClaw_Apex_MultiAgent_Workforce_Architecture.md",
+    "rationale": "Multi-agent setup for specialized roles"
+  },
+  {
+    "raw_path": "Raw_copies/AI PROMPT MAKER.txt",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".txt",
+    "content_summary": "Prompt generation scripts or examples",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Prompt_Generators_and_Form_Workflows.md",
+    "rationale": "Contains prompt generator logic"
+  },
+  {
+    "raw_path": "Raw_copies/AI prompt generator.txt",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".txt",
+    "content_summary": "Alternative prompt generation script",
+    "reusability_score": 6,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Likely duplicate or superseded by AI PROMPT MAKER"
+  },
+  {
+    "raw_path": "Raw_copies/AIS AI-Powered Stock Analysis Assistant.json",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".json",
+    "content_summary": "Workflow for an AI stock analysis assistant",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Stock_Screening_and_Technical_Analysis_Pipelines.md",
+    "rationale": "Highly relevant for financial screening"
+  },
+  {
+    "raw_path": "Raw_copies/AIS Analyst Helper.json",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".json",
+    "content_summary": "Assistant workflow for financial analysts",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Stock_Screening_and_Technical_Analysis_Pipelines.md",
+    "rationale": "Enhances automated analyst workflows"
+  },
+  {
+    "raw_path": "Raw_copies/AIS Inspiration long videos.json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Workflow for generating long form video inspiration",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+    "rationale": "Relevant for YouTube long form production"
+  },
+  {
+    "raw_path": "Raw_copies/AIS News Reader Hedra (1).json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Workflow for an AI news reader using Hedra",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Generative_AI_Video_and_Avatar_Cloning_Workflows.md",
+    "rationale": "Directly uses AI video/avatar tech for news reading"
+  },
+  {
+    "raw_path": "Raw_copies/AIS Resume Indeed.json",
+    "domain": "08_Business_Operations_and_Subbroking",
+    "file_type": ".json",
+    "content_summary": "Workflow for parsing or submitting resumes on Indeed",
+    "reusability_score": 7,
+    "action": "new_gm_needed",
+    "target_gm": "GM_Recruitment_and_Resume_Parsing_Automation.md",
+    "rationale": "Substantial distinct workflow not covered by existing GMs"
+  },
+  {
+    "raw_path": "Raw_copies/AIS Social Media Reels Sheet.json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Workflow linking social media reels to Google Sheets",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Omnichannel_Social_Media_Syndication_and_Repurposing.md",
+    "rationale": "Relevant for tracking reels in sheets"
+  },
+  {
+    "raw_path": "Raw_copies/AI_App_Factory_Blueprint_and_First_Product_Foundation.docx",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".docx",
+    "content_summary": "Document outlining AI app factory foundation",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Autonomous_AI_App_Factory_20_Stage_Lifecycle.md",
+    "rationale": "Directly supports the App Factory blueprint"
+  },
+  {
+    "raw_path": "Raw_copies/AI_App_Factory_Complete_20_Stage_Master_Blueprint.docx",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".docx",
+    "content_summary": "Comprehensive 20 stage master blueprint for AI app factory",
+    "reusability_score": 10,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Autonomous_AI_App_Factory_20_Stage_Lifecycle.md",
+    "rationale": "This is the source document for the 20-stage GM"
+  },
+  {
+    "raw_path": "Raw_copies/Advanced ChatGPT Prompt Engineering_Mindstream x HubSpot.pdf",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".pdf",
+    "content_summary": "Advanced prompt engineering guide from Mindstream and HubSpot",
+    "reusability_score": 9,
+    "action": "reference_only",
+    "target_gm": "",
+    "rationale": "Standalone PDF guide, keep in Assets Library as reference"
+  },
+  {
+    "raw_path": "Raw_copies/Auto Graphic Design System.json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Workflow for automated graphic design",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Graphic_Design_and_YouTube_Thumbnail_Engines.md",
+    "rationale": "Perfect match for graphic design automation GM"
+  },
+  {
+    "raw_path": "Raw_copies/BROC_NEW_Elevate.pdf",
+    "domain": "ARCHIVE",
+    "file_type": ".pdf",
+    "content_summary": "Brochure for Elevate",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Marketing brochure, not reusable playbook material"
+  },
+  {
+    "raw_path": "Raw_copies/Best practices for prompt engineering with.pdf",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".pdf",
+    "content_summary": "Best practices guide for prompt engineering",
+    "reusability_score": 8,
+    "action": "reference_only",
+    "target_gm": "",
+    "rationale": "Good reference material, keep as standalone"
+  },
+  {
+    "raw_path": "Raw_copies/Build a Premium Skool Resource Downloader & LLM Thread Collator Web Application (1).docx",
+    "domain": "10_R_and_D_Incubator_Half_Baked_Ideas",
+    "file_type": ".docx",
+    "content_summary": "Design doc for a Skool resource downloader",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Skool_Community_Resource_Downloader_and_LLM_Thread_Collator.md",
+    "rationale": "Directly corresponds to the Skool GM"
+  },
+  {
+    "raw_path": "Raw_copies/Claude Project System Prompt (1).pdf",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".pdf",
+    "content_summary": "System prompts for Claude projects",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Developer_Assistant_System_Prompts_and_Custom_Instructions.md",
+    "rationale": "Useful system prompts to incorporate"
+  },
+  {
+    "raw_path": "Raw_copies/Claude Prompt Guidelines (1).pdf",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".pdf",
+    "content_summary": "Official guidelines for prompting Claude",
+    "reusability_score": 8,
+    "action": "reference_only",
+    "target_gm": "",
+    "rationale": "Reference material"
+  },
+  {
+    "raw_path": "Raw_copies/Compiled n8n Docs (1).pdf",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".pdf",
+    "content_summary": "Compilation of n8n documentation",
+    "reusability_score": 8,
+    "action": "reference_only",
+    "target_gm": "",
+    "rationale": "Large reference document"
+  },
+  {
+    "raw_path": "Raw_copies/Complete Social Media Automation.json",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".json",
+    "content_summary": "Comprehensive social media automation workflow",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Omnichannel_Social_Media_Syndication_and_Repurposing.md",
+    "rationale": "Enhances omnichannel syndication"
+  },
+  {
+    "raw_path": "Raw_copies/Copy of YouTube Comments (TEMPLATE) (1).xlsx",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".xlsx",
+    "content_summary": "Template for managing YouTube comments",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+    "rationale": "Template for YouTube operations"
+  },
+  {
+    "raw_path": "Raw_copies/Copy of YouTube Videos (TEMPLATE) (1).xlsx",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".xlsx",
+    "content_summary": "Template for tracking YouTube videos",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+    "rationale": "Template for YouTube operations"
+  },
+  {
+    "raw_path": "Raw_copies/Copy of compiled-n8n-docs (1).docx",
+    "domain": "ARCHIVE",
+    "file_type": ".docx",
+    "content_summary": "Duplicate compiled n8n docs",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Duplicate of the PDF version"
+  },
+  {
+    "raw_path": "Raw_copies/Crypto Agent Prompts.docx",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".docx",
+    "content_summary": "Prompts tailored for a crypto trading agent",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_MultiAgent_Algorithmic_Trading_System_Architecture.md",
+    "rationale": "Fits into crypto trading agents framework"
+  },
+  {
+    "raw_path": "Raw_copies/DeepSeek-LLM research threads- AAG01.docx",
+    "domain": "09_LLM_Conversations_and_Syntheses",
+    "file_type": ".docx",
+    "content_summary": "Research threads on DeepSeek LLM capabilities",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_DeepSeek_Architecture_Reasoning_Models_and_Ecosystem_Synthesis.md",
+    "rationale": "Core research data for DeepSeek GM"
+  },
+  {
+    "raw_path": "Raw_copies/Email_Inbox_Manager (1).json",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".json",
+    "content_summary": "Workflow for managing email inboxes",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Human_in_the_Loop_and_Executive_Inbox_Automation.md",
+    "rationale": "Inbox management workflow"
+  },
+  {
+    "raw_path": "Raw_copies/Emojify.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Prompt to add emojis to text",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Micro-prompt for text transformation"
+  },
+  {
+    "raw_path": "Raw_copies/Explain like I am 5.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "ELI5 prompt template",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Classic micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/FETCH DYNAMIC PROMPTS.txt",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".txt",
+    "content_summary": "Script or workflow to fetch prompts dynamically",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Dynamic_Prompt_Repository_Sync_and_n8n_Injection.md",
+    "rationale": "Core piece for dynamic prompt injection"
+  },
+  {
+    "raw_path": "Raw_copies/Firstattempt_perplexity-chatgpt_scalp prompt template.txt",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".txt",
+    "content_summary": "Scalping prompt template using Perplexity/ChatGPT",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_High_Probability_Intraday_and_Scalping_Prompt_Frameworks.md",
+    "rationale": "Directly feeds into scalping prompt framework"
+  },
+  {
+    "raw_path": "Raw_copies/Fix grammar and spelling.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Grammar fixing prompt",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Standard micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/GPT-5 Instagram.json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Instagram automation workflow (named GPT-5)",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Omnichannel_Social_Media_Syndication_and_Repurposing.md",
+    "rationale": "Instagram specific automation"
+  },
+  {
+    "raw_path": "Raw_copies/Generate glossary.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Glossary generation prompt",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/Generate table of contents.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "TOC generation prompt",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/Google_Calendar_MCP (1) (1).json",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".json",
+    "content_summary": "MCP configuration for Google Calendar integration",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Model_Context_Protocol_MCP_and_Superpowers_Integration.md",
+    "rationale": "MCP tool configuration"
+  },
+  {
+    "raw_path": "Raw_copies/Hormozi AI.json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "AI persona configuration inspired by Alex Hormozi for marketing/sales",
+    "reusability_score": 8,
+    "action": "new_gm_needed",
+    "target_gm": "GM_Expert_Persona_Cloning_and_Marketing_Copy_Engine.md",
+    "rationale": "Represents persona cloning for marketing, warrants a separate module"
+  },
+  {
+    "raw_path": "Raw_copies/Inbox Manager Documentation (1).pdf",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".pdf",
+    "content_summary": "Documentation for the inbox manager workflow",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Human_in_the_Loop_and_Executive_Inbox_Automation.md",
+    "rationale": "Supports inbox automation playbook"
+  },
+  {
+    "raw_path": "Raw_copies/Instructions for UI Designer Landin.txt",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".txt",
+    "content_summary": "Instructions for UI Designer AI or human for landing pages",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+    "rationale": "UI dev instructions"
+  },
+  {
+    "raw_path": "Raw_copies/Instructions for UI Designer.docx",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".docx",
+    "content_summary": "More comprehensive instructions for UI design",
+    "reusability_score": 6,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Likely superseded by better system prompts"
+  },
+  {
+    "raw_path": "Raw_copies/KNOWLEDGE.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Agent zero or related knowledge base instructions",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+    "rationale": "Core agent documentation"
+  },
+  {
+    "raw_path": "Raw_copies/List of legal research sources.docx",
+    "domain": "08_Business_Operations_and_Subbroking",
+    "file_type": ".docx",
+    "content_summary": "List of sources for legal research",
+    "reusability_score": 5,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Not core to current playbooks, highly specialized and out of scope"
+  },
+  {
+    "raw_path": "Raw_copies/MO Signature Model Portfolio - 1 pager.pdf",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".pdf",
+    "content_summary": "Model portfolio one pager for Motilal Oswal",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Stock_Screening_and_Technical_Analysis_Pipelines.md",
+    "rationale": "Portfolio reference material"
+  },
+  {
+    "raw_path": "Raw_copies/MULTI_AGENT_TRADING_SYSTEM.json",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".json",
+    "content_summary": "Workflow for multi-agent trading system",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_MultiAgent_Algorithmic_Trading_System_Architecture.md",
+    "rationale": "Directly maps to multi-agent trading architecture"
+  },
+  {
+    "raw_path": "Raw_copies/Make longer.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Prompt to expand text",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/Make shorter.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Prompt to condense text",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/NISM-Series-XV-ResearchAnalyst-Workbook - March 2025.pdf",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".pdf",
+    "content_summary": "NISM Research Analyst workbook",
+    "reusability_score": 9,
+    "action": "reference_only",
+    "target_gm": "",
+    "rationale": "Essential reference material for NISM compliance"
+  },
+  {
+    "raw_path": "Raw_copies/Non-Coder's_GuidetoAI-PoweredWd_PRECONFIG.txt",
+    "domain": "10_R_and_D_Incubator_Half_Baked_Ideas",
+    "file_type": ".txt",
+    "content_summary": "Preconfig guide for non-coders building AI apps",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Non_Coders_AI_Web_Application_Factory_Playbook.md",
+    "rationale": "Source material for non-coder web app playbook"
+  },
+  {
+    "raw_path": "Raw_copies/NoteGPT_How to INSTANTLY Build An AI Agent Army in n8n with Claude.txt",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".txt",
+    "content_summary": "Notes on building AI agent armies in n8n",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_AI_Agent_Army_Generation_and_Subworkflow_Orchestration.md",
+    "rationale": "Directly feeds into agent army orchestration"
+  },
+  {
+    "raw_path": "Raw_copies/PCF_AI_Business_Plan.pdf",
+    "domain": "10_R_and_D_Incubator_Half_Baked_Ideas",
+    "file_type": ".pdf",
+    "content_summary": "Business plan for an AI initiative",
+    "reusability_score": 6,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Historical business plan, not a playbook"
+  },
+  {
+    "raw_path": "Raw_copies/PERFECT_AI_TRADING_SYSTEM_LLM_CHAIN.json",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".json",
+    "content_summary": "LLM chain configuration for trading system",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_MultiAgent_Algorithmic_Trading_System_Architecture.md",
+    "rationale": "Core technical asset for algorithmic trading"
+  },
+  {
+    "raw_path": "Raw_copies/PLAYBOOKS_StepByStep.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Step by step execution playbook instructions",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_ZeroClaw_Apex_MultiAgent_Workforce_Architecture.md",
+    "rationale": "Execution guidelines for agents"
+  },
+  {
+    "raw_path": "Raw_copies/PROTOCOLS.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Communication and behavioral protocols for agents",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+    "rationale": "Core runtime protocols"
+  },
+  {
+    "raw_path": "Raw_copies/Project codename_ FlowScribe (1).docx",
+    "domain": "10_R_and_D_Incubator_Half_Baked_Ideas",
+    "file_type": ".docx",
+    "content_summary": "Project docs for FlowScribe audio intelligence",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Project_FlowScribe_Autonomous_Audio_Intelligence_Engine.md",
+    "rationale": "Directly mapped to FlowScribe GM"
+  },
+  {
+    "raw_path": "Raw_copies/Prompt Engineering Guide-Tutorial.pdf",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".pdf",
+    "content_summary": "Comprehensive prompt engineering tutorial",
+    "reusability_score": 9,
+    "action": "reference_only",
+    "target_gm": "",
+    "rationale": "Reference guide"
+  },
+  {
+    "raw_path": "Raw_copies/Proposal Pointers.pdf",
+    "domain": "08_Business_Operations_and_Subbroking",
+    "file_type": ".pdf",
+    "content_summary": "Pointers for drafting business proposals",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Business_Operations_Compliance_and_Document_Workflows.md",
+    "rationale": "Useful for business ops"
+  },
+  {
+    "raw_path": "Raw_copies/README.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "General repository readme",
+    "reusability_score": 4,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Generic readme, low reuse"
+  },
+  {
+    "raw_path": "Raw_copies/Remove URLs.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Prompt to strip URLs from text",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/Rewrite as tweet thread.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Prompt for tweet thread creation",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/Rewrite as tweet.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Prompt for single tweet creation",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/SEBI - Investor Certification Examination - Financial Education Booklet.pdf",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".pdf",
+    "content_summary": "SEBI financial education booklet",
+    "reusability_score": 9,
+    "action": "reference_only",
+    "target_gm": "",
+    "rationale": "Key compliance and education reference"
+  },
+  {
+    "raw_path": "Raw_copies/SEO Blog Automation System.json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Workflow for automating SEO blog writing",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_SEO_Blog_Generation_and_Content_Strategy_Playbook.md",
+    "rationale": "Core execution workflow for SEO blogs"
+  },
+  {
+    "raw_path": "Raw_copies/SOP_ Download & Compile n8n Documentation into Google Docs (1).pdf",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".pdf",
+    "content_summary": "SOP for downloading and compiling n8n docs",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_n8n_Enterprise_Architectural_Foundations_and_Best_Practices.md",
+    "rationale": "Process documentation for maintaining n8n knowledge"
+  },
+  {
+    "raw_path": "Raw_copies/SOUL.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Agent persona and soul definitions",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+    "rationale": "Defines agent behavioral guardrails"
+  },
+  {
+    "raw_path": "Raw_copies/SOUL_20260815_050116_871.md",
+    "domain": "ARCHIVE",
+    "file_type": ".md",
+    "content_summary": "Duplicate or dated soul definition",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Dated version, supersede by main SOUL.md"
+  },
+  {
+    "raw_path": "Raw_copies/STRICT INSTRUCTIONS.txt",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".txt",
+    "content_summary": "System instructions prioritizing strict formatting",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Developer_Assistant_System_Prompts_and_Custom_Instructions.md",
+    "rationale": "Useful for system prompt enforcement"
+  },
+  {
+    "raw_path": "Raw_copies/Simplify.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Prompt to simplify text",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/Stock Analysis Agent.docx",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".docx",
+    "content_summary": "Documentation for stock analysis agent",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Stock_Screening_and_Technical_Analysis_Pipelines.md",
+    "rationale": "Core component of stock screening"
+  },
+  {
+    "raw_path": "Raw_copies/Summarize.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Summarization prompt",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/TO DO LIST.md",
+    "domain": "ARCHIVE",
+    "file_type": ".md",
+    "content_summary": "Personal or project to do list",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Ephemeral task list"
+  },
+  {
+    "raw_path": "Raw_copies/TOOLS.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Documentation of available tools for agents",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+    "rationale": "Crucial list of agent tools"
+  },
+  {
+    "raw_path": "Raw_copies/TOOLS_InstallationLog.md",
+    "domain": "ARCHIVE",
+    "file_type": ".md",
+    "content_summary": "Installation log for tools",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "One-time installation log"
+  },
+  {
+    "raw_path": "Raw_copies/Tavily's AI.txt",
+    "domain": "09_LLM_Conversations_and_Syntheses",
+    "file_type": ".txt",
+    "content_summary": "Notes on Tavily AI search engine",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_AI_Search_and_Web_Extraction_Engines_Exa_Firecrawl_Tavily.md",
+    "rationale": "Directly relevant to AI search engines"
+  },
+  {
+    "raw_path": "Raw_copies/This deep-dive research.txt",
+    "domain": "09_LLM_Conversations_and_Syntheses",
+    "file_type": ".txt",
+    "content_summary": "Deep dive research notes, generic title",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_DeepSeek_Architecture_Reasoning_Models_and_Ecosystem_Synthesis.md",
+    "rationale": "Assuming it aligns with LLM research"
+  },
+  {
+    "raw_path": "Raw_copies/Translate to Chinese.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Translation prompt",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_MicroPrompt_Deck_and_Text_Transformation_Catalog.md",
+    "rationale": "Micro-prompt"
+  },
+  {
+    "raw_path": "Raw_copies/Trending_YouTube_Videos_copy (1).json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Workflow to fetch trending YouTube videos",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+    "rationale": "Content ideation for YouTube"
+  },
+  {
+    "raw_path": "Raw_copies/Unlimited Content Ideas Documentation (1).pdf",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".pdf",
+    "content_summary": "Guide on generating unlimited content ideas",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Omnichannel_Social_Media_Syndication_and_Repurposing.md",
+    "rationale": "Valuable for content strategy"
+  },
+  {
+    "raw_path": "Raw_copies/Untitled document.pdf",
+    "domain": "ARCHIVE",
+    "file_type": ".pdf",
+    "content_summary": "Untitled document",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Unidentified content, likely mistake"
+  },
+  {
+    "raw_path": "Raw_copies/Upwork Checklist - Skill Arbitrage (1).docx",
+    "domain": "08_Business_Operations_and_Subbroking",
+    "file_type": ".docx",
+    "content_summary": "Checklist for Upwork skill arbitrage",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Freelance_Skill_Arbitrage_and_Upwork_Mastery.md",
+    "rationale": "Direct map to skill arbitrage GM"
+  },
+  {
+    "raw_path": "Raw_copies/VEO_3 (1).json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Veo3 AI integration configuration",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Generative_AI_Video_and_Avatar_Cloning_Workflows.md",
+    "rationale": "Video AI generator"
+  },
+  {
+    "raw_path": "Raw_copies/Veo3 AI Video Generator.json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Veo3 Video generator workflow",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Generative_AI_Video_and_Avatar_Cloning_Workflows.md",
+    "rationale": "Direct asset for video AI generation"
+  },
+  {
+    "raw_path": "Raw_copies/Welcome.md",
+    "domain": "ARCHIVE",
+    "file_type": ".md",
+    "content_summary": "Welcome notes",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Generic welcome message"
+  },
+  {
+    "raw_path": "Raw_copies/When to Use ChatGPT.pdf",
+    "domain": "09_LLM_Conversations_and_Syntheses",
+    "file_type": ".pdf",
+    "content_summary": "Guide on when to use ChatGPT vs other tools",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Zero_Cost_Multi_Provider_LLM_Routing_and_OmniRoute_Matrix.md",
+    "rationale": "Tool comparison and routing logic"
+  },
+  {
+    "raw_path": "Raw_copies/YouTube Content Strategist.json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Workflow for an AI YouTube content strategist",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+    "rationale": "Key persona for YouTube production"
+  },
+  {
+    "raw_path": "Raw_copies/YouTube_Content_Idea_Generator (1).json",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".json",
+    "content_summary": "Workflow to generate YouTube ideas",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+    "rationale": "Supports YouTube ideation"
+  },
+  {
+    "raw_path": "Raw_copies/Youtube Shorts -Demo-.xlsx",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".xlsx",
+    "content_summary": "Demo spreadsheet for YouTube shorts",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+    "rationale": "Data structure for tracking shorts"
+  },
+  {
+    "raw_path": "Raw_copies/_Free_Resource____10_Mega_n8n_automations_v2.json",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".json",
+    "content_summary": "Library of 10 mega n8n automations",
+    "reusability_score": 10,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Mega_Automation_Library_and_Production_Templates.md",
+    "rationale": "Directly constitutes the mega automation library"
+  },
+  {
+    "raw_path": "Raw_copies/ai_tools.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "List of AI tools for agent ecosystem",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+    "rationale": "Enhances subordinate tooling"
+  },
+  {
+    "raw_path": "Raw_copies/alternative-solution.md",
+    "domain": "ARCHIVE",
+    "file_type": ".md",
+    "content_summary": "Alternative solution discussion",
+    "reusability_score": 3,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Fragmentary thought process"
+  },
+  {
+    "raw_path": "Raw_copies/app.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "Minimal app config",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Too generic"
+  },
+  {
+    "raw_path": "Raw_copies/architecture.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "System architecture overview",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+    "rationale": "Valuable context for system scaffolding"
+  },
+  {
+    "raw_path": "Raw_copies/backup-specification-backend.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Specification for backend backup strategies",
+    "reusability_score": 8,
+    "action": "new_gm_needed",
+    "target_gm": "GM_Robust_Data_Backup_and_Recovery_Pipelines.md",
+    "rationale": "Backend specs deserve their own DevOps GM"
+  },
+  {
+    "raw_path": "Raw_copies/backup-specification-frontend.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Specification for frontend backup strategies",
+    "reusability_score": 8,
+    "action": "new_gm_needed",
+    "target_gm": "GM_Robust_Data_Backup_and_Recovery_Pipelines.md",
+    "rationale": "Companion to backend backup specs"
+  },
+  {
+    "raw_path": "Raw_copies/browser_agent.system.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "System instructions for browser agent",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+    "rationale": "Specific tool instruction for the browser agent"
+  },
+  {
+    "raw_path": "Raw_copies/build an AI chat agent with N8N.pdf",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".pdf",
+    "content_summary": "Guide on building chat agents in n8n",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_AI_Agent_Army_Generation_and_Subworkflow_Orchestration.md",
+    "rationale": "Practical guide for agent orchestration"
+  },
+  {
+    "raw_path": "Raw_copies/build.txt",
+    "domain": "ARCHIVE",
+    "file_type": ".txt",
+    "content_summary": "Build logs",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Transient log data"
+  },
+  {
+    "raw_path": "Raw_copies/build_20260815_042256_072.txt",
+    "domain": "ARCHIVE",
+    "file_type": ".txt",
+    "content_summary": "Timestamped build log",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Transient log data"
+  },
+  {
+    "raw_path": "Raw_copies/chat_history.txt",
+    "domain": "ARCHIVE",
+    "file_type": ".txt",
+    "content_summary": "Raw chat history dump",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Unprocessed logs, low direct reuse"
+  },
+  {
+    "raw_path": "Raw_copies/codacy.instructions.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Codacy setup instructions",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+    "rationale": "IDE and dev environment configuration"
+  },
+  {
+    "raw_path": "Raw_copies/codacy.instructions_20260815_050119_610.md",
+    "domain": "ARCHIVE",
+    "file_type": ".md",
+    "content_summary": "Dated Codacy instructions",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Duplicate"
+  },
+  {
+    "raw_path": "Raw_copies/community-plugins.json",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".json",
+    "content_summary": "Obsidian or similar community plugin list",
+    "reusability_score": 5,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "User-specific config"
+  },
+  {
+    "raw_path": "Raw_copies/complete-n8n-documentation.docx",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".docx",
+    "content_summary": "Word version of compiled n8n docs",
+    "reusability_score": 8,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Archived in favor of PDF version for reference"
+  },
+  {
+    "raw_path": "Raw_copies/content_template.md",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".md",
+    "content_summary": "Template for content creation",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Omnichannel_Social_Media_Syndication_and_Repurposing.md",
+    "rationale": "Reusable content structure"
+  },
+  {
+    "raw_path": "Raw_copies/contribution.md",
+    "domain": "ARCHIVE",
+    "file_type": ".md",
+    "content_summary": "Contribution guidelines",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Generic open source doc"
+  },
+  {
+    "raw_path": "Raw_copies/copilot-instructions.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Instructions for GitHub Copilot",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+    "rationale": "AI tool configuration for IDE"
+  },
+  {
+    "raw_path": "Raw_copies/core-plugins.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "Core plugin config",
+    "reusability_score": 3,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Specific config"
+  },
+  {
+    "raw_path": "Raw_copies/cursor-update-guide.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Update guide for Cursor AI IDE",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+    "rationale": "IDE tooling guide"
+  },
+  {
+    "raw_path": "Raw_copies/custominstruction.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Custom instructions snippet",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Developer_Assistant_System_Prompts_and_Custom_Instructions.md",
+    "rationale": "Micro custom instructions"
+  },
+  {
+    "raw_path": "Raw_copies/data.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "Generic data file",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Unidentified raw data"
+  },
+  {
+    "raw_path": "Raw_copies/deepseek_conversation_extractor.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Tool/script docs for extracting DeepSeek conversations",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Universal_Document_and_Code_Extraction_Pipelines.md",
+    "rationale": "Extraction pipeline documentation"
+  },
+  {
+    "raw_path": "Raw_copies/development.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "General development guidelines",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+    "rationale": "Devops context"
+  },
+  {
+    "raw_path": "Raw_copies/exa ai.txt",
+    "domain": "09_LLM_Conversations_and_Syntheses",
+    "file_type": ".txt",
+    "content_summary": "Notes on Exa AI search",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_AI_Search_and_Web_Extraction_Engines_Exa_Firecrawl_Tavily.md",
+    "rationale": "Part of AI search engines evaluation"
+  },
+  {
+    "raw_path": "Raw_copies/extensibility.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Docs on system extensibility",
+    "reusability_score": 5,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Likely generic documentation"
+  },
+  {
+    "raw_path": "Raw_copies/extensions.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "VSCode extensions list",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Too short, mostly handled by dev environment playbook"
+  },
+  {
+    "raw_path": "Raw_copies/github_readme.md",
+    "domain": "ARCHIVE",
+    "file_type": ".md",
+    "content_summary": "Draft of a GitHub readme",
+    "reusability_score": 3,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Project specific, not a playbook"
+  },
+  {
+    "raw_path": "Raw_copies/graph.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "Graph layout data",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Application state file"
+  },
+  {
+    "raw_path": "Raw_copies/installation.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Installation instructions",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+    "rationale": "Devops installation notes"
+  },
+  {
+    "raw_path": "Raw_copies/installation_20260815_050117_504.md",
+    "domain": "ARCHIVE",
+    "file_type": ".md",
+    "content_summary": "Dated installation guide",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Duplicate/dated"
+  },
+  {
+    "raw_path": "Raw_copies/jsconfig.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "JS config file",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Standard project config"
+  },
+  {
+    "raw_path": "Raw_copies/keybindings.json",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".json",
+    "content_summary": "VSCode keybindings",
+    "reusability_score": 5,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+    "rationale": "Useful for IDE scaffolding"
+  },
+  {
+    "raw_path": "Raw_copies/launch.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "VSCode debug launch file",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Project specific config"
+  },
+  {
+    "raw_path": "Raw_copies/levels.txt",
+    "domain": "ARCHIVE",
+    "file_type": ".txt",
+    "content_summary": "Unknown small file",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Too small to be useful"
+  },
+  {
+    "raw_path": "Raw_copies/manifest.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "General manifest",
+    "reusability_score": 1,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Generic"
+  },
+  {
+    "raw_path": "Raw_copies/mcp_config.json",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".json",
+    "content_summary": "MCP configuration file",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Model_Context_Protocol_MCP_and_Superpowers_Integration.md",
+    "rationale": "Core MCP config"
+  },
+  {
+    "raw_path": "Raw_copies/mcp_config_enhanced.json",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".json",
+    "content_summary": "Enhanced MCP configuration file",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Model_Context_Protocol_MCP_and_Superpowers_Integration.md",
+    "rationale": "Advanced MCP config"
+  },
+  {
+    "raw_path": "Raw_copies/mcp_config_superpowers.json",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".json",
+    "content_summary": "Superpowers MCP configuration",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Model_Context_Protocol_MCP_and_Superpowers_Integration.md",
+    "rationale": "Directly supports the Superpowers integration GM"
+  },
+  {
+    "raw_path": "Raw_copies/mcp_setup.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Guide on setting up MCP",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Model_Context_Protocol_MCP_and_Superpowers_Integration.md",
+    "rationale": "Setup instructions for MCP"
+  },
+  {
+    "raw_path": "Raw_copies/moc_template.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Map of Content template",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Knowledge_Graph_and_Hybrid_Search_Engine_Architecture.md",
+    "rationale": "Relevant for knowledge graph structuring"
+  },
+  {
+    "raw_path": "Raw_copies/mofsl landig page.docx",
+    "domain": "08_Business_Operations_and_Subbroking",
+    "file_type": ".docx",
+    "content_summary": "Copy/design for Motilal Oswal landing page",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Financial_Subbroking_Client_Acquisition_and_Funnel_Architecture.md",
+    "rationale": "Subbroking acquisition asset"
+  },
+  {
+    "raw_path": "Raw_copies/n8n Cheat Sheet.pdf",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".pdf",
+    "content_summary": "Cheat sheet for n8n",
+    "reusability_score": 9,
+    "action": "reference_only",
+    "target_gm": "",
+    "rationale": "Reference material"
+  },
+  {
+    "raw_path": "Raw_copies/n8n Shortcuts (1).md",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".md",
+    "content_summary": "Markdown list of n8n shortcuts",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_n8n_Enterprise_Architectural_Foundations_and_Best_Practices.md",
+    "rationale": "Best practices for n8n usage"
+  },
+  {
+    "raw_path": "Raw_copies/n8n vapi to supabase .json",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".json",
+    "content_summary": "Workflow connecting VAPI to Supabase via n8n",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Voice_AI_Telephony_and_Vapi_Calling_Engines.md",
+    "rationale": "Bridges voice AI with data storage"
+  },
+  {
+    "raw_path": "Raw_copies/n8n_full_prompt.txt",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".txt",
+    "content_summary": "Full system prompt for generating n8n workflows",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_n8n_Enterprise_Architectural_Foundations_and_Best_Practices.md",
+    "rationale": "Helps AI generate n8n workflows"
+  },
+  {
+    "raw_path": "Raw_copies/n8n_info (1).txt",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".txt",
+    "content_summary": "Info dump on n8n capabilities",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_n8n_Enterprise_Architectural_Foundations_and_Best_Practices.md",
+    "rationale": "Background knowledge"
+  },
+  {
+    "raw_path": "Raw_copies/n8n_prompt (1).txt",
+    "domain": "ARCHIVE",
+    "file_type": ".txt",
+    "content_summary": "Duplicate prompt for n8n",
+    "reusability_score": 4,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Superseded by full prompt"
+  },
+  {
+    "raw_path": "Raw_copies/n8n_prompt (2).txt",
+    "domain": "ARCHIVE",
+    "file_type": ".txt",
+    "content_summary": "Duplicate prompt",
+    "reusability_score": 4,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Duplicate"
+  },
+  {
+    "raw_path": "Raw_copies/n8n_prompt.txt",
+    "domain": "ARCHIVE",
+    "file_type": ".txt",
+    "content_summary": "Duplicate prompt",
+    "reusability_score": 4,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Duplicate"
+  },
+  {
+    "raw_path": "Raw_copies/n8n_trading_system_COMPLETELY_FIXED.json",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".json",
+    "content_summary": "Fixed n8n workflow for trading system",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_MultiAgent_Algorithmic_Trading_System_Architecture.md",
+    "rationale": "Algorithmic trading implementation"
+  },
+  {
+    "raw_path": "Raw_copies/natural-language-interface.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Documentation for agent natural language interface",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+    "rationale": "Core runtime interaction"
+  },
+  {
+    "raw_path": "Raw_copies/notifications.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Notification system design for agents",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+    "rationale": "Runtime tooling"
+  },
+  {
+    "raw_path": "Raw_copies/package.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "Node project package file",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Project specific, not playbook"
+  },
+  {
+    "raw_path": "Raw_copies/package_enhanced.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "Enhanced Node package file",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Project specific"
+  },
+  {
+    "raw_path": "Raw_copies/processing_guidelines.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Guidelines for agents processing data",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_ZeroClaw_Apex_MultiAgent_Workforce_Architecture.md",
+    "rationale": "Workforce processing rules"
+  },
+  {
+    "raw_path": "Raw_copies/project_rules.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Global project rules/conventions",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+    "rationale": "Scaffolding rules"
+  },
+  {
+    "raw_path": "Raw_copies/prompt engineering best practices top 10 tips.pdf",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".pdf",
+    "content_summary": "Top 10 tips for prompt engineering",
+    "reusability_score": 8,
+    "action": "reference_only",
+    "target_gm": "",
+    "rationale": "PDF Reference"
+  },
+  {
+    "raw_path": "Raw_copies/prompt engineering.pdf",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".pdf",
+    "content_summary": "General prompt engineering document",
+    "reusability_score": 7,
+    "action": "reference_only",
+    "target_gm": "",
+    "rationale": "PDF Reference"
+  },
+  {
+    "raw_path": "Raw_copies/prompt_extraction_workflow.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Workflow detailing how to extract prompts",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Prompt_Generators_and_Form_Workflows.md",
+    "rationale": "Directly supports prompt extraction"
+  },
+  {
+    "raw_path": "Raw_copies/prompt_template.md",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".md",
+    "content_summary": "Generic prompt template",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Prompt_Generators_and_Form_Workflows.md",
+    "rationale": "Template for prompts"
+  },
+  {
+    "raw_path": "Raw_copies/quickstart.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Quickstart guide",
+    "reusability_score": 5,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Too generic"
+  },
+  {
+    "raw_path": "Raw_copies/requirements.dev.txt",
+    "domain": "ARCHIVE",
+    "file_type": ".txt",
+    "content_summary": "Python dev requirements",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Project specific"
+  },
+  {
+    "raw_path": "Raw_copies/requirements2.txt",
+    "domain": "ARCHIVE",
+    "file_type": ".txt",
+    "content_summary": "Python requirements",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Project specific"
+  },
+  {
+    "raw_path": "Raw_copies/screener (1).json",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".json",
+    "content_summary": "Workflow or config for a stock screener",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Stock_Screening_and_Technical_Analysis_Pipelines.md",
+    "rationale": "Core component of stock screening"
+  },
+  {
+    "raw_path": "Raw_copies/settings.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "VSCode settings",
+    "reusability_score": 4,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Generic settings"
+  },
+  {
+    "raw_path": "Raw_copies/superpowers-dashboard.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Documentation for the Superpowers Dashboard",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Model_Context_Protocol_MCP_and_Superpowers_Integration.md",
+    "rationale": "Directly links to Superpowers MCP"
+  },
+  {
+    "raw_path": "Raw_copies/superpowers-interface.md",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".md",
+    "content_summary": "Documentation for Superpowers interface",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Model_Context_Protocol_MCP_and_Superpowers_Integration.md",
+    "rationale": "Directly links to Superpowers MCP"
+  },
+  {
+    "raw_path": "Raw_copies/tasks.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "VSCode tasks",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Generic tasks"
+  },
+  {
+    "raw_path": "Raw_copies/trading_tools.md",
+    "domain": "06_Quantitative_Finance_and_Trading",
+    "file_type": ".md",
+    "content_summary": "List of algorithmic trading tools and configs",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_MultiAgent_Algorithmic_Trading_System_Architecture.md",
+    "rationale": "Essential reference for trading"
+  },
+  {
+    "raw_path": "Raw_copies/troubleshooting.md",
+    "domain": "ARCHIVE",
+    "file_type": ".md",
+    "content_summary": "Generic troubleshooting guide",
+    "reusability_score": 3,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Too generic"
+  },
+  {
+    "raw_path": "Raw_copies/tsconfig.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "TS config",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Project specific"
+  },
+  {
+    "raw_path": "Raw_copies/tunnel.md",
+    "domain": "05_Code_Snippets_and_Dev_Tools",
+    "file_type": ".md",
+    "content_summary": "Docs on setting up tunnels (e.g. ngrok)",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Containerized_Docker_Runtime_and_Networking_Architecture.md",
+    "rationale": "Networking tool documentation"
+  },
+  {
+    "raw_path": "Raw_copies/u2Tuu02r7QI - 1.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "Opaque YouTube or media JSON file",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Transient data export"
+  },
+  {
+    "raw_path": "Raw_copies/universal_prompt_bot.json",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".json",
+    "content_summary": "Workflow for a universal prompt bot",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Prompt_Generators_and_Form_Workflows.md",
+    "rationale": "Implementation of prompt generator"
+  },
+  {
+    "raw_path": "Raw_copies/universal_prompt_planner_mvp.json",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".json",
+    "content_summary": "MVP workflow for prompt planning",
+    "reusability_score": 8,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Prompt_Generators_and_Form_Workflows.md",
+    "rationale": "Implementation of prompt planning"
+  },
+  {
+    "raw_path": "Raw_copies/universal_prompt_planner_simple.json",
+    "domain": "03_Prompt_Engineering_and_Frameworks",
+    "file_type": ".json",
+    "content_summary": "Simple workflow for prompt planning",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Automated_Prompt_Generators_and_Form_Workflows.md",
+    "rationale": "Implementation of prompt planning"
+  },
+  {
+    "raw_path": "Raw_copies/usage.md",
+    "domain": "ARCHIVE",
+    "file_type": ".md",
+    "content_summary": "Generic usage manual",
+    "reusability_score": 3,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Too generic"
+  },
+  {
+    "raw_path": "Raw_copies/user-dashboard.md",
+    "domain": "10_R_and_D_Incubator_Half_Baked_Ideas",
+    "file_type": ".md",
+    "content_summary": "Design for a user dashboard app",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Non_Coders_AI_Web_Application_Factory_Playbook.md",
+    "rationale": "Sample app concept for web factory"
+  },
+  {
+    "raw_path": "Raw_copies/workflow.md",
+    "domain": "02_Workflow_Automations_n8n",
+    "file_type": ".md",
+    "content_summary": "General workflow documentation",
+    "reusability_score": 6,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_n8n_Enterprise_Architectural_Foundations_and_Best_Practices.md",
+    "rationale": "Enterprise workflow context"
+  },
+  {
+    "raw_path": "Raw_copies/workspace.json",
+    "domain": "ARCHIVE",
+    "file_type": ".json",
+    "content_summary": "Workspace configuration",
+    "reusability_score": 2,
+    "action": "archive",
+    "target_gm": "",
+    "rationale": "Project specific"
+  },
+  {
+    "raw_path": "Raw_copies/yt_download.md",
+    "domain": "07_Content_Creation_and_Media_Engines",
+    "file_type": ".md",
+    "content_summary": "Script or tool doc for YouTube downloading",
+    "reusability_score": 7,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+    "rationale": "Utility for YouTube production"
+  },
+  {
+    "raw_path": "Raw_copies/zeroclaw agent -plan 0.v1.txt",
+    "domain": "01_AI_Agents_and_Autonomous_Systems",
+    "file_type": ".txt",
+    "content_summary": "Plan and structure for ZeroClaw agent",
+    "reusability_score": 9,
+    "action": "merge_into_existing_gm",
+    "target_gm": "GM_ZeroClaw_Apex_MultiAgent_Workforce_Architecture.md",
+    "rationale": "Foundational architectural text for ZeroClaw"
+  }
+]

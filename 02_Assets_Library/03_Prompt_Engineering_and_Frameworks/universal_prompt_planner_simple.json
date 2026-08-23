@@ -1,0 +1,147 @@
+{
+  "name": "Universal Prompt\u2011Planner (Simple)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "prompt-planner",
+        "responseMode": "lastNode",
+        "responseData": "allEntries"
+      },
+      "id": "1",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        100,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "user_request",
+              "value": "={{$json[\"body\"].text || $json[\"body\"] || 'No request provided'}}"
+            }
+          ]
+        }
+      },
+      "id": "2",
+      "name": "Extract Request",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        320,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "httpMethod": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "jsonParameters": true,
+        "bodyParametersJson": "{\n  \"model\": \"gpt-3.5-turbo-0125\",\n  \"temperature\": 0.3,\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are UNIVERSAL_PROMPT_PLANNER, a cost\u2011aware prompt\u2011engineering and planning assistant. Always respond in JSON with keys: roadmap (array of steps) and prompt (string).\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{$node[\\\"Extract Request\\\"].json[\\\"data\\\"].user_request}}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "OpenAI Clarify\u2011Plan\u2011Prompt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 2,
+      "position": [
+        560,
+        200
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const ai = items[0].json;\nconst content = JSON.parse(ai.choices[0].message.content);\nreturn [{ json: content }];"
+      },
+      "id": "4",
+      "name": "Parse OpenAI JSON",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        800,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "text",
+              "value": "=\ud83d\udcdd Plan:\\n{{$json[\"roadmap\"].map((s, i) => (i+1) + '. ' + s).join('\\n')}}\\n\\n\u2699\ufe0f Prompt:\\n{{$json[\"prompt\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        200
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Request": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Clarify\u2011Plan\u2011Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Clarify\u2011Plan\u2011Prompt": {
+      "main": [
+        [
+          {
+            "node": "Parse OpenAI JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse OpenAI JSON": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "a2b50a20-2f41-484a-8819-dc8c131ce53f"
+}

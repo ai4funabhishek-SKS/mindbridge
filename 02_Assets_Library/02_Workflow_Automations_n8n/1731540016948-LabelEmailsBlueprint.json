@@ -1,0 +1,215 @@
+{
+  "name": "Labeling Emails",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "id": "21658347-4adf-4a9a-9d32-41cfb7e4b186",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        320
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CJrIo6Qmis20CAYO",
+          "name": "Gmail account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "d7387224-362b-4207-869f-c64225fd589f",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        860,
+        540
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "gXgJEgJjDzYaPnsd",
+          "name": "OpenAi account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_6060376812390183679"
+        ]
+      },
+      "id": "31d593e7-9094-463e-a294-f6f0ed8c4e5c",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1340,
+        500
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CJrIo6Qmis20CAYO",
+          "name": "Gmail account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_5865590734655194215"
+        ]
+      },
+      "id": "815397fb-4c84-41d1-a076-06e1eb9314c4",
+      "name": "Gmail1",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1340,
+        100
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CJrIo6Qmis20CAYO",
+          "name": "Gmail account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_1379876243728034633"
+        ]
+      },
+      "id": "0f5bd2a8-ce4c-47a3-b725-87aee2c68bfa",
+      "name": "Gmail2",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1340,
+        300
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CJrIo6Qmis20CAYO",
+          "name": "Gmail account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Billing",
+              "description": "Messages focused on payment processing, billing issues, or invoice clarifications, typically sent to or received from finance teams, clients, or vendors. These communications often involve payment due dates, outstanding balances, or account discrepancies that require timely resolution. Common terms include: payment reminder, overdue, invoice, billing inquiry, payment required, due date, balance, urgent payment, or account update."
+            },
+            {
+              "category": "Urgent",
+              "description": "Emails requiring prompt attention or action, often relating to project updates, missing information, or immediate needs. These messages typically request quick follow-ups to keep tasks on track and avoid delays. They frequently contain time-sensitive information or dependencies for ongoing work. Common phrases include: \"need this ASAP,\" \"urgent,\" \"immediate response needed,\" or \"time-sensitive.\""
+            },
+            {
+              "category": "Read Through",
+              "description": "Emails and articles for leisurely reading, including newsletters, industry updates, or interesting content that you may want to browse when you have spare time. These messages are non-urgent and purely informational, serving to keep you informed or entertained. Skim through at your convenience—no immediate action required."
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "Please classify the text provided by the user into one of the following categories: {categories}, and use the provided formatting instructions below. Don't explain, and only output the json."
+        }
+      },
+      "id": "f6494af0-11a0-43a8-b06d-37cabafc61e9",
+      "name": "Text Classifier",
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        880,
+        320
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e5e5a0d9-35ac-4421-af23-8c1c6e53f374",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80868c6faaefe32f23363c3593878f9dc4b2470f6611e5a958f476842a987c73"
+  },
+  "id": "xtD7wcsnxqJRSFzh",
+  "tags": []
+}

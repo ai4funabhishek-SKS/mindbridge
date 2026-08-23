@@ -1,0 +1,1371 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1cecdecb-8a65-4d99-82c5-9ef6aac5e579",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        780,
+        360
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 20,
+        "filters": {
+          "labelIds": [
+            "INBOX",
+            "UNREAD"
+          ],
+          "receivedAfter": "={{ $json.message.content }}"
+        }
+      },
+      "id": "b76812ed-34e0-4878-a127-4131734db36f",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2280,
+        -140
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "yvIj6kxDWrgWlhcR",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "com.twilio.messaging.inbound-message.received"
+        ]
+      },
+      "id": "2657f020-dc29-4634-9159-63843fa06340",
+      "name": "Twilio Trigger",
+      "type": "n8n-nodes-base.twilioTrigger",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        360
+      ],
+      "webhookId": "b014d776-47cf-4641-af3d-a93fbe8a7601",
+      "credentials": {
+        "twilioApi": {
+          "id": "GPit0wUGajk3ZmnV",
+          "name": "Twilio account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1cf812d8-8513-43f9-919c-85a6fca8068b",
+      "name": "Date & Time",
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "b73d7c2d-4111-46b1-ba18-d09b7c3dd6e3",
+              "leftValue": "={{ $json.message.content }}",
+              "rightValue": "Get emails",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e0e98881-8844-404e-adb8-f9bcb3155319",
+      "name": "Get email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.1,
+      "position": [
+        1660,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "b46ee766-9ec7-4692-80f1-f9135ccf17f1",
+              "leftValue": "={{ $json.message.content }}",
+              "rightValue": "Get calendar",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "065a45ac-c43d-49b0-8182-2563967a1abc",
+      "name": "Get calendar",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.1,
+      "position": [
+        1640,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "47f1e50b-19f6-4d38-9e8a-97b1b246c27a",
+              "leftValue": "={{ $json.message.content }}",
+              "rightValue": "Send email",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "236afd6e-ea1f-4d31-b45e-c538e6c02264",
+      "name": "Send email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.1,
+      "position": [
+        1660,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c5f396c5-8753-413f-92c4-9847cbc9bace",
+              "leftValue": "={{ $json.message.content }}",
+              "rightValue": "Create task",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a21a452e-a67d-48c8-9443-583c2615d15f",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.1,
+      "position": [
+        1640,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1RopRHiL28GJcf6Um_u125DQY1G3RpH9irxqdM2qeX7c",
+          "mode": "list",
+          "cachedResultName": "Generated_Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RopRHiL28GJcf6Um_u125DQY1G3RpH9irxqdM2qeX7c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 193191670,
+          "mode": "list",
+          "cachedResultName": "Generated_Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RopRHiL28GJcf6Um_u125DQY1G3RpH9irxqdM2qeX7c/edit#gid=193191670"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Last Name",
+              "lookupValue": "={{ $json.choices[0].message.content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e6e34e13-b1f8-472c-a622-23a27d732054",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2100,
+        60
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "d5oDodEqrbrzNezy",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "=Here's your emails:  \nFrom: {{ $json.From }}\nSummary: {{ $json.snippet }}",
+        "options": {}
+      },
+      "id": "2ac0ffde-ddd3-461d-88a1-81744fc7891d",
+      "name": "Twilio",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        3180,
+        0
+      ],
+      "credentials": {
+        "twilioApi": {
+          "id": "GPit0wUGajk3ZmnV",
+          "name": "Twilio account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.message.content }}",
+        "message": "={{ $('Email fill in\\'s').item.json.message.content }}",
+        "options": {
+          "sendTo": "={{ $('Google Sheets').item.json.Email }}"
+        }
+      },
+      "id": "66f7bf1b-ff59-4cb3-a437-807115c58822",
+      "name": "Gmail1",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2940,
+        240
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "yvIj6kxDWrgWlhcR",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "npuruczky@gmail.com",
+          "mode": "list",
+          "cachedResultName": "npuruczky@gmail.com"
+        },
+        "returnAll": true,
+        "options": {
+          "timeMin": "={{ $('After').item.json.message.content }}",
+          "timeMax": "={{ $json.message.content }}"
+        }
+      },
+      "id": "6bcc2992-eee8-4c47-9675-0b544779eecf",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.1,
+      "position": [
+        2480,
+        420
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "aOu0PJtQQdy1eVAi",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a5ad3506-e082-4939-a901-9612c1e4e636",
+      "name": "Date & Time1",
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "message": "=Here's an events scheduled:  {{ $json.summary }} on {{ $json.start.date }}",
+        "options": {}
+      },
+      "id": "5623fb59-ef77-4093-a11f-4015701a0732",
+      "name": "Twilio1",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        3200,
+        420
+      ],
+      "credentials": {
+        "twilioApi": {
+          "id": "GPit0wUGajk3ZmnV",
+          "name": "Twilio account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are to determine the date to get. If the text message asks to get calendar for today then your output should be todays date. \n\n- For example, if todays date is the 10th of September 2024, then your output should be '2024-09-10 00:00:00'\n\n- For example, if the text asks to get calendar from yesterday and the date is 10th of September 2024 then your output should be '2024-09-09 00:00:00'\n\n- For example, if the message asks to get calendar for next week and todays date is the 7th of September 2024 then your output should be the next Monday which would be'2024-09-16 00:00:00'\n\nHere is the message you are to analyze to see what date it is talking about: {{ $('Twilio Trigger').item.json.data.body }} \n\nHere's the current date: {{ $json.currentDate }}\n\nYour only output should say the date like this (example, you must change the dates when necessary and not use the 10th like in this example): 2024-09-10 00:00:00\n\nIt should never say anything more",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6e0b42ad-3da2-4838-a39e-c302a2b0d573",
+      "name": "After",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        1900,
+        420
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are to look at the output of this message and determine the end date: {{ $('Twilio Trigger').item.json.data.body }}\n\nYou will have to analyze the message and determine an end date. The message could say many different things including but not limited to: today, maybe it says for Wednesday next week, maybe it could say Monday of the 20th of September 2024)\n\nFor example, if it says to get calendar for today and todays date is the 12th of september 2024 then end date should be the 13th of september 2024 because it shouldn't go past that.\n\nIf it says to get calendar for the rest of the week and todays date is the 9th of september then your output should be '2024-09-15 00:00:00' because that is the end of the rest of that week.\n\nYou are to use common sense.\n\nHere's another example.\nLet's say the message says 'get my calendar for wednesday of next week', then you are to look at the current date which is ({{ $('Date & Time1').item.json.currentDate }}) and then find that date which would be the 18th of september 2024 and your output should be '2024-09-19 00:00:00'\n\nHere's another example. The message says something along the lines of getting / finding calendar / if they have anything going on next week. Well, then you are to look at todays date (lets say today is the 11th of september 2024, then find the end of that week which would be the 22nd because that day lands on a sunday and would be the end of the week. So your output in this case would be 2024-09-22 00:00:00\n\nRemember, your output should only be the end date and nothing else.\n\nAdditionally, you must always make sure the output is never before this date: {{ $json.message.content }}",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "153b3847-6902-4787-9611-ae0178bf951e",
+      "name": "Before",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        2180,
+        420
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "9ddb7fa6-4e94-4b5a-82f0-2355247487eb",
+          "mode": "list",
+          "cachedResultName": "Nick’s To-Do",
+          "cachedResultUrl": "https://www.notion.so/9ddb7fa64e944b5a82f02355247487eb"
+        },
+        "simple": false,
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Name|title",
+              "title": "={{ $('Before1').item.json.message.content }}"
+            },
+            {
+              "key": "Execution Date|date",
+              "includeTime": false,
+              "date": "={{ $json.message.content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "03094c7d-90ac-49a6-9659-1fa3753ac216",
+      "name": "Notion",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        2620,
+        600
+      ],
+      "credentials": {
+        "notionApi": {
+          "id": "7atSvNVBIhXFWrcR",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a2a36769-7619-4f2a-8154-79f69f9e4470",
+      "name": "Date & Time2",
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "message": "Done, anything else?",
+        "options": {}
+      },
+      "id": "8d31c0b5-267e-49d4-966d-8af52aede262",
+      "name": "Twilio2",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        3200,
+        580
+      ],
+      "credentials": {
+        "twilioApi": {
+          "id": "GPit0wUGajk3ZmnV",
+          "name": "Twilio account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "Done, anything else?",
+        "options": {}
+      },
+      "id": "fbb852ad-b32c-4b2c-acae-6571c88a0e52",
+      "name": "Twilio3",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        3180,
+        200
+      ],
+      "credentials": {
+        "twilioApi": {
+          "id": "GPit0wUGajk3ZmnV",
+          "name": "Twilio account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c5f396c5-8753-413f-92c4-9847cbc9bace",
+              "leftValue": "={{ $json.message.content }}",
+              "rightValue": "Create meeting",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "59cf8e25-73de-48bc-bc32-7f01af7c6eb7",
+      "name": "Create Meeting",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.1,
+      "position": [
+        1640,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5ee58507-ce5b-402c-bedd-aaafcae8e848",
+      "name": "Date & Time3",
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your job is to look at the message and determine what the name of the task should be. It should be simple and concise and never more than 10 words (even 10 words is a lot)\n\nHere's the message: {{ $('Twilio Trigger').item.json.data.body }}\n\nExample: If the message says something like 'create a task to send voting ballot on Thursday.' Then your output should be 'Send Voting Ballot' and only that. Never mention dates in the title.",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "73c9cc4a-a89e-4afa-987c-47b1830745a1",
+      "name": "Before1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        1980,
+        600
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your job is to look at the message and determine what the execution date of the task should be. \n\nHere's the message: {{ $('Twilio Trigger').item.json.data.body }}\n\nHere's the current date: {{ $('Date & Time2').item.json.currentDate }}\n\nFor example, the message could say something like 'create a task to write down my core strengths on Friday' then you are to look at the current date and output the date of the closest upcoming Friday. In this case, the output would be '2024-09-13 00:00:00' because today is 11th of September 2024 and Friday is in two days. If the message says for next Friday then you would grab the next Friday after the current date. Your only output should be the execution date and nothing else",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a6f3e9cb-1922-4592-8e5e-69cee652a540",
+      "name": "Before2",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        2280,
+        600
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1RopRHiL28GJcf6Um_u125DQY1G3RpH9irxqdM2qeX7c",
+          "mode": "list",
+          "cachedResultName": "Generated_Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RopRHiL28GJcf6Um_u125DQY1G3RpH9irxqdM2qeX7c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 193191670,
+          "mode": "list",
+          "cachedResultName": "Generated_Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RopRHiL28GJcf6Um_u125DQY1G3RpH9irxqdM2qeX7c/edit#gid=193191670"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Last Name",
+              "lookupValue": "={{ $json.message.content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fe62ce77-c0aa-4b42-b032-a7171fe3a9cc",
+      "name": "Google Sheets1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2300,
+        1060
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "d5oDodEqrbrzNezy",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "npuruczky@gmail.com",
+          "mode": "list",
+          "cachedResultName": "npuruczky@gmail.com"
+        },
+        "start": "={{ $('date/time get').item.json.message.content }}",
+        "end": "={{ $('end time').item.json.message.content }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $json.Email }}"
+          ],
+          "summary": "={{ $json['First Name'] }} and Nick Sync"
+        }
+      },
+      "id": "0b0eb302-2142-49ab-a50d-48bf408ff9a9",
+      "name": "Google Calendar1",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.1,
+      "position": [
+        2620,
+        1000
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "aOu0PJtQQdy1eVAi",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are to look at the the sheet data and write an email to them based on the message and make it sound professional. Here's some things to always include:\n\n1. An introduction (this will always say 'Hey {{ $('Google Sheets').item.json['First Name'] }},'\n2. The outro should always say 'Best,\nNick'\n(the 'Best,' should always be a line above 'Nick'\n\n3. Body of the message. This will be in between the intro and the outro. Here's the body: {{ $json.message.content }}\n\nHere's an example of what it should all look like:\nHey Ron,\n\n{{ $json.message.content }}\n\nBest,\nNick  ",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "109b7ab8-441f-41bf-a76d-e4bfe984487e",
+      "name": "Email fill in's",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        2420,
+        60
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are to look at the message and just give me the last name and only make that your output.\n\nFor example: 'Morrison'\n\nI gave it that output because the message contained Mark Morrison.\n\nHere's the message: {{ $('Twilio Trigger').item.json.data.body }}",
+              "role": "system"
+            }
+          ]
+        },
+        "simplify": false,
+        "options": {}
+      },
+      "id": "2c5c9a2c-cf9c-4991-927f-50d685fffdd8",
+      "name": "Get last name",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        1800,
+        180
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are to look at the message and determine what is to be in the email body. For example, if the message says 'send an email to mark morrison asking for their cell phone number', then your output should be 'Could you send over your cell phone number?'\n\nYou should use common sense to determine what should be in the body and don't add or remove anything from what was mentioned in the message, you can just say it word for word.\n\nHere's another example, if the message says 'send an email to matthew curry that we just sent payment and your check should be mailed out to you within the next few weeks so be on the look out for it' then your output should be 'We just sent payment and your check should be mailed out to you within the next few weeks so be on the lookout for it.'\n\nHere's the message to analyze: {{ $('Twilio Trigger').item.json.data.body }}",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fd7139d6-576c-4434-a6a9-cdb74a8b2638",
+      "name": "Email body",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        2220,
+        200
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are to determine a subject line from the message. It can be simple and just contain a summary of what the body is about. Keep it brief, simple, and easy to understand. \n\nHere's the body you are basing the subject off: {{ $('Email body').item.json.message.content }}\n\nIf the body contains something like 'We are cancelling our membership due to unsatisfactory service' then your output should be 'Cancelling Our Service'.\nThat's just an example.",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6d00c0c0-bda1-4b13-9a2d-96d06473c33f",
+      "name": "Email fill in's1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        2620,
+        240
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your job is to analyze the message body ({{ $('Twilio Trigger').item.json.data.body }}) and accurately determine both the desired meeting date and time. Use the current date ({{ $json.currentDate }}) and the message content to return the correct output in the format 'YYYY-MM-DD HH:MM:SS'. Adjust both the date and time based on the user's request.\n\n**Important:** The examples provided below are **only for reference** to guide you on how to calculate the correct date and time. Do **not** use these specific dates or times; always base your calculation on the current date and the request in the message body.\n\nReference Examples:\n1. If the message says \"schedule a meeting for next Thursday at 12 PM,\" and today is Wednesday, 11th September 2024, your output would be '2024-09-12 12:00:00'.\n2. If the message says \"schedule a meeting for tomorrow at 3 PM,\" and today is Wednesday, 11th September 2024, your output would be '2024-09-12 15:00:00'.\n3. If today's date is 4th September 2024 and the message asks for \"next Tuesday at 10 AM,\" your output would be '2024-09-10 10:00:00'.\n4. If the message says \"schedule a meeting for Friday at 9:30 AM,\" and today is 11th September 2024, your output would be '2024-09-13 09:30:00'.\n5. If the message says \"schedule a meeting for today at 6 PM,\" and today is 11th September 2024, your output would be '2024-09-11 18:00:00'.\n6. If the message simply says \"schedule a meeting for next Tuesday,\" and today's date is 4th September 2024, your output should be '2024-09-10 00:00:00'. Default the time to '00:00:00' if no specific time is mentioned.\n\nInstructions:\n- For requests that specify both a day and time, find the closest occurrence of the requested day and use the provided time.\n- For requests that mention only a day (e.g., \"next [day]\"), find the closest occurrence of that day and default the time to '00:00:00' unless otherwise specified.\n- For requests that mention \"today\" or \"tomorrow\" with a specific time, adjust both the date and time accordingly.\n- If a specific date, time, or month is mentioned, return that date and time directly.\n\nEnsure your output includes only the correctly formatted date and time (in 'YYYY-MM-DD HH:MM:SS' format) and nothing else. The examples provided above are **only for reference** and should not influence your calculations unless the message content matches the logic.\n",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "23a0f38e-b3aa-4009-aee4-1e26b34a5a39",
+      "name": "date/time get",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        1940,
+        860
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are to look at the message and just give me the last name and only make that your output.\n\nFor example: 'Morrison'\n\nI gave it that output because the message contained Mark Morrison.\n\nHere's the message: {{ $('Twilio Trigger').item.json.data.body }}",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "822127e2-65b9-4745-b0c2-8731bf816297",
+      "name": "last name",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        1940,
+        1240
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are to look at {{ $json.message.content }} and make the date the exact same but make the time 1 hour after. That is the only change you will ever make. For example, if the time is 2024-09-13 13:00:00 then your output should be '2024-09-13 13:00:00'\n\n  ",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "84054b7d-9df5-4b15-b019-abeb3c276c39",
+      "name": "end time",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        1940,
+        1040
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "Done, anything else?",
+        "options": {}
+      },
+      "id": "f64b9b71-e442-49f2-a4ea-614cde748bb0",
+      "name": "Twilio4",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        3180,
+        960
+      ],
+      "credentials": {
+        "twilioApi": {
+          "id": "GPit0wUGajk3ZmnV",
+          "name": "Twilio account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Your job is to analyze the message and decide what action to take. There's going to be four actions to take and you are to make your output one or more of them. You must incorporate a bit of common sense to figure what action to take:\n\n1. Get calendar\n2. Get emails\n3. Create task\n4. Send email\n5. Create meeting\n\nYour output can be just one response 'Get calendar', or it can include several like 'Get calendar', 'Get emails', 'Update notion'.\n\nThis is the message you are to analyze: {{ $json.data.body }}",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3a0113d0-a9f6-4542-bc14-ce3ec88fa24f",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        1240,
+        360
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are to determine the date to get. If the text message asks to get emails for today then your output should be todays date. \n\n- For example, if todays date is the 10th of September 2024, then your output should be '2024-09-10T00:00:00'\n\n- For example, if the text asks to get emails from yesterday and the date is 10th of September 2024 then your output should be '2024-09-09T00:00:00'\n\n- For example, if the message asks to get emails from last week and todays date is 17th of September 2024 then your output should be '2024-09-07T00:00:00'\n\nHere is the message you are to analyze to see what date it is talking about:  {{ $('Twilio Trigger').item.json.data.body }}\n\nHere's the current date: {{ $json.currentDate }}\n\nYour only output should say the date like this (example): 2024-09-10T00:00:00\n\nIt should never say anything more",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "80a6623f-a9ed-4bd1-9e42-335d329fa19f",
+      "name": "OpenAI2",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        1960,
+        -140
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "sAnzFwriuEdVj3o6",
+          "name": "OpenAi account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Twilio Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get email": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email": {
+      "main": [
+        [
+          {
+            "node": "Get last name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Twilio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Email body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get calendar": {
+      "main": [
+        [
+          {
+            "node": "Date & Time1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time1": {
+      "main": [
+        [
+          {
+            "node": "After",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "main": [
+        [
+          {
+            "node": "Twilio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "After": {
+      "main": [
+        [
+          {
+            "node": "Before",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Before": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Date & Time2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time2": {
+      "main": [
+        [
+          {
+            "node": "Before1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion": {
+      "main": [
+        [
+          {
+            "node": "Twilio2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "main": [
+        [
+          {
+            "node": "Twilio3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Meeting": {
+      "main": [
+        [
+          {
+            "node": "Date & Time3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Before1": {
+      "main": [
+        [
+          {
+            "node": "Before2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Before2": {
+      "main": [
+        [
+          {
+            "node": "Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time3": {
+      "main": [
+        [
+          {
+            "node": "date/time get",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email fill in's": {
+      "main": [
+        [
+          {
+            "node": "Email fill in's1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get last name": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email body": {
+      "main": [
+        [
+          {
+            "node": "Email fill in's",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email fill in's1": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "date/time get": {
+      "main": [
+        [
+          {
+            "node": "end time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "last name": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "end time": {
+      "main": [
+        [
+          {
+            "node": "last name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar1": {
+      "main": [
+        [
+          {
+            "node": "Twilio4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Get email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get calendar",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Meeting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI2": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8f7cc0ef-4e98-444e-853f-505a95086d42",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80868c6faaefe32f23363c3593878f9dc4b2470f6611e5a958f476842a987c73"
+  },
+  "id": "fdJZBw2BeigQ3Rzh",
+  "tags": []
+}

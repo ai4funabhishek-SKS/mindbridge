@@ -1,0 +1,6 @@
+Support 1: 24584.22
+Support 2: 24552.38
+Resistance 1: 24660.77
+Resistance 2: 24705.48
+RSI: 45.45
+Current Price: 24616.05

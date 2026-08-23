@@ -1,0 +1,722 @@
+{
+  "name": "4K Video Creator",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "627dc655-2570-4646-94b0-45d544461c8f",
+              "name": "upscale multiplier",
+              "value": 3,
+              "type": "number"
+            },
+            {
+              "id": "a76db358-7fcb-4cb2-a652-e67aa314c7d8",
+              "name": "frames to interpolate",
+              "value": 1,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        112
+      ],
+      "id": "5b7078a8-2117-4593-b537-5b09f5afbcbd",
+      "name": "Your creative direction"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        128,
+        112
+      ],
+      "id": "e04ae5fc-6620-481a-9fd7-fd5f5ba4447c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        304
+      ],
+      "id": "1b1dde96-3b46-4bae-8c85-8e7ae157f3c4",
+      "name": "Wait",
+      "webhookId": "5749080e-099e-4f52-8c16-3b6acc05ccad"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1XiapRxt5jl35Djh6mm10bSHDMZRsEH2TZBNsWXU4goo",
+          "mode": "list",
+          "cachedResultName": "UpscaleRobo | n13",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XiapRxt5jl35Djh6mm10bSHDMZRsEH2TZBNsWXU4goo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nJUfTShOarHWKhTTf60dbL6d-VxDedbqA_AjDNS54lU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Get input').first().json.id }}",
+            "status": "done",
+            "output_highres_highfps": "={{ $('Get Result 3').first().json.video_url }}",
+            "output_highres": "={{ $('Get Result').first().json.video.url }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "input",
+              "displayName": "input",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "output_highres",
+              "displayName": "output_highres",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output_highres_highfps",
+              "displayName": "output_highres_highfps",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        720,
+        816
+      ],
+      "id": "8ac22357-319c-47c3-9993-00bbc07be7f0",
+      "name": "Store output"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/topaz/upscale/video",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"video_url\": \"{{ $json.input }}\",\n  \"upscale_factor\": {{ $('Your creative direction').item.json['upscale multiplier'] }},\n  \"target_fps\": 30\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        496,
+        304
+      ],
+      "id": "3cc0c0bb-3fcd-49b5-8bcb-0b5f54760069",
+      "name": "Upscale - Topaz"
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/topaz/requests/{{ $('Upscale - Topaz').item.json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        304
+      ],
+      "id": "6c866651-d038-4e01-a7d9-2387a9659065",
+      "name": "Get Result",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XiapRxt5jl35Djh6mm10bSHDMZRsEH2TZBNsWXU4goo",
+          "mode": "list",
+          "cachedResultName": "UpscaleRobo | n13",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XiapRxt5jl35Djh6mm10bSHDMZRsEH2TZBNsWXU4goo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XiapRxt5jl35Djh6mm10bSHDMZRsEH2TZBNsWXU4goo/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "for production"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        720,
+        112
+      ],
+      "id": "5f277439-ed98-4aad-8348-53362d351d02",
+      "name": "Get input"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/ffmpeg-api/compose",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"tracks\": [\n    {\n      \"id\": \"1\",\n      \"type\": \"video\",\n      \"keyframes\": [\n        {\n          \"url\": \"{{ $json.video.url }}\",\n          \"timestamp\": 0,\n          \"duration\": 0\n        }\n      ]\n    },\n    {\n      \"id\": \"2\",\n      \"type\": \"audio\",\n      \"keyframes\": [\n        {\n          \"timestamp\": 0,\n          \"duration\": 0,\n          \"url\": \"{{ $('Get input').first().json.input }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        496,
+        608
+      ],
+      "id": "9689545f-4abf-4844-8cc4-803d42dd0411",
+      "name": "Add back audio"
+    },
+    {
+      "parameters": {
+        "content": "## Upscale (More resolution)",
+        "height": 96,
+        "width": 416,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        48,
+        304
+      ],
+      "id": "4378755d-ef87-44a3-8c40-47d4a922577a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Interpolate (More fps)",
+        "height": 96,
+        "width": 416,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        48,
+        464
+      ],
+      "id": "3480c1fd-6770-46bf-935c-6d2be8f06f00",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Add back audio",
+        "height": 96,
+        "width": 416,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        48,
+        608
+      ],
+      "id": "0b64f348-8a4d-42e1-bfb2-795ba3513ba2",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# UpscaleRobo - with TopazLabs and RIFE (by RoboNuggets 🥚)",
+        "width": 1280,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a56201d9-eabd-4daf-842b-9a0a1bf794ce",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        464
+      ],
+      "id": "3436f72b-e69d-42fb-b57d-041a505fb9ed",
+      "name": "Wait 2",
+      "webhookId": "5749080e-099e-4f52-8c16-3b6acc05ccad"
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/rife/requests/{{ $('Interpolate - RIFE').item.json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        464
+      ],
+      "id": "de9e7c92-1ed1-4aa8-82ef-85cfaa705e0b",
+      "name": "Get Result 2",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        608
+      ],
+      "id": "5385b322-e1ed-4c59-82cc-9c635eefb3e0",
+      "name": "Wait 3",
+      "webhookId": "5749080e-099e-4f52-8c16-3b6acc05ccad"
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/ffmpeg-api/requests/{{ $('Add back audio').item.json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        608
+      ],
+      "id": "56003dd8-9c79-4419-a0f3-08fb4a9d6487",
+      "name": "Get Result 3",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aac86dd6-905d-4515-bd3a-71d5d70e6956",
+              "leftValue": "={{ $json.video.url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        464
+      ],
+      "id": "e0b43d71-cb70-4475-9f3a-c817d645125b",
+      "name": "If 2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6594ade6-50eb-437f-9d96-1b362526a472",
+              "leftValue": "={{ $json.video_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        608
+      ],
+      "id": "7e393a03-dc98-4db9-8925-31155825b0ee",
+      "name": "If 3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4c895d90-e8bd-42cf-ab58-511c85e8c782",
+              "leftValue": "={{ $json.video.url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        304
+      ],
+      "id": "fed65bf5-1888-4dbf-a824-1b212c1383f8",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "content": "## Some Limitations\n\n### Topaz Labs\n- **Maximum Output Resolution**: 4K only  \n- **Maximum Input Length**: 30 seconds  \n\n### Interpolation Settings\n- **File Size Note**: There appears to be an undocumented file size limit—based on tests, a 30-second 4K video runs into issues, while a 15-second 4K clip processes fine\n",
+        "height": 368,
+        "width": 288,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        240
+      ],
+      "id": "38653495-129a-4feb-8cbb-c99178d81afd",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/rife/video",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"video_url\": \"{{ $json.video.url }}\",\n  \"num_frames\": {{ $('Your creative direction').item.json['frames to interpolate'] }},\n  \"use_calculated_fps\": true\n}\n\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        496,
+        464
+      ],
+      "id": "0e869056-6ee7-4c8e-a584-bb131e25c0a6",
+      "name": "Interpolate - RIFE"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Your creative direction": {
+      "main": [
+        [
+          {
+            "node": "Get input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Your creative direction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upscale - Topaz": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Result": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get input": {
+      "main": [
+        [
+          {
+            "node": "Upscale - Topaz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add back audio": {
+      "main": [
+        [
+          {
+            "node": "Wait 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2": {
+      "main": [
+        [
+          {
+            "node": "Get Result 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Result 2": {
+      "main": [
+        [
+          {
+            "node": "If 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 3": {
+      "main": [
+        [
+          {
+            "node": "Get Result 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Result 3": {
+      "main": [
+        [
+          {
+            "node": "If 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If 2": {
+      "main": [
+        [
+          {
+            "node": "Add back audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If 3": {
+      "main": [
+        [
+          {
+            "node": "Store output",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Interpolate - RIFE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Interpolate - RIFE": {
+      "main": [
+        [
+          {
+            "node": "Wait 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8e3925c8-054f-4bcc-b179-07d6752eb81b",
+  "meta": {
+    "instanceId": "69f54ab0f1afba7dd61c0a7a7609df8a8bd98642cf42d92572ea26f947c9a1d8"
+  },
+  "id": "q2Dqo93euVe9Akmh",
+  "tags": []
+}

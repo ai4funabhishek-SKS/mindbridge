@@ -1,0 +1,32 @@
+{
+  "recommendations": [
+    "github.copilot",
+    "github.copilot-chat",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-toolsai.jupyter",
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-json",
+    "redhat.vscode-yaml",
+    "ms-azuretools.vscode-docker",
+    "ms-kubernetes-tools.vscode-kubernetes-tools",
+    "ms-vscode-remote.remote-containers",
+    "ritwickdey.liveserver",
+    "streetsidesoftware.code-spell-checker",
+    "yzhang.markdown-all-in-one",
+    "ms-vscode.powershell",
+    "ms-vscode.vscode-node-azure-pack",
+    "teamsdevapp.vscode-ai-foundry",
+    "continue.continue",
+    "davidanson.vscode-markdownlint",
+    "ms-azuretools.vscode-azure-mcp-server",
+    "upstash.context7-mcp",
+    "vscode-icons-team.vscode-icons"
+  ]
+}

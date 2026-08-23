@@ -1,0 +1,579 @@
+{
+  "name": "Perfect AI Trading System - LLM Chain Research",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minute",
+              "step": 15
+            }
+          ],
+          "timezone": "Asia/Kolkata"
+        },
+        "triggerAtStartup": false
+      },
+      "id": "perfect-scheduler-001",
+      "name": "Market Research Scheduler",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        200,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst hour = now.getHours();\nconst minute = now.getMinutes();\nconst day = now.getDay();\n\nconst isWeekday = day >= 1 && day <= 5;\nconst isMarketHours = (hour > 9 || (hour === 9 && minute >= 15)) && (hour < 15 || (hour === 15 && minute <= 30));\nconst isResearchTime = isMarketHours && !(hour === 9 && minute < 20) && !(hour === 15 && minute > 0);\n\nreturn [{\n  canProceed: isWeekday && isResearchTime,\n  currentTime: now.toISOString(),\n  marketPhase: hour < 10 ? 'OPENING' : hour < 12 ? 'MORNING' : hour < 14 ? 'AFTERNOON' : 'CLOSING',\n  tradingSession: isResearchTime ? 'ACTIVE' : 'CLOSED'\n}];"
+      },
+      "id": "perfect-market-validator-002",
+      "name": "Market Research Validator",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.canProceed}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "perfect-research-gate-003",
+      "name": "Research Gate",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        600,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY",
+        "authentication": "none",
+        "requestMethod": "GET",
+        "options": {
+          "headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Accept": "application/json",
+            "Referer": "https://www.nseindia.com/option-chain"
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "perfect-nse-data-004",
+      "name": "NSE Research Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        800,
+        300
+      ],
+      "continueOnFail": true,
+      "retryOnFail": true,
+      "maxTries": 2
+    },
+    {
+      "parameters": {
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/^NSEI?interval=1m&range=1d",
+        "authentication": "none",
+        "requestMethod": "GET",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "perfect-yahoo-data-005",
+      "name": "Yahoo Market Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        800,
+        400
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.reddit.com/r/IndiaInvestments/hot.json?limit=25",
+        "authentication": "none",
+        "requestMethod": "GET",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "perfect-sentiment-data-006",
+      "name": "Multi-Source Sentiment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        800,
+        500
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:8b-instruct-q4_0",
+        "prompt": "You are a MASTER MARKET ANALYST with 20+ years experience in Indian markets. Your role is to provide comprehensive market analysis that forms the foundation for all trading decisions.\n\n**MARKET DATA:**\nNSE Data: {{$node['NSE Research Data'].json}}\nYahoo Data: {{$node['Yahoo Market Data'].json}}\nSentiment Data: {{$node['Multi-Source Sentiment'].json}}\nCurrent Session: {{$node['Market Research Validator'].json.marketPhase}}\n\n**YOUR COMPREHENSIVE ANALYSIS MUST INCLUDE:**\n\n1. **MARKET STRUCTURE ANALYSIS:**\n   - Current NIFTY level and trend direction\n   - Key support and resistance levels (minimum 3 each)\n   - Market volatility assessment (VIX equivalent)\n   - Volume analysis and institutional flow\n   - Sector rotation patterns\n\n2. **OPTION CHAIN DEEP DIVE:**\n   - ATM strike identification\n   - Put-Call Ratio analysis and implications\n   - Maximum Pain calculation and significance\n   - Open Interest buildup patterns\n   - IV crush/expansion expectations\n   - Options flow analysis (institutional vs retail)\n\n3. **TECHNICAL CONFLUENCE:**\n   - Multi-timeframe trend alignment (1m, 5m, 15m, 1h, 1d)\n   - Key technical levels and patterns\n   - Momentum indicators status\n   - Volume profile analysis\n   - Market microstructure insights\n\n4. **SENTIMENT & FLOW ANALYSIS:**\n   - Retail vs institutional sentiment\n   - News flow impact assessment\n   - Social media sentiment synthesis\n   - FII/DII activity implications\n\n5. **SESSION OUTLOOK:**\n   - Intraday bias and key levels\n   - Event risk assessment\n   - Volatility expectations\n   - Trading opportunities identification\n\n**OUTPUT FORMAT (STRICT JSON):**\n```json\n{\n  \"market_structure\": {\n    \"nifty_level\": number,\n    \"trend_direction\": \"STRONG_BULLISH|BULLISH|NEUTRAL|BEARISH|STRONG_BEARISH\",\n    \"support_levels\": [number, number, number],\n    \"resistance_levels\": [number, number, number],\n    \"volatility_regime\": \"LOW|NORMAL|HIGH|EXTREME\",\n    \"volume_analysis\": \"ABOVE_AVERAGE|AVERAGE|BELOW_AVERAGE\",\n    \"market_phase\": \"ACCUMULATION|DISTRIBUTION|TRENDING|CONSOLIDATION\"\n  },\n  \"option_chain_analysis\": {\n    \"atm_strike\": number,\n    \"put_call_ratio\": number,\n    \"pcr_interpretation\": \"BULLISH|BEARISH|NEUTRAL\",\n    \"max_pain\": number,\n    \"iv_percentile\": number,\n    \"option_flow\": \"CALL_HEAVY|PUT_HEAVY|BALANCED\",\n    \"institutional_activity\": \"BUYING|SELLING|NEUTRAL\"\n  },\n  \"technical_confluence\": {\n    \"trend_alignment_score\": number,\n    \"momentum_strength\": \"STRONG|MODERATE|WEAK\",\n    \"key_patterns\": [\"pattern1\", \"pattern2\"],\n    \"breakout_levels\": [number, number],\n    \"breakdown_levels\": [number, number]\n  },\n  \"sentiment_synthesis\": {\n    \"overall_sentiment\": number,\n    \"sentiment_strength\": \"STRONG|MODERATE|WEAK\", \n    \"key_themes\": [\"theme1\", \"theme2\", \"theme3\"],\n    \"sentiment_drivers\": [\"driver1\", \"driver2\"]\n  },\n  \"session_outlook\": {\n    \"intraday_bias\": \"BULLISH|BEARISH|NEUTRAL\",\n    \"key_events\": [\"event1\", \"event2\"],\n    \"volatility_expectation\": \"HIGH|MEDIUM|LOW\",\n    \"trading_conditions\": \"EXCELLENT|GOOD|FAIR|POOR\"\n  },\n  \"analyst_confidence\": number,\n  \"analysis_timestamp\": \"ISO_datetime\"\n}\n```\n\n**CRITICAL REQUIREMENTS:**\n- Be precise with numerical levels\n- Provide actionable insights, not generic observations\n- Consider current market regime and session timing\n- Base analysis on actual data, not assumptions\n- Maintain professional institutional-grade standards",
+        "options": {
+          "temperature": 0.1,
+          "topP": 0.9,
+          "maxTokens": 3000
+        }
+      },
+      "id": "perfect-master-analyst-007",
+      "name": "Master Market Analyst",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        300
+      ],
+      "credentials": {
+        "ollamaApi": "ollama-local"
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen2:7b-instruct",
+        "prompt": "You are an ADVANCED SENTIMENT SYNTHESIZER specializing in Indian market psychology and behavioral analysis. Your expertise lies in extracting actionable sentiment signals from multiple data sources.\n\n**INPUT DATA:**\nMarket Analysis: {{$node['Master Market Analyst'].json}}\nRaw Sentiment: {{$node['Multi-Source Sentiment'].json}}\nMarket Phase: {{$node['Market Research Validator'].json.marketPhase}}\n\n**YOUR ADVANCED SENTIMENT ANALYSIS:**\n\n1. **BEHAVIORAL PSYCHOLOGY ANALYSIS:**\n   - Fear vs Greed indicators from text analysis\n   - Retail investor sentiment patterns\n   - Institutional sentiment divergence\n   - Sentiment momentum and trend changes\n   - Contrarian vs momentum sentiment signals\n\n2. **MULTI-SOURCE SENTIMENT FUSION:**\n   - Reddit r/IndiaInvestments detailed analysis\n   - News sentiment correlation with price action\n   - Social media sentiment velocity\n   - Options positioning sentiment implications\n   - VIX sentiment correlation analysis\n\n3. **SENTIMENT-DRIVEN TRADE SIGNALS:**\n   - Extreme sentiment reversal opportunities\n   - Sentiment confirmation for trend trades\n   - Sentiment divergence warning signals\n   - Crowd psychology exploitation opportunities\n\n4. **MARKET PSYCHOLOGY INSIGHTS:**\n   - Current market narrative analysis\n   - Sentiment catalysts identification\n   - Behavioral bias exploitation opportunities\n   - Mass psychology trend analysis\n\n**OUTPUT FORMAT (STRICT JSON):**\n```json\n{\n  \"sentiment_analysis\": {\n    \"overall_sentiment_score\": number,\n    \"sentiment_label\": \"EXTREME_FEAR|FEAR|NEUTRAL|GREED|EXTREME_GREED\",\n    \"sentiment_momentum\": \"INCREASING|STABLE|DECREASING\",\n    \"sentiment_divergence\": \"BULLISH_DIVERGENCE|BEARISH_DIVERGENCE|NO_DIVERGENCE\",\n    \"contrarian_signal_strength\": number\n  },\n  \"behavioral_indicators\": {\n    \"fear_greed_index\": number,\n    \"retail_sentiment\": \"BULLISH|BEARISH|NEUTRAL\",\n    \"institutional_sentiment\": \"BULLISH|BEARISH|NEUTRAL\",\n    \"sentiment_extremes\": [\"extreme1\", \"extreme2\"],\n    \"crowd_behavior\": \"HERDING|CONTRARIAN|BALANCED\"\n  },\n  \"sentiment_signals\": {\n    \"reversal_probability\": number,\n    \"trend_confirmation_strength\": number,\n    \"sentiment_based_bias\": \"BULLISH|BEARISH|NEUTRAL\",\n    \"key_sentiment_levels\": [number, number],\n    \"sentiment_catalysts\": [\"catalyst1\", \"catalyst2\"]\n  },\n  \"market_narrative\": {\n    \"dominant_themes\": [\"theme1\", \"theme2\", \"theme3\"],\n    \"narrative_strength\": \"STRONG|MODERATE|WEAK\",\n    \"narrative_sustainability\": \"HIGH|MEDIUM|LOW\",\n    \"narrative_risks\": [\"risk1\", \"risk2\"]\n  },\n  \"trading_implications\": {\n    \"sentiment_edge_opportunities\": [\"opportunity1\", \"opportunity2\"],\n    \"sentiment_risk_warnings\": [\"warning1\", \"warning2\"],\n    \"optimal_position_sizing\": \"AGGRESSIVE|MODERATE|CONSERVATIVE\",\n    \"sentiment_timing_signals\": [\"signal1\", \"signal2\"]\n  },\n  \"confidence_metrics\": {\n    \"analysis_confidence\": number,\n    \"data_quality_score\": number,\n    \"sentiment_clarity\": \"CLEAR|MIXED|UNCLEAR\"\n  },\n  \"synthesis_timestamp\": \"ISO_datetime\"\n}\n```\n\n**ANALYSIS STANDARDS:**\n- Extract nuanced behavioral insights, not surface-level sentiment\n- Identify contrarian opportunities and crowd psychology patterns\n- Correlate sentiment with actual market positioning\n- Provide forward-looking sentiment implications\n- Maintain institutional research-grade analytical rigor",
+        "options": {
+          "temperature": 0.2,
+          "topP": 0.9,
+          "maxTokens": 2500
+        }
+      },
+      "id": "perfect-sentiment-synthesizer-008",
+      "name": "Advanced Sentiment Synthesizer",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        500
+      ],
+      "credentials": {
+        "ollamaApi": "ollama-local"
+      }
+    },
+    {
+      "parameters": {
+        "model": "mistral:7b-instruct",
+        "prompt": "You are an ELITE SCALPING STRATEGIST with expertise in high-frequency NIFTY options trading. You specialize in identifying 5-30 minute precision entry opportunities with exceptional risk-adjusted returns.\n\n**COMPREHENSIVE INPUT:**\nMarket Analysis: {{$node['Master Market Analyst'].json}}\nSentiment Analysis: {{$node['Advanced Sentiment Synthesizer'].json}}\nCurrent Time: {{$now}}\nTrading Session: {{$node['Market Research Validator'].json.marketPhase}}\n\n**YOUR ELITE SCALPING ANALYSIS:**\n\n1. **MICRO-STRUCTURE ANALYSIS:**\n   - Level 2 order flow implications from option chain\n   - Intraday support/resistance precision levels\n   - Volume-weighted entry/exit zones\n   - Market maker positioning insights\n   - Volatility expansion/contraction patterns\n\n2. **PRECISION ENTRY IDENTIFICATION:**\n   - ATM/Near-ATM option opportunities (Delta 0.4-0.6)\n   - High-probability reversal zones\n   - Momentum continuation setups\n   - Volatility breakout opportunities\n   - Time decay advantage positions\n\n3. **RISK-REWARD OPTIMIZATION:**\n   - Minimum 1:2.5 risk-reward setups only\n   - Optimal position sizing for 1-2 lot retail traders\n   - Stop-loss placement using market structure\n   - Target selection based on technical confluence\n   - Time-based exit strategies\n\n4. **SESSION-SPECIFIC STRATEGY:**\n   - Opening range breakout opportunities\n   - Mid-session momentum trades\n   - Pre-close positioning strategies\n   - Expiry-day specific approaches\n   - Volatility timing advantages\n\n**GENERATE 1-3 HIGHEST CONVICTION SCALPING SIGNALS:**\n\n```json\n{\n  \"scalping_opportunities\": [\n    {\n      \"signal_id\": \"SCALP_ELITE_YYYYMMDD_HHMMSS\",\n      \"opportunity_grade\": \"A+|A|B+|B\",\n      \"conviction_level\": number,\n      \"setup_type\": \"MOMENTUM_BREAKOUT|REVERSAL_SCALP|VOLATILITY_EXPANSION|SUPPORT_BOUNCE|RESISTANCE_REJECTION\",\n      \n      \"instrument_details\": {\n        \"strike_price\": number,\n        \"option_type\": \"CE|PE\",\n        \"expiry_date\": \"YYYY-MM-DD\",\n        \"current_premium\": number,\n        \"delta\": number,\n        \"gamma\": number,\n        \"theta\": number,\n        \"vega\": number,\n        \"open_interest\": number,\n        \"volume\": number\n      },\n      \n      \"trade_parameters\": {\n        \"action\": \"BUY|SELL\",\n        \"entry_price\": number,\n        \"entry_zone_range\": [number, number],\n        \"stop_loss\": number,\n        \"target_1\": number,\n        \"target_2\": number,\n        \"target_3\": number,\n        \"risk_amount_per_lot\": number,\n        \"reward_potential_per_lot\": number,\n        \"risk_reward_ratio\": number,\n        \"position_size_lots\": number,\n        \"maximum_loss\": number\n      },\n      \n      \"timing_parameters\": {\n        \"entry_timeframe\": \"IMMEDIATE|NEXT_5MIN|NEXT_15MIN|NEXT_30MIN\",\n        \"hold_duration\": \"5-15MIN|15-30MIN|30-60MIN\",\n        \"optimal_entry_time\": \"HH:MM-HH:MM\",\n        \"compulsory_exit_time\": \"HH:MM\",\n        \"time_decay_impact\": \"MINIMAL|MODERATE|SIGNIFICANT\"\n      },\n      \n      \"technical_confluence\": {\n        \"support_resistance_levels\": [number, number, number],\n        \"volume_confirmation\": \"STRONG|MODERATE|WEAK\",\n        \"momentum_indicators\": [\"indicator1\", \"indicator2\"],\n        \"pattern_completion\": \"CONFIRMED|DEVELOPING|POTENTIAL\",\n        \"market_structure_alignment\": \"PERFECT|GOOD|FAIR\"\n      },\n      \n      \"rationale\": {\n        \"primary_setup_reason\": \"detailed_explanation\",\n        \"supporting_factors\": [\"factor1\", \"factor2\", \"factor3\"],\n        \"market_context\": \"context_explanation\",\n        \"edge_identification\": \"edge_explanation\",\n        \"execution_advantages\": [\"advantage1\", \"advantage2\"]\n      },\n      \n      \"risk_assessment\": {\n        \"setup_risk_level\": \"LOW|MEDIUM|HIGH\",\n        \"market_risk_factors\": [\"risk1\", \"risk2\"],\n        \"execution_risks\": [\"risk1\", \"risk2\"],\n        \"mitigation_strategies\": [\"strategy1\", \"strategy2\"],\n        \"worst_case_scenario\": \"scenario_description\"\n      },\n      \n      \"performance_expectations\": {\n        \"probability_of_success\": number,\n        \"expected_return\": number,\n        \"risk_adjusted_return\": number,\n        \"sharpe_ratio_estimate\": number,\n        \"historical_similar_setups\": \"performance_data\"\n      }\n    }\n  ],\n  \n  \"market_scalping_conditions\": {\n    \"overall_scalping_environment\": \"EXCELLENT|GOOD|FAIR|POOR\",\n    \"volatility_suitability\": \"PERFECT|GOOD|ACCEPTABLE|POOR\",\n    \"liquidity_assessment\": \"EXCELLENT|GOOD|ADEQUATE|POOR\",\n    \"risk_reward_opportunities\": \"ABUNDANT|MODERATE|LIMITED|SCARCE\",\n    \"session_timing_advantage\": \"HIGH|MEDIUM|LOW\"\n  },\n  \n  \"strategic_guidance\": {\n    \"position_sizing_recommendation\": \"AGGRESSIVE|MODERATE|CONSERVATIVE\",\n    \"risk_management_priority\": [\"priority1\", \"priority2\", \"priority3\"],\n    \"execution_tips\": [\"tip1\", \"tip2\", \"tip3\"],\n    \"session_strategy\": \"strategy_description\",\n    \"key_levels_to_watch\": [number, number, number]\n  },\n  \n  \"analysis_metadata\": {\n    \"analysis_confidence\": number,\n    \"data_freshness_score\": number,\n    \"market_regime_suitability\": number,\n    \"generation_timestamp\": \"ISO_datetime\"\n  }\n}\n```\n\n**ELITE STANDARDS:**\n- Only provide Grade A/A+ setups with 70%+ win probability\n- Ensure ALL signals meet minimum 1:2.5 risk-reward criteria\n- Focus on liquid strikes with >50,000 OI and active volume\n- Consider market microstructure and institutional positioning\n- Provide specific price levels, not ranges or approximations\n- Account for expiry-day dynamics if applicable\n- Maintain institutional hedge fund-grade analysis quality",
+        "options": {
+          "temperature": 0.3,
+          "topP": 0.9,
+          "maxTokens": 4000
+        }
+      },
+      "id": "perfect-scalping-strategist-009",
+      "name": "Elite Scalping Strategist",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        200
+      ],
+      "credentials": {
+        "ollamaApi": "ollama-local"
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:8b-instruct-q4_0",
+        "prompt": "You are a MASTER SWING ARCHITECT specializing in 1-5 day momentum and mean-reversion strategies across Indian equity and index markets. Your expertise lies in identifying high-conviction multi-day opportunities with superior risk-adjusted returns.\n\n**COMPREHENSIVE MARKET INTELLIGENCE:**\nMarket Analysis: {{$node['Master Market Analyst'].json}}\nSentiment Analysis: {{$node['Advanced Sentiment Synthesizer'].json}}\nScalping Context: {{$node['Elite Scalping Strategist'].json}}\nCurrent Session: {{$node['Market Research Validator'].json.marketPhase}}\n\n**YOUR MASTER-LEVEL SWING ANALYSIS:**\n\n1. **MULTI-TIMEFRAME ARCHITECTURE:**\n   - Daily/Weekly trend alignment analysis\n   - Swing-level support/resistance identification\n   - Momentum vs mean-reversion opportunity assessment\n   - Sector rotation and relative strength analysis\n   - Institutional positioning and flow analysis\n\n2. **FUNDAMENTAL CATALYST INTEGRATION:**\n   - Earnings season positioning opportunities\n   - News flow and event-driven setups\n   - Sector rotation and thematic plays\n   - Policy/regulatory impact assessment\n   - Seasonal and cyclical pattern recognition\n\n3. **RISK-ADJUSTED OPPORTUNITY IDENTIFICATION:**\n   - Minimum 1:2 risk-reward with 60%+ win probability\n   - Position sizing for 2-5 day holding periods\n   - Volatility-adjusted stop placement\n   - Multiple target level identification\n   - Portfolio correlation considerations\n\n4. **SWING-SPECIFIC EXECUTION STRATEGY:**\n   - Optimal entry timing and accumulation strategies\n   - Position management through multi-day holds\n   - Partial profit-taking strategies\n   - Stop-loss trail management\n   - Exit strategy optimization\n\n**GENERATE 2-4 MASTER-GRADE SWING OPPORTUNITIES:**\n\n```json\n{\n  \"swing_opportunities\": [\n    {\n      \"opportunity_id\": \"SWING_MASTER_YYYYMMDD_XXX\",\n      \"opportunity_grade\": \"MASTER|EXPERT|PROFESSIONAL|DEVELOPING\",\n      \"conviction_rating\": number,\n      \"setup_classification\": \"MOMENTUM_BREAKOUT|MEAN_REVERSION|TREND_CONTINUATION|REVERSAL_PATTERN|CATALYST_DRIVEN\",\n      \n      \"instrument_analysis\": {\n        \"primary_instrument\": \"stock_name|NIFTY|BANKNIFTY\",\n        \"instrument_type\": \"STOCK|INDEX|SECTOR_ETF\",\n        \"market_cap_category\": \"LARGE_CAP|MID_CAP|SMALL_CAP\",\n        \"sector\": \"sector_name\",\n        \"current_price\": number,\n        \"52_week_range\": [number, number],\n        \"relative_strength_ranking\": number,\n        \"liquidity_rating\": \"EXCELLENT|GOOD|ADEQUATE\"\n      },\n      \n      \"trade_architecture\": {\n        \"action\": \"BUY|SELL\",\n        \"entry_strategy\": \"MARKET_ENTRY|LIMIT_ENTRY|STAGED_ACCUMULATION\",\n        \"primary_entry_price\": number,\n        \"entry_range\": [number, number],\n        \"stop_loss\": number,\n        \"stop_loss_rationale\": \"detailed_explanation\",\n        \"target_1\": number,\n        \"target_1_probability\": number,\n        \"target_2\": number,\n        \"target_2_probability\": number,\n        \"target_3\": number,\n        \"target_3_probability\": number,\n        \"risk_per_unit\": number,\n        \"reward_potential_per_unit\": number,\n        \"risk_reward_ratio\": number,\n        \"position_size_recommendation\": number,\n        \"capital_allocation_percentage\": number\n      },\n      \n      \"temporal_framework\": {\n        \"expected_holding_period\": \"1-2_DAYS|2-3_DAYS|3-5_DAYS|5-7_DAYS\",\n        \"optimal_entry_window\": \"TODAY|TOMORROW|NEXT_2_DAYS\",\n        \"key_time_catalysts\": [\"catalyst1\", \"catalyst2\"],\n        \"earnings_proximity\": \"BEFORE_EARNINGS|AFTER_EARNINGS|NO_EARNINGS_IMPACT\",\n        \"expiry_considerations\": \"expiry_impact_analysis\"\n      },\n      \n      \"technical_architecture\": {\n        \"primary_pattern\": \"pattern_name\",\n        \"pattern_completion_stage\": \"COMPLETED|90%_COMPLETE|DEVELOPING\",\n        \"key_support_levels\": [number, number, number],\n        \"key_resistance_levels\": [number, number, number],\n        \"volume_confirmation\": \"STRONG|MODERATE|DEVELOPING\",\n        \"momentum_indicators\": {\n          \"rsi_level\": number,\n          \"macd_signal\": \"BULLISH|BEARISH|NEUTRAL\",\n          \"moving_average_alignment\": \"BULLISH|BEARISH|MIXED\"\n        },\n        \"volatility_assessment\": \"EXPANDING|CONTRACTING|STABLE\",\n        \"multi_timeframe_confluence\": \"PERFECT|STRONG|MODERATE|WEAK\"\n      },\n      \n      \"fundamental_catalyst_analysis\": {\n        \"primary_catalysts\": [\"catalyst1\", \"catalyst2\", \"catalyst3\"],\n        \"catalyst_timeline\": \"IMMEDIATE|SHORT_TERM|MEDIUM_TERM\",\n        \"catalyst_impact_probability\": number,\n        \"sector_tailwinds\": [\"tailwind1\", \"tailwind2\"],\n        \"company_specific_factors\": [\"factor1\", \"factor2\"],\n        \"macro_environment_support\": \"STRONG|MODERATE|WEAK|NEUTRAL\"\n      },\n      \n      \"opportunity_rationale\": {\n        \"primary_thesis\": \"detailed_investment_thesis\",\n        \"supporting_arguments\": [\"argument1\", \"argument2\", \"argument3\"],\n        \"market_context\": \"current_market_context\",\n        \"edge_identification\": \"competitive_edge_explanation\",\n        \"historical_precedent\": \"similar_historical_setups\",\n        \"institutional_activity\": \"buying|selling|neutral\"\n      },\n      \n      \"risk_framework\": {\n        \"primary_risks\": [\"risk1\", \"risk2\", \"risk3\"],\n        \"risk_mitigation_strategies\": [\"strategy1\", \"strategy2\"],\n        \"maximum_adverse_scenario\": \"worst_case_description\",\n        \"early_warning_signals\": [\"signal1\", \"signal2\"],\n        \"position_management_rules\": [\"rule1\", \"rule2\", \"rule3\"]\n      },\n      \n      \"performance_projections\": {\n        \"probability_of_success\": number,\n        \"expected_return_percentage\": number,\n        \"risk_adjusted_return\": number,\n        \"sharpe_ratio_estimate\": number,\n        \"maximum_drawdown_expectation\": number,\n        \"similar_historical_performance\": \"performance_statistics\"\n      }\n    }\n  ],\n  \n  \"swing_market_assessment\": {\n    \"overall_swing_environment\": \"EXCELLENT|GOOD|NEUTRAL|CHALLENGING\",\n    \"trend_sustainability\": \"HIGH|MEDIUM|LOW\",\n    \"volatility_regime_suitability\": \"OPTIMAL|GOOD|ACCEPTABLE|CHALLENGING\",\n    \"sector_rotation_opportunities\": [\"sector1\", \"sector2\", \"sector3\"],\n    \"institutional_flow_direction\": \"BULLISH|BEARISH|NEUTRAL\"\n  },\n  \n  \"portfolio_strategy_guidance\": {\n    \"diversification_recommendations\": [\"recommendation1\", \"recommendation2\"],\n    \"correlation_considerations\": \"correlation_analysis\",\n    \"position_sizing_framework\": \"AGGRESSIVE|BALANCED|CONSERVATIVE\",\n    \"risk_management_priorities\": [\"priority1\", \"priority2\", \"priority3\"],\n    \"portfolio_heat_management\": \"heat_level_guidance\"\n  },\n  \n  \"execution_excellence\": {\n    \"entry_execution_tips\": [\"tip1\", \"tip2\", \"tip3\"],\n    \"position_management_guidelines\": [\"guideline1\", \"guideline2\"],\n    \"exit_strategy_optimization\": [\"strategy1\", \"strategy2\"],\n    \"monitoring_requirements\": [\"requirement1\", \"requirement2\"],\n    \"performance_tracking_metrics\": [\"metric1\", \"metric2\"]\n  },\n  \n  \"architecture_metadata\": {\n    \"analysis_confidence_level\": number,\n    \"data_comprehensiveness_score\": number,\n    \"market_regime_alignment\": number,\n    \"architect_signature\": \"Master_Swing_Architect\",\n    \"generation_timestamp\": \"ISO_datetime\"\n  }\n}\n```\n\n**MASTER ARCHITECT STANDARDS:**\n- Only recommend MASTER/EXPERT grade opportunities with 60%+ win probability\n- Ensure comprehensive multi-dimensional analysis covering technical, fundamental, and sentiment factors\n- Provide specific actionable levels with detailed rationale\n- Consider portfolio-level impact and correlation effects\n- Maintain institutional asset management-grade analytical rigor\n- Focus on asymmetric risk-reward opportunities with limited downside",
+        "options": {
+          "temperature": 0.4,
+          "topP": 0.9,
+          "maxTokens": 5000
+        }
+      },
+      "id": "perfect-swing-architect-010",
+      "name": "Master Swing Architect",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        400
+      ],
+      "credentials": {
+        "ollamaApi": "ollama-local"
+      }
+    },
+    {
+      "parameters": {
+        "model": "deepseek-r1:7b",
+        "prompt": "You are the SUPREME RISK CONTROLLER - the final authority on all trading decisions. Your role is to apply institutional-grade risk management to validate, modify, or reject all trading recommendations. No signal proceeds without your explicit approval.\n\n**COMPREHENSIVE RISK ANALYSIS INPUT:**\nMarket Analysis: {{$node['Master Market Analyst'].json}}\nSentiment Analysis: {{$node['Advanced Sentiment Synthesizer'].json}}\nScalping Signals: {{$node['Elite Scalping Strategist'].json}}\nSwing Opportunities: {{$node['Master Swing Architect'].json}}\n\n**YOUR SUPREME RISK VALIDATION FRAMEWORK:**\n\n1. **QUANTITATIVE RISK METRICS:**\n   - Individual position risk (max 2% of capital per trade)\n   - Portfolio heat level (max 10% total risk)\n   - Risk-reward ratio validation (min 1:2 swing, 1:2.5 scalping)\n   - Position sizing optimization\n   - Correlation risk assessment\n   - Maximum adverse excursion analysis\n\n2. **QUALITATIVE RISK ASSESSMENT:**\n   - Market regime suitability\n   - Setup quality and conviction analysis\n   - Execution complexity assessment\n   - Liquidity and slippage considerations\n   - Time horizon alignment\n   - Black swan event vulnerability\n\n3. **BEHAVIORAL RISK MANAGEMENT:**\n   - Overconfidence bias detection\n   - Revenge trading prevention\n   - FOMO-driven decision identification\n   - Risk tolerance alignment\n   - Emotional state assessment\n   - Discipline framework enforcement\n\n4. **INSTITUTIONAL STANDARDS COMPLIANCE:**\n   - Sharpe ratio expectations (min 1.5)\n   - Maximum drawdown limits (5% per month)\n   - Win rate consistency (min 55% for swing, 60% for scalping)\n   - Risk-adjusted return requirements\n   - Regulatory compliance considerations\n\n**RISK CONTROLLER DECISION OUTPUT:**\n\n```json\n{\n  \"risk_control_decision\": {\n    \"overall_portfolio_status\": \"APPROVED|MODIFIED|REJECTED\",\n    \"decision_rationale\": \"comprehensive_explanation\",\n    \"risk_controller_confidence\": number,\n    \"decision_timestamp\": \"ISO_datetime\"\n  },\n  \n  \"validated_scalping_signals\": [\n    {\n      \"original_signal_id\": \"signal_id\",\n      \"risk_decision\": \"APPROVED|MODIFIED|REJECTED\",\n      \"risk_grade\": \"A+|A|B+|B|C|REJECTED\",\n      \"modified_parameters\": {\n        \"position_size_adjustment\": number,\n        \"stop_loss_modification\": number,\n        \"target_adjustment\": number,\n        \"entry_timing_modification\": \"modification_details\"\n      },\n      \"risk_assessment\": {\n        \"individual_risk_amount\": number,\n        \"risk_percentage_of_capital\": number,\n        \"risk_reward_final\": number,\n        \"probability_adjusted_return\": number,\n        \"maximum_adverse_excursion\": number,\n        \"liquidity_impact_score\": number\n      },\n      \"approval_conditions\": [\"condition1\", \"condition2\"],\n      \"risk_warnings\": [\"warning1\", \"warning2\"],\n      \"monitoring_requirements\": [\"requirement1\", \"requirement2\"]\n    }\n  ],\n  \n  \"validated_swing_opportunities\": [\n    {\n      \"original_opportunity_id\": \"opportunity_id\",\n      \"risk_decision\": \"APPROVED|MODIFIED|REJECTED\",\n      \"risk_grade\": \"MASTER|EXPERT|PROFESSIONAL|DEVELOPING|REJECTED\",\n      \"modified_parameters\": {\n        \"position_size_adjustment\": number,\n        \"stop_loss_modification\": number,\n        \"target_adjustments\": [number, number, number],\n        \"holding_period_modification\": \"modification_details\"\n      },\n      \"risk_assessment\": {\n        \"individual_risk_amount\": number,\n        \"risk_percentage_of_capital\": number,\n        \"risk_reward_final\": number,\n        \"correlation_risk_score\": number,\n        \"liquidity_assessment\": \"EXCELLENT|GOOD|ADEQUATE|POOR\",\n        \"drawdown_expectation\": number\n      },\n      \"approval_conditions\": [\"condition1\", \"condition2\"],\n      \"risk_warnings\": [\"warning1\", \"warning2\"],\n      \"performance_expectations\": {\n        \"adjusted_probability\": number,\n        \"expected_sharpe_ratio\": number,\n        \"risk_adjusted_alpha\": number\n      }\n    }\n  ],\n  \n  \"portfolio_risk_management\": {\n    \"total_portfolio_risk\": number,\n    \"portfolio_heat_percentage\": number,\n    \"risk_concentration_analysis\": {\n      \"sector_concentration\": \"concentration_assessment\",\n      \"correlation_clustering\": \"correlation_analysis\",\n      \"time_horizon_distribution\": \"distribution_analysis\"\n    },\n    \"portfolio_adjustments\": {\n      \"position_sizing_modifications\": [\"modification1\", \"modification2\"],\n      \"diversification_requirements\": [\"requirement1\", \"requirement2\"],\n      \"hedging_recommendations\": [\"hedge1\", \"hedge2\"]\n    }\n  },\n  \n  \"risk_framework_enforcement\": {\n    \"maximum_daily_loss_limit\": number,\n    \"maximum_weekly_loss_limit\": number,\n    \"maximum_monthly_drawdown_limit\": number,\n    \"position_size_caps\": {\n      \"individual_position_cap\": number,\n      \"sector_exposure_cap\": number,\n      \"total_equity_exposure_cap\": number\n    },\n    \"risk_monitoring_triggers\": [\n      {\n        \"trigger_condition\": \"condition_description\",\n        \"trigger_threshold\": number,\n        \"required_action\": \"action_description\"\n      }\n    ]\n  },\n  \n  \"behavioral_risk_assessment\": {\n    \"overconfidence_risk_score\": number,\n    \"emotional_state_assessment\": \"DISCIPLINED|NEUTRAL|EMOTIONAL\",\n    \"bias_detection_warnings\": [\"bias1\", \"bias2\"],\n    \"discipline_enforcement_measures\": [\"measure1\", \"measure2\"],\n    \"psychological_readiness_score\": number\n  },\n  \n  \"market_risk_context\": {\n    \"systemic_risk_level\": \"LOW|MODERATE|HIGH|EXTREME\",\n    \"volatility_regime_risk\": \"FAVORABLE|NEUTRAL|CHALLENGING\",\n    \"liquidity_environment\": \"OPTIMAL|GOOD|ADEQUATE|POOR\",\n    \"tail_risk_assessment\": \"LOW|MODERATE|HIGH\",\n    \"black_swan_vulnerability\": [\"vulnerability1\", \"vulnerability2\"]\n  },\n  \n  \"execution_risk_management\": {\n    \"slippage_expectations\": {\n      \"scalping_slippage\": number,\n      \"swing_slippage\": number\n    },\n    \"timing_risk_mitigation\": [\"strategy1\", \"strategy2\"],\n    \"liquidity_risk_controls\": [\"control1\", \"control2\"],\n    \"execution_quality_requirements\": [\"requirement1\", \"requirement2\"]\n  },\n  \n  \"performance_accountability\": {\n    \"expected_portfolio_metrics\": {\n      \"target_sharpe_ratio\": number,\n      \"target_annual_return\": number,\n      \"maximum_acceptable_drawdown\": number,\n      \"minimum_win_rate\": number\n    },\n    \"performance_review_triggers\": [\"trigger1\", \"trigger2\"],\n    \"strategy_modification_conditions\": [\"condition1\", \"condition2\"]\n  },\n  \n  \"supreme_controller_metadata\": {\n    \"risk_analysis_confidence\": number,\n    \"framework_compliance_score\": number,\n    \"institutional_standards_alignment\": number,\n    \"controller_signature\": \"Supreme_Risk_Controller\",\n    \"risk_validation_timestamp\": \"ISO_datetime\"\n  }\n}\n```\n\n**SUPREME RISK CONTROLLER MANDATES:**\n- REJECT any signal that doesn't meet institutional risk standards\n- MODIFY position sizes to align with risk tolerance and portfolio heat\n- APPROVE only highest conviction, best risk-adjusted opportunities\n- ENFORCE strict discipline and behavioral risk management\n- MAINTAIN portfolio-level risk coherence and diversification\n- PRIORITIZE capital preservation over profit maximization\n- ENSURE all decisions align with long-term wealth preservation goals",
+        "options": {
+          "temperature": 0.05,
+          "topP": 0.8,
+          "maxTokens": 4000
+        }
+      },
+      "id": "perfect-risk-controller-011",
+      "name": "Supreme Risk Controller",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        350
+      ],
+      "credentials": {
+        "ollamaApi": "ollama-local"
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.risk_control_decision.overall_portfolio_status}}",
+              "operation": "equal",
+              "value2": "APPROVED"
+            }
+          ]
+        }
+      },
+      "id": "perfect-quality-gate-012",
+      "name": "Supreme Quality Gate",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        350
+      ]
+    },
+    {
+      "parameters": {
+        "model": "phi3:latest",
+        "prompt": "You are the MASTER ALERT COMPOSITOR - responsible for crafting institutional-grade trading alerts that combine precision, clarity, and actionable intelligence. Your alerts represent the pinnacle of professional trading communication.\n\n**APPROVED INTELLIGENCE INPUT:**\nRisk Controller Decision: {{$node['Supreme Risk Controller'].json}}\nMarket Context: {{$node['Master Market Analyst'].json.session_outlook}}\nCurrent Time: {{$now}}\n\n**MASTER ALERT COMPOSITION STANDARDS:**\n\n1. **INSTITUTIONAL COMMUNICATION EXCELLENCE:**\n   - Concise yet comprehensive signal presentation\n   - Professional terminology with clarity for retail traders\n   - Risk-first communication approach\n   - Actionable precision without information overload\n   - Mobile-optimized formatting for instant comprehension\n\n2. **MULTI-CHANNEL OPTIMIZATION:**\n   - Telegram: Instant actionable alerts with emojis and formatting\n   - Email: Comprehensive analysis with detailed rationale\n   - WhatsApp: Concise high-impact messages\n   - File Logs: Complete audit trail for performance analysis\n\n3. **PSYCHOLOGICAL IMPACT DESIGN:**\n   - Confidence-building language for approved signals\n   - Clear risk communication to prevent overleverage\n   - Urgency indicators for time-sensitive opportunities\n   - Professional credibility markers\n   - Behavioral bias mitigation in message structure\n\n**MASTER ALERT OUTPUT:**\n\n```json\n{\n  \"alert_suite\": {\n    \"telegram_premium_alert\": {\n      \"message\": \"🎯 **INSTITUTIONAL GRADE SIGNALS** - {{current_time}}\\n\\n⭐ **SUPREME QUALITY VALIDATED**\\n\\n📊 **SCALPING ELITE** ({{scalping_count}} signals):\\n{{scalping_formatted}}\\n\\n📈 **SWING MASTER** ({{swing_count}} opportunities):\\n{{swing_formatted}}\\n\\n🛡️ **RISK FRAMEWORK:**\\n• Portfolio Heat: {{portfolio_heat}}%\\n• Max Risk/Trade: ₹{{max_risk}}\\n• Expected Sharpe: {{sharpe_ratio}}\\n\\n⚡ **EXECUTION PRIORITY:** {{execution_priority}}\\n💡 **Market Regime:** {{market_regime}}\\n⏰ **Valid Until:** {{validity_time}}\\n\\n🎓 **Risk Controller Approved** ✅\\n\\n#InstitutionalGrade #TradingSignals #RiskManaged\",\n      \"parse_mode\": \"Markdown\",\n      \"priority\": \"HIGH|MEDIUM|LOW\"\n    },\n    \n    \"email_research_report\": {\n      \"subject\": \"🏛️ Institutional Research: {{signal_count}} Premium Opportunities - {{date}}\",\n      \"html_body\": \"comprehensive_html_report_with_tables_and_analysis\",\n      \"text_body\": \"text_version_for_compatibility\",\n      \"attachments\": [\n        {\n          \"filename\": \"risk_analysis.json\",\n          \"content\": \"detailed_risk_metrics\"\n        }\n      ]\n    },\n    \n    \"whatsapp_flash_alert\": {\n      \"message\": \"🚨 FLASH ALERT\\n\\n{{top_signal_summary}}\\n\\nRisk: ₹{{risk}} | RR: 1:{{rr}}\\nApproved: Supreme Risk Controller\\n\\n#Trading\",\n      \"character_count\": \"under_1000_chars\"\n    },\n    \n    \"performance_log\": {\n      \"log_entry\": {\n        \"timestamp\": \"ISO_datetime\",\n        \"signals_generated\": {\n          \"scalping_count\": number,\n          \"swing_count\": number,\n          \"total_approved\": number,\n          \"approval_rate\": number\n        },\n        \"risk_metrics\": {\n          \"portfolio_heat\": number,\n          \"expected_sharpe\": number,\n          \"max_individual_risk\": number,\n          \"risk_diversification_score\": number\n        },\n        \"market_context\": {\n          \"session_phase\": \"phase\",\n          \"volatility_regime\": \"regime\",\n          \"sentiment_score\": number,\n          \"institutional_flow\": \"direction\"\n        },\n        \"performance_expectations\": {\n          \"aggregate_win_probability\": number,\n          \"expected_portfolio_return\": number,\n          \"risk_adjusted_alpha\": number\n        }\n      }\n    }\n  },\n  \n  \"communication_analytics\": {\n    \"message_impact_score\": number,\n    \"clarity_rating\": \"EXCELLENT|GOOD|ADEQUATE\",\n    \"actionability_score\": number,\n    \"professional_credibility_level\": \"INSTITUTIONAL|PROFESSIONAL|RETAIL\",\n    \"behavioral_optimization_score\": number\n  },\n  \n  \"delivery_specifications\": {\n    \"telegram_delivery\": {\n      \"channel_priority\": \"HIGH|MEDIUM|LOW\",\n      \"notification_sound\": \"enabled|disabled\",\n      \"pin_message\": True,\n      \"forward_restrictions\": \"enabled\"\n    },\n    \"email_delivery\": {\n      \"importance_level\": \"HIGH|NORMAL\",\n      \"read_receipt\": \"requested\",\n      \"delivery_confirmation\": \"required\"\n    },\n    \"logging_specifications\": {\n      \"retention_period\": \"1_year\",\n      \"backup_frequency\": \"daily\",\n      \"encryption_level\": \"AES_256\"\n    }\n  },\n  \n  \"master_compositor_metadata\": {\n    \"composition_confidence\": number,\n    \"institutional_standards_compliance\": number,\n    \"multi_channel_optimization_score\": number,\n    \"compositor_signature\": \"Master_Alert_Compositor\",\n    \"composition_timestamp\": \"ISO_datetime\"\n  }\n}\n```\n\n**MASTER COMPOSITOR EXCELLENCE STANDARDS:**\n- Craft alerts that inspire confidence while maintaining realistic expectations\n- Ensure every message contains specific actionable intelligence\n- Optimize for mobile consumption with clear visual hierarchy\n- Maintain professional institutional communication standards\n- Include appropriate risk warnings and position sizing guidance\n- Create memorable and impactful messaging that drives proper execution",
+        "options": {
+          "temperature": 0.2,
+          "topP": 0.9,
+          "maxTokens": 3000
+        }
+      },
+      "id": "perfect-alert-compositor-013",
+      "name": "Master Alert Compositor",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        350
+      ],
+      "credentials": {
+        "ollamaApi": "ollama-local"
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$env.TELEGRAM_CHAT_ID}}",
+        "text": "={{$json.alert_suite.telegram_premium_alert.message}}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "perfect-telegram-delivery-014",
+      "name": "Premium Telegram Delivery",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        280
+      ],
+      "credentials": {
+        "telegramApi": "telegram-premium-credentials"
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{$env.RESEARCH_EMAIL}}",
+        "toEmail": "={{$env.SUBSCRIBER_EMAIL}}",
+        "subject": "={{$json.alert_suite.email_research_report.subject}}",
+        "emailFormat": "html",
+        "message": "={{$json.alert_suite.email_research_report.html_body}}",
+        "options": {
+          "priority": "high"
+        }
+      },
+      "id": "perfect-email-research-015",
+      "name": "Research Report Delivery",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        380
+      ],
+      "credentials": {
+        "smtp": "research-smtp-credentials"
+      }
+    },
+    {
+      "parameters": {
+        "fileName": "institutional_signals_{{$now.format('YYYY-MM-DD')}}.json",
+        "data": "={{JSON.stringify($json.alert_suite.performance_log, null, 2)}}",
+        "options": {
+          "encoding": "utf8"
+        }
+      },
+      "id": "perfect-performance-logger-016",
+      "name": "Performance Logger",
+      "type": "n8n-nodes-base.writeFile",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "institutional-research",
+        "options": {
+          "noResponseBody": false
+        }
+      },
+      "id": "perfect-research-trigger-017",
+      "name": "Manual Research Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        600
+      ]
+    }
+  ],
+  "connections": {
+    "Market Research Scheduler": {
+      "main": [
+        [
+          {
+            "node": "Market Research Validator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Market Research Validator": {
+      "main": [
+        [
+          {
+            "node": "Research Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Gate": {
+      "main": [
+        [
+          {
+            "node": "NSE Research Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Yahoo Market Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Multi-Source Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NSE Research Data": {
+      "main": [
+        [
+          {
+            "node": "Master Market Analyst",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Yahoo Market Data": {
+      "main": [
+        [
+          {
+            "node": "Master Market Analyst",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Multi-Source Sentiment": {
+      "main": [
+        [
+          {
+            "node": "Advanced Sentiment Synthesizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Master Market Analyst": {
+      "main": [
+        [
+          {
+            "node": "Advanced Sentiment Synthesizer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Elite Scalping Strategist",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Master Swing Architect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Advanced Sentiment Synthesizer": {
+      "main": [
+        [
+          {
+            "node": "Elite Scalping Strategist",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Master Swing Architect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elite Scalping Strategist": {
+      "main": [
+        [
+          {
+            "node": "Supreme Risk Controller",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Master Swing Architect": {
+      "main": [
+        [
+          {
+            "node": "Supreme Risk Controller",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supreme Risk Controller": {
+      "main": [
+        [
+          {
+            "node": "Supreme Quality Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supreme Quality Gate": {
+      "main": [
+        [
+          {
+            "node": "Master Alert Compositor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Master Alert Compositor": {
+      "main": [
+        [
+          {
+            "node": "Premium Telegram Delivery",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Research Report Delivery",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Performance Logger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Research Trigger": {
+      "main": [
+        [
+          {
+            "node": "Research Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Kolkata"
+  },
+  "staticData": {},
+  "tags": [
+    {
+      "id": "institutional",
+      "name": "institutional"
+    },
+    {
+      "id": "research",
+      "name": "research"
+    },
+    {
+      "id": "llm-chain",
+      "name": "llm-chain"
+    },
+    {
+      "id": "premium",
+      "name": "premium"
+    }
+  ],
+  "triggerCount": 1,
+  "versionId": "2.0"
+}

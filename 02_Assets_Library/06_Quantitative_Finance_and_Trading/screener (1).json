@@ -1,0 +1,564 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -560,
+        160
+      ],
+      "id": "9a0359cc-fbc1-4e2d-a985-536356150a4b",
+      "name": "When chat message received",
+      "webhookId": "stock-screener-webhook-001"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "original_message",
+              "value": "={{ ($json.message || $json.chatInput || \"\") }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ ($json.message || $json.chatInput || \"\") }}"
+            },
+            {
+              "name": "market",
+              "value": "={{ $json.market || \"NSE\" }}"
+            },
+            {
+              "name": "timezone",
+              "value": "={{ $json.timezone || \"Asia/Kolkata\" }}"
+            },
+            {
+              "name": "screening_focus",
+              "value": "={{ $json.screening_focus || \"institutional_investment\" }}"
+            },
+            {
+              "name": "run_id",
+              "value": "={{ new Date().toISOString() }}"
+            }
+          ],
+          "number": [
+            {
+              "name": "min_market_cap",
+              "value": "={{ Number.isFinite($json.min_market_cap) ? $json.min_market_cap : 1000 }}"
+            },
+            {
+              "name": "max_picks",
+              "value": "={{ (function(){ const v = parseInt($json.max_picks || 3, 10); return Math.min(Math.max(v,1),5); })() }}"
+            },
+            {
+              "name": "min_institutional_holding",
+              "value": "={{ Number.isFinite($json.min_institutional_holding) ? $json.min_institutional_holding : 15 }}"
+            },
+            {
+              "name": "max_debt_to_equity",
+              "value": "={{ Number.isFinite($json.max_debt_to_equity) ? $json.max_debt_to_equity : 0.5 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        -368,
+        160
+      ],
+      "id": "9426fb65-7f31-4c90-a667-4b3e8184d5a1",
+      "name": "Set Defaults"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {
+          "maxRetries": 4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -672,
+        368
+      ],
+      "id": "0d36c2f8-78d9-4a2e-a08c-55ddc41e3a34",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "IXVDSsvE2d5P5Sty",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are the Master Orchestrator. Minimize Deep Research calls - only use for live web data that can't be found through basic screening.\n\nOPERATING MODES:\n\n• INITIATE: When user requests stock screening, call Planner Agent with user brief + defaults. Parse planner output to get steps array. For steps with needs_deep_research=true:\n  1. Collect all deep-research steps (label, target_agent, deep_research_input).\n  2. For EACH step, set DeepResearch__Input to the deep_research_input.\n  3. Launch ALL Deep Research jobs in parallel (non-blocking).\n  4. For EACH response, extract job ID robustly:\n     - Prefer response.id; else response.response_id; else response.data?.id; else fallback dr_${Date.now()}_${Math.random().toString(36).substr(2,9)}.\n  5. Append EVERY job to the queue immediately: QueueManager__Input={\"command\":\"append\",\"items\":[{\"id\":\"EXTRACTED_JOB_ID\",\"label\":\"STEP_LABEL\",\"target_agent\":\"AGENT_NAME\",\"status\":\"queued\",\"created_at\":\"ISO_TIMESTAMP\"}]}.\n  6. After launching all jobs, verify storage with QueueManager__Input={\"command\":\"get_all\"}; if any missing, re-append.\n\n  Reply: \"🔍 Started N research tasks: [labels]. Type 'status' in 15–20 minutes to check progress.\"\n\n• STATUS: ALWAYS start by calling Queue Manager with QueueManager__Input={\"command\":\"get_all\"}. Do NOT remove jobs.\n\n  If queue is empty AND user expected jobs: explain IDs were not stored; offer to restart.\n\n  If jobs found: For each job with status in [queued, running]:\n  1. Set URL=\"https://api.openai.com/v1/responses/{job.id}\" and call Get Deep Research Result.\n  2. If status is [completed, finished]: extract content; update job to completed and store result; fan-out the same result to ALL agents: set Screener__Input, FinAnalyst__Input, MgmtResearch__Input and call each agent.\n  3. After agent calls, update the job again with agent_outputs: { screener, financial, management }.\n  4. If status is [running, in_progress]: leave untouched.\n  5. If status is [failed, error]: update to failed; never delete.\n\n  Report: \"📊 Jobs Status: X completed, Y running, Z queued\" plus per-job id/label/status.\n\n• RANK: When most analyses complete, call Stock Ranking Agent with assembled results.\n\nRULES:\n• Use Deep Research sparingly - only for current market data/news requiring web search\n• Include sources with URLs and dates (YYYY-MM-DD)\n• Flag data >12 months old\n• Never fabricate data\n• Respect max_picks limit\n• Preserve full audit trail: never remove jobs from queue\n",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        160
+      ],
+      "id": "1221d37d-91b0-464e-9480-218717000fb5",
+      "name": "Master Orchestrator"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Planner Agent: returns a compact JSON plan of steps for the requested screening/research.",
+        "text": "={{ $fromAI('Planner__Input', '', 'string') }}",
+        "options": {
+          "systemMessage": "You are the Planner Agent. Create an efficient screening plan that minimizes Deep Research calls.\n\nINPUT: User's screening request + defaults (market, caps, focus)\n\nOUTPUT (JSON only):\n{\n  \"steps\": [\n    {\n      \"label\": \"<short_descriptive_name>\",\n      \"target_agent\": \"Stock Screener Agent|Financial Analyst Agent|Management Research Agent\", \n      \"needs_deep_research\": false,\n      \"deep_research_input\": \"<only_if_needs_current_web_data>\",\n      \"priority\": 1\n    }\n  ]\n}\n\nPLANNING STRATEGY:\n• Create 2-4 focused steps maximum\n• Start with basic institutional screening (no Deep Research needed)\n• Only set needs_deep_research=true for:\n  - Current market news/events requiring web search\n  - Live price data or recent regulatory filings\n  - Real-time institutional transaction data\n• For standard screening (PE ratios, debt levels, market cap), use needs_deep_research=false\n• Keep deep_research_input very specific: \"Find recent NSE small-cap institutional investments in Q4 2024\"\n\nRETURN ONLY the JSON object - no markdown, arrays, or wrappers."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -688,
+        640
+      ],
+      "id": "116c50f4-bef8-4a73-baf4-cd8be14aa9a1",
+      "name": "Planner Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Queue Manager: maintain Deep Research job queue in AI memory var DR_Queue.",
+        "text": "={{ $fromAI('QueueManager__Input', '', 'string') }}",
+        "options": {
+          "systemMessage": "You are the Queue Manager. Maintain DR_Queue array in attached Queue Memory for persistence across user sessions.\n\nSTATE STRUCTURE:\nDR_Queue = [\n  {\n    \"id\": \"deep_research_job_id\",\n    \"label\": \"human_readable_task_name\", \n    \"target_agent\": \"Stock Screener Agent|Financial Analyst Agent|Management Research Agent\",\n    \"status\": \"queued|running|completed|failed\",\n    \"created_at\": \"timestamp\",\n    \"history\": [ { \"status\": \"queued\", \"timestamp\": \"...\" } ],\n    \"result\": \"deep_research_output_when_complete\",\n    \"agent_outputs\": { \"screener\": null, \"financial\": null, \"management\": null }\n  }\n]\n\nCOMMANDS:\n\n• append: {\"command\": \"append\", \"items\": [{\"id\":\"...\", \"label\":\"...\", \"target_agent\":\"...\", \"status\":\"queued\", \"created_at\":\"...\"}]}\n  - Add new jobs to DR_Queue array.\n  - If job exists, do NOT replace; keep existing and only append to history if status changes.\n  - Return: {\"status\": \"appended\", \"count\": N, \"total_jobs\": X}\n\n• get_all: {\"command\": \"get_all\"}\n  - Return complete queue state.\n  - If DR_Queue is empty/undefined, initialize as empty array.\n  - Return: {\"items\": DR_Queue, \"total\": N, \"completed\": X, \"pending\": Y, \"failed\": Z, \"queue_empty\": true/false}\n\n• update: {\"command\": \"update\", \"updates\": [{\"id\": \"job_id\", \"status\": \"completed\", \"result\": \"output\", \"agent_outputs\": { }, \"append_history\": true }]}\n  - Update job fields; if append_history=true and status provided, push to history with current timestamp.\n  - Return: {\"status\": \"updated\", \"updated_count\": N}\n\n• clear_completed: {\"command\": \"clear_completed\"}\n  - NO-OP: For auditability, never remove jobs. Return current counts.\n  - Return: {\"status\": \"noop\", \"removed_count\": 0}\n\nPOLICY:\n- Never delete jobs.\n- Preserve full status history.\n- Always return valid JSON. Use Queue Memory for persistence."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        656
+      ],
+      "id": "f4085f18-747d-40c4-98e3-36ead3974211",
+      "name": "Queue Manager"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 200000
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -272,
+        896
+      ],
+      "id": "fcc27605-bd6b-44ae-9beb-66af58cf03ec",
+      "name": "Queue Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Stock Screener Agent: Finds stocks with recent institutional investments (HNI, UHNI, MFs) and screens by basic criteria.",
+        "text": "={{ $fromAI('Screener__Input', '', 'string') }}",
+        "options": {
+          "systemMessage": "You are the Stock Screener Agent, specialized in finding stocks with recent institutional investments.\nTASK: Use Deep Research outputs to assemble screened_stocks with investor events (URLs/dates). Respect market, cap, liquidity filters. Return JSON only."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -64,
+        656
+      ],
+      "id": "ce746afa-55cd-4c64-b381-6139aa5784cc",
+      "name": "Stock Screener Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Financial Analyst Agent: Analyzes quarterly/annual results, financial metrics, and valuation ratios.",
+        "text": "={{ $fromAI('FinAnalyst__Input', '', 'string') }}",
+        "options": {
+          "systemMessage": "You are the Financial Analyst Agent. Use Deep Research outputs only. Return JSON with recent results, key ratios, valuation, peers; include URLs/dates; flag data >12 months."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        656
+      ],
+      "id": "09a2afa6-f3c8-494c-bb28-04bd493e7632",
+      "name": "Financial Analyst Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Management Research Agent: Researches management history, governance, and corporate actions.",
+        "text": "={{ $fromAI('MgmtResearch__Input', '', 'string') }}",
+        "options": {
+          "systemMessage": "You are the Management Research Agent. Use Deep Research outputs only. Return JSON with management/governance findings, risks/strengths, with URLs and dates."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        656
+      ],
+      "id": "b51ce3d4-8622-4f63-9787-f0d7b8955006",
+      "name": "Management Research Agent"
+    },
+    {
+      "parameters": {
+        "description": "Private scratchpad for planning/progress. Do NOT reveal content to the user.\nUsage:\n• Start: one-level bullet list\n• After each step: strike through with ~~like this~~ plus done/undone\n• Keep ≤ 8 lines. No reasoning or data here."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        528,
+        368
+      ],
+      "id": "b7ea75b1-dab6-4b25-bd5a-9009090d2f68",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 100
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -496,
+        368
+      ],
+      "id": "d04ff093-df7d-499d-b8e8-9853fdc47a79",
+      "name": "Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Deep Research (HTTP; POST /v1/responses). Starts a background search/coding job using o3-deep-research.",
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"o3-deep-research-2025-06-26\",\n  \"input\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        { \"type\": \"input_text\", \"text\": \"={{ $fromAI('DeepResearch__Input', $('Set Defaults').item.json.message || $('When chat message received').item.json.message || $('When chat message received').item.json.chatInput, 'string') }}\" }\n      ]\n    }\n  ],\n  \"reasoning\": { \"summary\": \"auto\" },\n  \"background\": true,\n  \"tools\": [\n    { \"type\": \"web_search_preview\" },\n    { \"type\": \"code_interpreter\", \"container\": { \"type\": \"auto\" } }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        368
+      ],
+      "id": "cd804290-a93a-4138-97d5-0af88d044f50",
+      "name": "Deep Research",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "KGAh9OkQXYChH0sC",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Get Deep Research Result (HTTP; GET /v1/responses/{id}). Expects AI var URL = https://api.openai.com/v1/responses/{id}.",
+        "url": "={{ $fromAI('URL', '', 'string') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        832,
+        368
+      ],
+      "id": "00497eb5-8713-4fa2-b8e8-f34147d0c29d",
+      "name": "Get Deep Research Result",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "KGAh9OkQXYChH0sC",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Stock Ranking Agent: Ranks stocks based on comprehensive analysis and provides final investment recommendations.",
+        "text": "={{ $fromAI('Ranking__Input', '', 'string') }}",
+        "options": {
+          "systemMessage": "You are the Stock Ranking Agent. Rank after analyses exist. Return JSON with executive_summary, ranked_stocks (≤ max_picks), risks, next_steps, data_quality, last_updated (YYYY-MM-DD HH:MM:SS). Include sources."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        784,
+        656
+      ],
+      "id": "8735e775-489e-49be-9558-57d2575d13e2",
+      "name": "Stock Ranking Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        864
+      ],
+      "id": "f4a494a6-dfda-47ac-9885-3d0b6206a674",
+      "name": "OpenAI Chat Model for Ranking",
+      "credentials": {
+        "openAiApi": {
+          "id": "IXVDSsvE2d5P5Sty",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        928
+      ],
+      "id": "0967d9ea-4d77-4265-bb25-1e89ab6602fd",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "IXVDSsvE2d5P5Sty",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Set Defaults",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Defaults": {
+      "main": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Planner Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Queue Manager": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Queue Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Queue Manager",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stock Screener Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Financial Analyst Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Management Research Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deep Research": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Deep Research Result": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stock Ranking Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model for Ranking": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Stock Ranking Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Planner Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Queue Manager",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Stock Screener Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Financial Analyst Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Management Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b906d67289e64267bf0ebbd2cc0beb8b7577172fc177f5bb8b349b941daa3eeb"
+  }
+}

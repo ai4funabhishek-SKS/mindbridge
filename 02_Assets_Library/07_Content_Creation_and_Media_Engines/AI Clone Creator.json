@@ -1,0 +1,328 @@
+{
+  "name": "AI Clone Creator",
+  "nodes": [
+    {
+      "parameters": {
+        "amount": 210
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        752,
+        0
+      ],
+      "id": "2475deff-e47c-4f0b-b982-1c4114ea2ba1",
+      "name": "Wait ",
+      "webhookId": "8876fb64-9015-4f23-a406-ef2ffeaf586f"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ROLE: You're an expert in viral short-form video content creation with 10 years of experience. You've created viral short videos that have gotten 10 billion views in total.\n\nOBJECTIVE: Your goal is to prepare all the materials for my next short video. It should be super valuable to my audience. I'm paying you ten thousand dollars for it.\n\nSCENARIO: I run an Instagram page about marketing and sales. My audience is marketers, salespeople, founders, B2B business owners, B2C business owners, brands. My goal is to help them build better brands with valuable, and practical content. I do Instagram Reels. My content is about growth hacks: for instance, use this marketing technique on your social media page to trigger more sales.\n\nEXPECTATION: Write a script for my next 30 seconds Instagram Reel. Make sure to have great: hook, retention, and reward at the end. Example output:\n5 Social Media Trends Dominating 2025. Stop posting like it's 2024. AI Transparency — Marketers are showing their AI prompts instead of hiding them. Be open about your process. Social Search — TikTok and Instagram are replacing Google for product discovery. Optimize for search, not just likes. In-App Shopping — 46% of consumers buy directly through social media. Your posts are now storefronts. Real Communities — People want genuine connections, not follower counts. Build relationships that matter. Multi-Platform Video — All platforms now prioritize video content. Create once, adapt everywhere. Social media isn't just marketing anymore — it's discovery, community, and commerce combined. Ready to adapt?\n\nOutput nothing except for the script. Plain text with no new lines. Begin:",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        192,
+        0
+      ],
+      "id": "f7da36fe-146c-4a6c-8aa6-edc841093454",
+      "name": "Write Script"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.heygen.com/v2/video/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"video_inputs\": [\n    {\n      \"character\": {\n        \"type\": \"avatar\",\n        \"avatar_id\": \"650fef8b47eb4458a98d44b6aa154b88\",\n        \"avatar_style\": \"normal\"\n      },\n      \"voice\": {\n        \"type\": \"text\",\n        \"input_text\": \"{{ $json.output }}\",\n        \"voice_id\": \"89520ae282e247df996ba8be59e55f1c\",\n        \"speed\": 1.1,\n        \"pitch\": 50,\n        \"emotion\": \"Excited\"\n      }\n    }\n  ],\n  \"dimension\": {\n    \"width\": 720,\n    \"height\": 1280\n  },\n  \"aspect_ratio\": \"9:16\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        544,
+        0
+      ],
+      "id": "5cb874ae-101e-4a67-bedf-84e7740499db",
+      "name": "Generate Video",
+      "executeOnce": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZHIqFghzjB1W32Td",
+          "name": "HeyGen"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "1725665d-f21c-4d8f-973c-06fcdbf7b361",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "content": "# Write Script",
+        "height": 380,
+        "width": 560,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -96,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "b3dc85f9-75ce-4bc2-afd9-08a293bf03e6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Generate Video",
+        "height": 380,
+        "width": 580,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        480,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "bf153510-2364-4b86-9857-5034e13ee185",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Auto Publish",
+        "height": 380,
+        "width": 460,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1088,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "d2a2fc18-73f3-4df9-95a0-d7bf7b971b0e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/posts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"post\": {\n    \"target\": {\n      \"targetType\": \"instagram\"\n    },\n    \"content\": {\n      \"text\": \"I'm an AI clone\",\n      \"platform\": \"instagram\",\n      \"mediaUrls\": [\"{{ $json.url }}\"]\n    },\n    \"accountId\": \"9107\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        0
+      ],
+      "id": "0abef632-96c5-433b-b99a-3ba34c757473",
+      "name": "Publish Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "c696uEOs526cTSWM",
+          "name": "Blotato Oleg"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        112,
+        160
+      ],
+      "id": "789ee922-dd8f-4245-9afa-c83fb14f7d51",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "k9gwbpBcU5sIcbmX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.heygen.com/v1/video_status.get",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "video_id",
+              "value": "={{ $json.data.video_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        928,
+        0
+      ],
+      "id": "4ed096c3-1958-4170-8617-06d720219bdc",
+      "name": "Download Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZHIqFghzjB1W32Td",
+          "name": "HeyGen"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.blotato.com/v2/media",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{ $json.data.video_url }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        0
+      ],
+      "id": "03b90c13-c346-4304-97de-537f8a4ae05c",
+      "name": "Upload Blotato",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "c696uEOs526cTSWM",
+          "name": "Blotato Oleg"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Wait ": {
+      "main": [
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Script": {
+      "main": [
+        [
+          {
+            "node": "Generate Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Video": {
+      "main": [
+        [
+          {
+            "node": "Wait ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Write Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write Script",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Upload Blotato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Blotato": {
+      "main": [
+        [
+          {
+            "node": "Publish Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f225448c-1728-4254-9079-f5ff6e7ca206",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69f54ab0f1afba7dd61c0a7a7609df8a8bd98642cf42d92572ea26f947c9a1d8"
+  },
+  "id": "9BrChDOzediDLVFu",
+  "tags": []
+}

@@ -1,0 +1,254 @@
+{
+  "main": {
+    "id": "5a780493aca43ee2",
+    "type": "split",
+    "children": [
+      {
+        "id": "fe26fb92d1bb1bca",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "52f1ebe6b0b311a5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Welcome.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Welcome"
+            }
+          },
+          {
+            "id": "015f1602904122ee",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "! Inbox.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "! Inbox"
+            }
+          }
+        ],
+        "currentTab": 1
+      },
+      {
+        "id": "32c0bb4f642c908a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "197877fc14834b5b",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "b91e153f26cb9d3b",
+    "type": "split",
+    "children": [
+      {
+        "id": "ac647bfe2482f82d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5e30047ce88545ec",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "1deb0e304bfeb331",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "5457dea93aa99567",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          },
+          {
+            "id": "d6ca2f21058d076a",
+            "type": "leaf",
+            "state": {
+              "type": "recent-files",
+              "state": {},
+              "icon": "clock",
+              "title": "Recent Files"
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "9472476b06c0226e",
+    "type": "split",
+    "children": [
+      {
+        "id": "dd9490fda07e8f25",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2e314436ac829e8f",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "878ca1f7cf248147",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "df5a70027d4ffd0f",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "3460a443d32cebb7",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "templater-obsidian:Templater": false,
+      "omnisearch:Omnisearch": false,
+      "copilot:Open Copilot Chat": false,
+      "obsidian-kanban:Create new board": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false,
+      "obsidian-excalidraw-plugin:New drawing": false
+    }
+  },
+  "active": "197877fc14834b5b",
+  "lastOpenFiles": [
+    "my research/run_llm_collation.bat",
+    "my research/sources/code_examples/README_LLM_Collation.md",
+    "my research/sources/code_examples/llm_knowledge_collation.py",
+    "my research/sources/code_examples/json_to_docx_converter.py",
+    "my research/sources/code_examples/universal_llm_extractor.py",
+    "my research/sources/processed/prompt_extraction_summary.json",
+    "my research/sources/prompts/workflow/workflow_1_v1.md",
+    "my research/sources/prompts/trading/trading_1_v1.md",
+    "my research/sources/prompts/ai_tools/ai_tools_1_v1.md",
+    "my research/sources/code_examples/prompt_extractor.py",
+    "my research/sources/processed/~$epSeek_LLM_Research_Report.docx",
+    "my research/sources/processed/DeepSeek_LLM_Research_Report.docx",
+    "my research/sources/code_examples/md_to_docx.py",
+    "my research/sources/processed/final_report.md",
+    "my research/sources/processed/analysis.md",
+    "my research/sources/processed/organized_content.json",
+    "my research/sources/code_examples/content_processor.py",
+    "my research/templates/version_control_guidelines.md",
+    "my research/templates/prompt_testing_guidelines.md",
+    "! Inbox.md",
+    "copilot-custom-prompts/Rewrite as tweet thread.md",
+    "copilot-custom-prompts/Rewrite as tweet.md",
+    "copilot-custom-prompts/Remove URLs.md",
+    "copilot-custom-prompts/Generate glossary.md",
+    "copilot-custom-prompts/Generate table of contents.md",
+    "copilot-custom-prompts/Make longer.md",
+    "copilot-custom-prompts/Make shorter.md",
+    "copilot-custom-prompts/Emojify.md",
+    "copilot-custom-prompts/Explain like I am 5.md",
+    "copilot-custom-prompts/Simplify.md",
+    "copilot-custom-prompts/Summarize.md",
+    "copilot-custom-prompts/Translate to Chinese.md",
+    "copilot-custom-prompts/Fix grammar and spelling.md",
+    "Welcome.md"
+  ]
+}
