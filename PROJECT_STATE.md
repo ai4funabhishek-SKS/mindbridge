@@ -10,18 +10,19 @@ test suite — all non-destructive to the original raw files.
 ## 2. 🔒 Active Worker
 | Field | Value |
 |---|---|
-| Claimed by | opencode (session: post-crash resume + M5b decision) |
-| Claimed at | 2026-08-23 20:08 local |
-| Status | CLAIMED |
+| Claimed by | opencode (session: M5b embed resume #2 + parallel anomaly fix) |
+| Claimed at | 2026-08-24 — session complete, claim RELEASED |
+| Status | FREE |
 
 ## 3. Current Status
-🟢 **M5 DEEP-PROCESSING: COMPLETE.** 443/443 files classified; 96/96 E2E tests
-passing (100%). Session delivered: crash recovery → credentials audit (50 raw +
-repo-wide scan, placeholder-aware scanner) → live keys redacted from public
-tiers (2 GM playbooks + 6 library copies; originals untouched in Raw_copies) →
-RAG/KG rebuilt across all tiers (502 docs / 10,785 chunks) → dashboards aligned.
-**NEXT:** semantic/vector search layer (owner-chosen M5b); GitHub push pending
-owner repo decision — recommend Private; scrub dashboard exports first.
+🟢 **M5b SEMANTIC INDEX: COMPLETE (2026-08-24).** All 10,785/10,785 chunks embedded
+(nomic-embed-text via Ollama, 768-dim, L2-normalised) in `chunk_embeddings` table.
+Domain anomaly RESOLVED: 42 manifest entries had action↔domain mismatches
+(archive-action vs ARCHIVE-bucket); all aligned — final split 149 archive /
+255 merge_into_gm / 39 reference_only = 443. ARCHIVE confirmed as intentional
+routing bucket, not an 11th content domain. 96/96 tests still pass.
+**NEXT:** build the semantic search command (cosine similarity over
+chunk_embeddings, hybrid with FTS5); GitHub push pending owner repo decision.
 
 ## 4. Milestone Log
 | Date | Milestone | Status | Notes |
@@ -33,9 +34,11 @@ owner repo decision — recommend Private; scrub dashboard exports first.
 | 2026-08-18 (crashed) | M5 deep-processing 443 files | PARTIAL | 186/443 deep-classified; run died at ~186 |
 | 2026-08-23 | Crash recovery & mission reconstruction | DONE | owner confirmed lost context; resumed M5 |
 | 2026-08-23 | M5 deep-processing 443/443 + security hardening | DONE | 96/96 tests; see batches 01-11 + redaction commits |
+| 2026-08-24 | M5b semantic index 10,785/10,785 embedded | DONE | survived UI freeze mid-run; crash-safe resume worked |
+| 2026-08-24 | Domain anomaly resolved (42 manifest fixes) | DONE | backup kept; 96/96 tests re-verified |
 
-## 5.1 M5 Final Statistics (2026-08-23)
-- Classification: 251 merge_into_gm · 123 archive · 65 reference_only · 0 pending
+## 5.1 M5 Final Statistics (2026-08-23, split corrected 2026-08-24)
+- Classification: 255 merge_into_gm · 149 archive · 39 reference_only · 0 pending
 - 117 files scored reusability ≥8 ("gems"); avg score 4.92
 - Credentials: live keys found in my_api_keys_backup.md, key.txt (DeepInfra+Jina),
   test.env.txt (Groq), Google OAuth client-secret json — all local-only
@@ -68,7 +71,10 @@ owner repo decision — recommend Private; scrub dashboard exports first.
 2. Credentials audit → authoritative risky list (60 flagged in index + fresh scan);
    keep risky aside via .gitignore; commit safe outputs locally; GitHub only after
    owner provides repo + approves push (recommend Private).
-3. Fix anomaly: manifest shows 11 distinct domains vs canonical 10.
+3. ~~Fix anomaly: manifest shows 11 distinct domains vs canonical 10.~~ RESOLVED
+   2026-08-24: ARCHIVE is the routing bucket for cold storage (by design); 42
+   mismatched action↔domain entries aligned; pre-fix backup at
+   `_trash_manifest_backup_2026-08-24.json`.
 4. After M5 processing completes → semantic/vector search layer (owner-chosen).
 5. Owner memory anchor (2026-08-23): "go through each and every file, identify
    what it is, categorise it, tag metadata — know exactly what I have and whether
@@ -92,13 +98,13 @@ CONTEXT: C:\knowledgeBase_staging — Second Brain KB: 443 raw files refined
 into vault + 10-domain library (49 playbooks) + FTS5/KG database (502 docs,
 10785 chunks) + dashboards + 96-test suite at 100% pass. Owner is
 non-technical, decides in natural language.
-STATE:   M1-M4 DONE. M5 DONE 2026-08-23: every file deep-classified in
-Processed_Assets/file_classification_manifest.json (251 merged, 123 archive,
-65 reference, 117 gems scored 8+). Credentials audited; public tiers
-sanitized; git protections verified by test suite.
-NEXT:    semantic/vector search layer (owner-chosen). GitHub push only after
-owner names repo + approves; recommend Private; scrub Excel/HTML dashboard
-exports for embedded content first.
+STATE:   M1-M5 DONE. M5b semantic index DONE 2026-08-24: chunk_embeddings has
+10785/10785 chunks (nomic-embed-text, 768d). Domain anomaly resolved (ARCHIVE
+= routing bucket; 42 manifest entries aligned; 149/255/39 final split).
+Credentials audited; public tiers sanitized; 96/96 tests pass.
+NEXT:    semantic search command (cosine over chunk_embeddings, hybrid with
+FTS5). GitHub push only after owner names repo + approves; recommend Private;
+scrub Excel/HTML dashboard exports for embedded content first.
 GOTCHAS: free providers/quota drops interrupt runs — small committed
 increments only (m5_merge_batch.py validator + per-batch commits is the
 pattern). Raw_copies/ + vault + RAG DB stay out of git. Live keys exist in
