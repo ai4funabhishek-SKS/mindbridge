@@ -245,9 +245,9 @@
   "file_type": ".json",
   "content_summary": "Workflow for parsing or submitting resumes on Indeed",
   "reusability_score": 7,
-  "action": "new_gm_needed",
+  "action": "merge_into_existing_gm",
   "target_gm": "GM_Recruitment_and_Resume_Parsing_Automation.md",
-  "rationale": "Substantial distinct workflow not covered by existing GMs"
+  "rationale": "Substantial distinct workflow not covered by existing GMs [2026-08-23: target playbook now exists; upgraded from new_gm_needed]"
  },
  {
   "raw_path": "Raw_copies/AIS Social Media Reels Sheet.json",
@@ -525,9 +525,9 @@
   "file_type": ".json",
   "content_summary": "AI persona configuration inspired by Alex Hormozi for marketing/sales",
   "reusability_score": 8,
-  "action": "new_gm_needed",
+  "action": "merge_into_existing_gm",
   "target_gm": "GM_Expert_Persona_Cloning_and_Marketing_Copy_Engine.md",
-  "rationale": "Represents persona cloning for marketing, warrants a separate module"
+  "rationale": "Represents persona cloning for marketing, warrants a separate module [2026-08-23: target playbook now exists; upgraded from new_gm_needed]"
  },
  {
   "raw_path": "Raw_copies/Inbox Manager Documentation (1).pdf",
@@ -1075,9 +1075,9 @@
   "file_type": ".md",
   "content_summary": "Specification for backend backup strategies",
   "reusability_score": 8,
-  "action": "new_gm_needed",
+  "action": "merge_into_existing_gm",
   "target_gm": "GM_Robust_Data_Backup_and_Recovery_Pipelines.md",
-  "rationale": "Backend specs deserve their own DevOps GM"
+  "rationale": "Backend specs deserve their own DevOps GM [2026-08-23: target playbook now exists; upgraded from new_gm_needed]"
  },
  {
   "raw_path": "Raw_copies/backup-specification-frontend.md",
@@ -1085,9 +1085,9 @@
   "file_type": ".md",
   "content_summary": "Specification for frontend backup strategies",
   "reusability_score": 8,
-  "action": "new_gm_needed",
+  "action": "merge_into_existing_gm",
   "target_gm": "GM_Robust_Data_Backup_and_Recovery_Pipelines.md",
-  "rationale": "Companion to backend backup specs"
+  "rationale": "Companion to backend backup specs [2026-08-23: target playbook now exists; upgraded from new_gm_needed]"
  },
  {
   "raw_path": "Raw_copies/browser_agent.system.md",
