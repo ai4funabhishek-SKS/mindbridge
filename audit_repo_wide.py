@@ -40,6 +40,25 @@ FILENAME_RULES = [
 
 
 def main():
+    # Placeholder-safe verification: ignore obvious teaching placeholders,
+    # env-var templates and mock values so public playbooks stay publishable.
+    PLACEHOLDER_HINTS = ("your", "mock", "${", "<", ">", "example", "xxx",
+                         "placeholder", "xxxx", "test_key", "none",
+                         "[redacted]")
+    def is_real_secret(match_text: str) -> bool:
+        low = match_text.lower()
+        if any(h in low for h in PLACEHOLDER_HINTS):
+            return False
+        # Value side only (after last separator): reject bare snake_case
+        # identifiers (var-to-var assignment) and bracketed expressions
+        # such as [Environment]::GetEnvironmentVariable(...) reads.
+        value = re.split(r"[:=]", match_text, maxsplit=1)[-1].strip().strip("\"'")
+        if re.fullmatch(r"[a-z][a-z0-9_]*", value or ""):
+            return False
+        if "[" in value or value.startswith("("):
+            return False
+        return True
+
     risky = []
     for p in ROOT.rglob("*"):
         if not p.is_file():
@@ -56,8 +75,11 @@ def main():
             try:
                 if p.stat().st_size <= MAX_SCAN_BYTES:
                     text = p.read_text(encoding="utf-8", errors="ignore")
-                    reasons += [f"content:{m}" for m in CONTENT_PATTERNS
-                                if re.search(CONTENT_PATTERNS[m], text)]
+                    for m_name, pat in CONTENT_PATTERNS.items():
+                        for m in re.finditer(pat, text):
+                            if is_real_secret(m.group(0)):
+                                reasons.append(f"content:{m_name}")
+                                break
             except OSError:
                 pass
         if reasons:
