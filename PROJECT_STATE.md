@@ -10,8 +10,8 @@ test suite — all non-destructive to the original raw files.
 ## 2. 🔒 Active Worker
 | Field | Value |
 |---|---|
-| Claimed by | opencode (session: crash-recovery + M5 resume) |
-| Claimed at | 2026-08-23 17:48 local |
+| Claimed by | opencode (session: post-crash resume + M5b decision) |
+| Claimed at | 2026-08-23 20:08 local |
 | Status | CLAIMED |
 
 ## 3. Current Status
