@@ -1,0 +1,486 @@
+[
+ {
+  "raw_path": "Raw_copies/! Inbox.md",
+  "domain": "10_R_and_D_Incubator_Half_Baked_Ideas",
+  "file_type": ".md",
+  "content_summary": "Owner's own stream-of-consciousness planning note about streamlining workflows and gaining clarity on what needs doing; early-stage personal brainstorm",
+  "reusability_score": 4,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_R_and_D_Incubator_Backlog_and_Experimental_Prototypes.md",
+  "rationale": "Authentic owner intent snapshot; feeds the incubator backlog playbook as an idea-seed entry",
+  "valuable_content": [
+   {
+    "type": "business_idea",
+    "description": "Streamline-and-clarify workflow thinking"
+   }
+  ],
+  "tags": [
+   "inbox",
+   "idea-seed",
+   "personal-note"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/000_home.md",
+  "domain": "09_LLM_Conversations_and_Syntheses",
+  "file_type": ".md",
+  "content_summary": "Obsidian knowledge-base home page template describing entry point, overview and content types of the vault",
+  "reusability_score": 2,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Boilerplate navigation page of the original Obsidian vault; superseded by 00_Index_and_Dashboards tier",
+  "tags": [
+   "obsidian",
+   "boilerplate",
+   "navigation"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/1649839632749_1 (1).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Single-page scanned PDF with empty extractable text; likely a scanned receipt or blank form",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "No machine-readable content; keep only as archived original",
+  "tags": [
+   "scan",
+   "empty-text"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/1731557585881-PhoneCallingAgent.json",
+  "domain": "02_Workflow_Automations_n8n",
+  "file_type": ".json",
+  "content_summary": "n8n workflow: phone-calling AI agent combining OpenAI chat model, embeddings, Gmail tool and conditional routing across 13 nodes",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Voice_AI_Telephony_and_Vapi_Calling_Engines.md",
+  "rationale": "Direct voice-agent pattern; complements telephony playbook with Gmail-integrated variant",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Working n8n voice-agent node graph"
+   }
+  ],
+  "tags": [
+   "n8n",
+   "voice-agent",
+   "openai",
+   "gmail"
+  ],
+  "credentials_note": "flagged has-credentials in shallow index - sanitized copy only"
+ },
+ {
+  "raw_path": "Raw_copies/2025_04_26_automated_faceless_ai_videos_n8n.json",
+  "domain": "07_Content_Creation_and_Media_Engines",
+  "file_type": ".json",
+  "content_summary": "26-node scheduled n8n pipeline producing automated faceless AI videos: HTTP requests, structured output parser, OpenAI agent chain",
+  "reusability_score": 9,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+  "rationale": "Complete production-grade automation matching the faceless-video engine playbook exactly",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "End-to-end scheduled video generation workflow"
+   },
+   {
+    "type": "use_case",
+    "description": "Faceless channel autopilot"
+   }
+  ],
+  "tags": [
+   "n8n",
+   "faceless-video",
+   "automation",
+   "schedule-trigger"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/28130131256160013493 (1).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "National Insurance Company Ltd 1-year package policy document (policy no. 28130131256160013493)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Personal insurance record; no knowledge-base value, retain as archived original",
+  "tags": [
+   "insurance",
+   "personal-record",
+   "pii-adjacent"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/28130131256260010499 (1).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "National Insurance Company Ltd 1-year package policy document (policy no. 28130131256260010499)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Personal insurance record; no KB value",
+  "tags": [
+   "insurance",
+   "personal-record",
+   "pii-adjacent"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/AI_Lab_Credential_Manager_v2 (1).xlsx",
+  "domain": "ARCHIVE",
+  "file_type": ".xlsx",
+  "content_summary": "Personal credential manager spreadsheet: HOME dashboard plus sheets of global and Chinese LLM API keys and aggregator/router accounts",
+  "reusability_score": 2,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Sensitive credentials inventory; never publish, personal reference only - already excluded from git",
+  "tags": [
+   "credentials",
+   "api-keys",
+   "sensitive",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Abhishek_yadav_CV_ Jul 2024 1-2.docx",
+  "domain": "ARCHIVE",
+  "file_type": ".docx",
+  "content_summary": "CV of Abhishek Yadav (contact details, professional summary, 210 paragraphs of work history)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Third-party personal CV (likely recruitment corpus); PII - keep out of published tiers",
+  "tags": [
+   "cv",
+   "pii",
+   "recruitment-source"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Account Statement (1).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Encrypted bank account statement PDF (password-protected, unreadable without credential)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Financial record; encrypted and private",
+  "tags": [
+   "bank-statement",
+   "encrypted",
+   "financial",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Account Statement (3).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Encrypted bank account statement PDF (password-protected)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Financial record; encrypted and private",
+  "tags": [
+   "bank-statement",
+   "encrypted",
+   "financial",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Account Statement (4).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Encrypted bank account statement PDF (password-protected)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Financial record; encrypted and private",
+  "tags": [
+   "bank-statement",
+   "encrypted",
+   "financial",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Account_Statement_1234XXXXXX6862(9).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Encrypted bank statement PDF for masked account 1234XXXXXX6862",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Financial record; encrypted and private",
+  "tags": [
+   "bank-statement",
+   "encrypted",
+   "financial",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Account_Statement_2024 (1).xlsx",
+  "domain": "ARCHIVE",
+  "file_type": ".xlsx",
+  "content_summary": "Bank statement data exported to Excel: 4 sheets of ~50-65 transaction rows for 2024",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Personal financial data; no KB value",
+  "tags": [
+   "bank-statement",
+   "excel",
+   "financial",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Account_Statement_2024.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "102-page full-year bank statement for BEENA YADAV, Indore branch (account 1234)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Financial record; contains full name/address - strictly private",
+  "tags": [
+   "bank-statement",
+   "financial",
+   "pii",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Account_Statement_BY_1234XXXXXX6862.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Large (27MB) encrypted bank statement PDF for account 1234XXXXXX6862",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Financial record; encrypted and private",
+  "tags": [
+   "bank-statement",
+   "encrypted",
+   "financial",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Account_Statement_old_1234XXXXXX6862(9).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Zero-page (empty body) old bank statement PDF shell",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Empty/duplicate stub retained for non-destructive integrity",
+  "tags": [
+   "bank-statement",
+   "stub",
+   "duplicate"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Account_Statement_old_1234XXXXXX6862(9).xlsx",
+  "domain": "ARCHIVE",
+  "file_type": ".xlsx",
+  "content_summary": "Old bank-statement Excel duplicate: same 4-sheet structure as Account_Statement_2024 (1).xlsx",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Duplicate of newer statement export",
+  "tags": [
+   "bank-statement",
+   "duplicate",
+   "financial",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Acct_Statement_XXXXXXXX0064_20102025 (1).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Bank statement PDF (account ending 0064, dated 20-10-2025); zero pages of extractable text - image scan",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Scanned financial record",
+  "tags": [
+   "bank-statement",
+   "scanned",
+   "financial",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Acct_Statement_XXXXXXXX7106_26092025 (1).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Bank statement PDF (account ending 7106, dated 26-09-2025); zero pages of extractable text - image scan",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Scanned financial record",
+  "tags": [
+   "bank-statement",
+   "scanned",
+   "financial",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Adhar.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Aadhaar national identity card scan (single page, image-only)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Government ID - highest-sensitivity personal document; never enters any published tier",
+  "tags": [
+   "identity",
+   "aadhaar",
+   "pii-critical",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/All scan document.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "23-page bundle of miscellaneous scanned documents (numbered pages, image-only scans)",
+  "reusability_score": 2,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Mixed personal scan bundle; needs manual review before any reuse - flagged for owner attention",
+  "tags": [
+   "scans",
+   "mixed",
+   "review-needed"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/BRUTAL_REVIEW.md",
+  "domain": "08_Business_Operations_and_Subbroking",
+  "file_type": ".md",
+  "content_summary": "Candid critical assessment document challenging assumptions of a business plan - 'what nobody else will tell you about this plan'",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Brutal_Architectural_Audit_and_Solo_Founder_Execution_Blueprint.md",
+  "rationale": "Exactly the brutally-honest audit genre of its target playbook; adds plan-level critique patterns",
+  "valuable_content": [
+   {
+    "type": "mental_model",
+    "description": "Pre-mortem critique framework for plans"
+   },
+   {
+    "type": "use_case",
+    "description": "Solo-founder decision hardening"
+   }
+  ],
+  "tags": [
+   "strategy",
+   "critique",
+   "decision-making",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Bulk Holding_11032025010127.xlsx",
+  "domain": "ARCHIVE",
+  "file_type": ".xlsx",
+  "content_summary": "Near-empty spreadsheet ('Bulk Holding' with a single row) - demat/portfolio holding export stub",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Empty export artifact",
+  "tags": [
+   "holdings",
+   "stub",
+   "financial"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/CAPITAL_GAIN_LOSS_STATEMENT_15092025110050_protected.xlsx",
+  "domain": "ARCHIVE",
+  "file_type": ".xlsx",
+  "content_summary": "Password-protected capital gains/losses statement export (broker tax report)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Protected financial tax record",
+  "tags": [
+   "capital-gains",
+   "tax",
+   "protected",
+   "financial",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/cleanup_log.txt",
+  "domain": "ARCHIVE",
+  "file_type": ".txt",
+  "content_summary": "Second clean-up run log (12:30 run) with prompt-marker noise from embedded text; records quarantined moves",
+  "reusability_score": 2,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Migration audit trail duplicate-run",
+  "tags": [
+   "log",
+   "migration-history",
+   "provenance"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_1649839632749_1.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Quarantined duplicate of single-page scanned PDF 1649839632749_1",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Duplicate stub in quarantine",
+  "tags": [
+   "duplicate",
+   "quarantine",
+   "scan"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_28130131256160013493.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Quarantined duplicate of National Insurance policy 28130131256160013493",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Duplicate insurance record in quarantine",
+  "tags": [
+   "duplicate",
+   "quarantine",
+   "insurance"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_28130131256260010499.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Quarantined duplicate of National Insurance policy 28130131256260010499",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Duplicate insurance record in quarantine",
+  "tags": [
+   "duplicate",
+   "quarantine",
+   "insurance"
+  ]
+ }
+]
