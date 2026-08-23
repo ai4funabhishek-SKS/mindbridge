@@ -1,0 +1,602 @@
+[
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Upwork Checklist - Skill Arbitrage (2).docx",
+  "domain": "08_Business_Operations_and_Subbroking",
+  "file_type": ".docx",
+  "content_summary": "Upwork profile optimization checklist: professional title formula (70 words), profile picture rules, experience framing for skill-arbitrage freelancing",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Freelance_Skill_Arbitrage_and_Upwork_Mastery.md",
+  "rationale": "Actionable profile SOP matching the freelance mastery playbook directly",
+  "valuable_content": [
+   {
+    "type": "sop",
+    "description": "Profile setup checklist"
+   },
+   {
+    "type": "mental_model",
+    "description": "Skill-arbitrage positioning"
+   }
+  ],
+  "tags": [
+   "upwork",
+   "freelance",
+   "checklist"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Upwork Checklist - Skill Arbitrage.docx",
+  "domain": "08_Business_Operations_and_Subbroking",
+  "file_type": ".docx",
+  "content_summary": "Base copy of the Upwork skill-arbitrage profile checklist (identical 150-paragraph content)",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Freelance_Skill_Arbitrage_and_Upwork_Mastery.md",
+  "rationale": "Canonical member of duplicated checklist pair",
+  "valuable_content": [
+   {
+    "type": "sop",
+    "description": "Profile setup checklist"
+   }
+  ],
+  "tags": [
+   "upwork",
+   "freelance",
+   "checklist"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_YouTube_Content_Idea_Generator.json",
+  "domain": "07_Content_Creation_and_Media_Engines",
+  "file_type": ".json",
+  "content_summary": "10-node idea-generator workflow: chat trigger, OpenAI ideation, batch splitting, filtering into Google Sheets backlog",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+  "rationale": "Idea-pipeline component feeding the YouTube engine playbook",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Idea-generation to Sheets backlog flow"
+   }
+  ],
+  "tags": [
+   "youtube",
+   "ideas",
+   "n8n",
+   "chatbot"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_appearance.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Empty Obsidian appearance config stub ({})",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Empty boilerplate config",
+  "tags": [
+   "obsidian",
+   "stub",
+   "empty"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_fw.topic_summary.msg.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Framework message template wrapping conversation history ({{content}}) for topic summarization",
+  "reusability_score": 5,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Agent Zero framework prompt component; completes the summarizer pair",
+  "valuable_content": [
+   {
+    "type": "prompt",
+    "description": "Topic-summary message wrapper"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "prompt-template",
+   "summarization"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_fw.topic_summary.sys.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "System prompt defining an AI summarization assistant role and expected output for digesting conversation history into topics",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Reusable memory-consolidation prompt from Agent Zero runtime",
+  "valuable_content": [
+   {
+    "type": "prompt",
+    "description": "Summarizer system prompt with role contract"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "system-prompt",
+   "memory"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_mcp_config_backup.json",
+  "domain": "05_Code_Snippets_and_Dev_Tools",
+  "file_type": ".json",
+  "content_summary": "MCP servers configuration backup: filesystem server via npx @modelcontextprotocol plus other registered tool servers",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Model_Context_Protocol_MCP_and_Superpowers_Integration.md",
+  "rationale": "Concrete working MCP client config example for the integration playbook",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Reference mcpServers JSON layout"
+   }
+  ],
+  "tags": [
+   "mcp",
+   "config",
+   "tooling"
+  ],
+  "credentials_note": "review for tokens before any publish"
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_n8n Shortcuts.md",
+  "domain": "02_Workflow_Automations_n8n",
+  "file_type": ".md",
+  "content_summary": "Official n8n keyboard shortcuts cheat sheet covering canvas, workflow controls and execution commands",
+  "reusability_score": 5,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_n8n_Enterprise_Architectural_Foundations_and_Best_Practices.md",
+  "rationale": "Handy operator reference for the n8n foundations playbook appendix",
+  "valuable_content": [
+   {
+    "type": "sop",
+    "description": "Shortcut reference table"
+   }
+  ],
+  "tags": [
+   "n8n",
+   "shortcuts",
+   "cheatsheet"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_package_20260815_050120_785.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Empty npm package manifest stub ('installed-nodes', no dependencies)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Generated boilerplate stub",
+  "tags": [
+   "npm",
+   "stub",
+   "empty"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_screener (2).json",
+  "domain": "06_Quantitative_Finance_and_Trading",
+  "file_type": ".json",
+  "content_summary": "17-node conversational stock-screener agent: chat trigger, sub-agent tools, HTTP market-data calls and windowed memory",
+  "reusability_score": 9,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Automated_Stock_Screening_and_Technical_Analysis_Pipelines.md",
+  "rationale": "Core screening automation of the trading stack; duplicate copy of canonical screener",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Agent-with-tools screener node graph"
+   }
+  ],
+  "tags": [
+   "trading",
+   "screener",
+   "ai-agent",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_screener.json",
+  "domain": "06_Quantitative_Finance_and_Trading",
+  "file_type": ".json",
+  "content_summary": "Base copy of the 17-node conversational stock-screener agent workflow",
+  "reusability_score": 9,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Automated_Stock_Screening_and_Technical_Analysis_Pipelines.md",
+  "rationale": "Canonical screener workflow for the trading stack",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Agent-with-tools screener node graph"
+   }
+  ],
+  "tags": [
+   "trading",
+   "screener",
+   "ai-agent",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/zero_test.txt",
+  "domain": "ARCHIVE",
+  "file_type": ".txt",
+  "content_summary": "Zero-byte empty test file left over from pipeline integrity checks; contains no content whatsoever",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Empty test artifact",
+  "tags": [
+   "empty",
+   "test"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/ClientReport.xlsx",
+  "domain": "ARCHIVE",
+  "file_type": ".xlsx",
+  "content_summary": "Spreadsheet named ClientReport containing a single empty sheet",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Empty shell despite promising name",
+  "tags": [
+   "empty",
+   "stub"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/CommercialVehicleProposal_QVPVC0212250 (1).pdf",
+  "domain": "08_Business_Operations_and_Subbroking",
+  "file_type": ".pdf",
+  "content_summary": "Root-level copy of PROBUS passenger-vehicle insurance proposal form (AG code BA504000)",
+  "reusability_score": 4,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Subbroking-domain artifact showing proposal workflow; contains business data",
+  "valuable_content": [
+   {
+    "type": "use_case",
+    "description": "Proposal form field map"
+   }
+  ],
+  "tags": [
+   "insurance",
+   "subbroking",
+   "probus",
+   "business-record"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/D155472913 (1).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Go Digit private car policy schedule/certificate duplicate copy",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Personal vehicle insurance record duplicate",
+  "tags": [
+   "insurance",
+   "vehicle",
+   "duplicate"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/DayTradingAgent (2).json",
+  "domain": "06_Quantitative_Finance_and_Trading",
+  "file_type": ".json",
+  "content_summary": "14-node intraday trading agent: OpenAI reasoning over aggregated HTTP market data with custom code transforms and merge logic",
+  "reusability_score": 9,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_MultiAgent_Algorithmic_Trading_System_Architecture.md",
+  "rationale": "Direct implementation pattern for the multi-agent trading architecture playbook",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Market-data aggregation + analysis agent"
+   },
+   {
+    "type": "use_case",
+    "description": "Intraday decision support"
+   }
+  ],
+  "tags": [
+   "trading",
+   "daytrading",
+   "ai-agent",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Elevate_Quote (1).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Health-insurance premium quote letter for MOTILAL OSWAL customer (Elevate plan)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Personal insurance quote; business-context name only",
+  "tags": [
+   "insurance-quote",
+   "personal-record",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Elevate_Quote.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Base copy of the Motilal Oswal Elevate health-insurance quote",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Personal insurance quote duplicate set member",
+  "tags": [
+   "insurance-quote",
+   "personal-record",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Faceless_YouTube_Generator.json",
+  "domain": "07_Content_Creation_and_Media_Engines",
+  "file_type": ".json",
+  "content_summary": "Flagship 49-node faceless-video factory: LLM chains for scripting, code transforms, convertToFile audio, Google Drive asset management end-to-end",
+  "reusability_score": 10,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+  "rationale": "Largest most-complete faceless-video automation in the corpus; centerpiece artifact of its playbook",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Full script-to-asset production line"
+   },
+   {
+    "type": "use_case",
+    "description": "Channel autopilot blueprint"
+   },
+   {
+    "type": "business_idea",
+    "description": "Faceless channel productization"
+   }
+  ],
+  "tags": [
+   "youtube",
+   "faceless",
+   "flagship",
+   "automation",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Fee-Receipt (1).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Delhi University School of Open Learning fee receipt copy 1",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Duplicate personal receipt",
+  "tags": [
+   "receipt",
+   "duplicate"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Fee-Receipt (2).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Delhi University fee receipt copy 2",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Duplicate personal receipt",
+  "tags": [
+   "receipt",
+   "duplicate"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Fee-Receipt (3).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Delhi University fee receipt copy 3",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Duplicate personal receipt",
+  "tags": [
+   "receipt",
+   "duplicate"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Fee-Receipt_BlankTemplate.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Blank fee-receipt template with no extracted content",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Blank form template",
+  "tags": [
+   "receipt",
+   "template",
+   "blank"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Fiecrawal ai.txt",
+  "domain": "09_LLM_Conversations_and_Syntheses",
+  "file_type": ".txt",
+  "content_summary": "Firecrawl agent-onboarding notes: install steps, claude mcp add command, credential retrieval pointers for web-scraping setup",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_AI_Search_and_Web_Extraction_Engines_Exa_Firecrawl_Tavily.md",
+  "rationale": "Hands-on Firecrawl setup recipe enriching the web-extraction engines playbook",
+  "valuable_content": [
+   {
+    "type": "sop",
+    "description": "Firecrawl MCP onboarding steps"
+   }
+  ],
+  "tags": [
+   "firecrawl",
+   "scraping",
+   "mcp",
+   "setup-guide"
+  ],
+  "credentials_note": "contains credential-location references - never publish raw"
+ },
+ {
+  "raw_path": "Raw_copies/LinkedIn DM Automation System.json",
+  "domain": "08_Business_Operations_and_Subbroking",
+  "file_type": ".json",
+  "content_summary": "8-node LinkedIn outreach workflow: form capture, OpenAI personalization, HTTP delivery with rate limiting into Google Sheets tracker",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_B2B_Client_Outreach_LinkedIn_and_Email_Automation.md",
+  "rationale": "Working B2B outreach automation matching the LinkedIn playbook scope",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "DM personalization + send pipeline"
+   },
+   {
+    "type": "use_case",
+    "description": "Lead-gen funnel automation"
+   }
+  ],
+  "tags": [
+   "linkedin",
+   "outreach",
+   "lead-gen",
+   "n8n"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Multi-Platform Publisher.json",
+  "domain": "07_Content_Creation_and_Media_Engines",
+  "file_type": ".json",
+  "content_summary": "12-node syndication workflow: single form input publishing via HTTP to multiple social platforms with variable mapping",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Omnichannel_Social_Media_Syndication_and_Repurposing.md",
+  "rationale": "Exact publish-once-syndicate-everywhere pattern of the omnichannel playbook",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Multi-platform posting fan-out"
+   }
+  ],
+  "tags": [
+   "social-media",
+   "syndication",
+   "publishing",
+   "n8n"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/OCR_Reader_Test (1).json",
+  "domain": "05_Code_Snippets_and_Dev_Tools",
+  "file_type": ".json",
+  "content_summary": "Root-level copy of the OCR test workflow (Drive fetch, information extractor, Sheets output)",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Universal_Document_and_Code_Extraction_Pipelines.md",
+  "rationale": "Second instance of extraction pattern; reinforces extraction playbook examples",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "OCR-to-Sheets extraction flow"
+   }
+  ],
+  "tags": [
+   "ocr",
+   "extraction",
+   "duplicate-copy"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Oracle_AI_Lab_Reference.txt",
+  "domain": "05_Code_Snippets_and_Dev_Tools",
+  "file_type": ".txt",
+  "content_summary": "Oracle Cloud AI lab access reference: Mumbai region (ap-mumbai-1), OCI API key file locations and account identifiers",
+  "reusability_score": 3,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Useful infra pointer but embeds private-key path and account data; local-only reference",
+  "valuable_content": [
+   {
+    "type": "use_case",
+    "description": "OCI region/key layout reference"
+   }
+  ],
+  "tags": [
+   "oracle-cloud",
+   "infrastructure",
+   "api-keys",
+   "keep-aside",
+   "sensitive"
+  ],
+  "credentials_note": "contains private-key path and tenancy info - strictly local"
+ },
+ {
+  "raw_path": "Raw_copies/PROJECT_BRIEF.md",
+  "domain": "09_LLM_Conversations_and_Syntheses",
+  "file_type": ".md",
+  "content_summary": "OmniRoute free-provider configuration project brief v1.0: audit date, objective, confirmed user state and explicit success criteria",
+  "reusability_score": 9,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Zero_Cost_Multi_Provider_LLM_Routing_and_OmniRoute_Matrix.md",
+  "rationale": "Authoritative spec behind the OmniRoute matrix playbook; adds acceptance criteria",
+  "valuable_content": [
+   {
+    "type": "business_idea",
+    "description": "Zero-cost multi-provider LLM routing"
+   },
+   {
+    "type": "sop",
+    "description": "Provider audit methodology"
+   }
+  ],
+  "tags": [
+   "omniroute",
+   "project-brief",
+   "llm-routing",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/PROVIDERS_Shortlist.json",
+  "domain": "09_LLM_Conversations_and_Syntheses",
+  "file_type": ".json",
+  "content_summary": "Curated shortlist of free LLM providers filtered from community wiki with tier summaries and provenance metadata",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Zero_Cost_Multi_Provider_LLM_Routing_and_OmniRoute_Matrix.md",
+  "rationale": "Structured provider dataset backing the routing matrix decisions",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Machine-readable provider tier data"
+   }
+  ],
+  "tags": [
+   "omniroute",
+   "providers",
+   "dataset",
+   "free-tier"
+  ]
+ }
+]
