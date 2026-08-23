@@ -6072,5 +6072,20 @@
    "prompts",
    "version-control"
   ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_122750/cleanup_log.txt",
+  "domain": "ARCHIVE",
+  "file_type": ".txt",
+  "content_summary": "First clean-up run log from 12:27:50 recording source paths and files moved during the vault-segregation migration, preceding the 12:30 second run",
+  "reusability_score": 2,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Earliest migration audit trail; provenance value for forensic reconstruction of file movements",
+  "tags": [
+   "log",
+   "migration-history",
+   "provenance"
+  ]
  }
 ]
