@@ -5375,5 +5375,429 @@
    "agent-zero",
    "schema"
   ]
+ },
+ {
+  "raw_path": "Raw_copies/fw.user_message.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "User-message JSON envelope combining system message, user message and attachments array",
+  "reusability_score": 3,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Standard envelope schema fragment",
+  "tags": [
+   "agent-zero",
+   "schema"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/fw.wait_complete.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Notice that wait finished upon reaching target time",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Trivial timing stub",
+  "tags": [
+   "agent-zero",
+   "stub"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/fw.warning.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "System-warning JSON wrapper template",
+  "reusability_score": 2,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Warning-format fragment",
+  "tags": [
+   "agent-zero",
+   "stub"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/human_in_da_loop.json",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".json",
+  "content_summary": "18-node human-in-the-loop workflow: Google Sheets trigger feeding an OpenAI agent chain that drafts Gmail replies for approval",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Human_in_the_Loop_and_Executive_Inbox_Automation.md",
+  "rationale": "Complete approval-gated email automation matching the HITL inbox playbook",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Sheets-triggered approval workflow"
+   }
+  ],
+  "tags": [
+   "n8n",
+   "human-in-the-loop",
+   "gmail",
+   "approval-flow",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/key.txt",
+  "domain": "ARCHIVE",
+  "file_type": ".txt",
+  "content_summary": "Plain-text file holding live API keys for DeepInfra infra and Jina AI services",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Live credentials - strictly local, excluded from git; rotate before any sharing",
+  "tags": [
+   "api-keys",
+   "deepinfra",
+   "jina",
+   "critical-keep-aside"
+  ],
+  "credentials_note": "LIVE KEYS - never publish; recommend rotation"
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050119_785.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Obsidian ChatGPT-MD plugin manifest (v2.8.0)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050119_818.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Obsidian Copilot plugin manifest (v3.0.2)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050119_828.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Dataview plugin manifest (v0.5.68)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050119_843.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "DB Folder plugin manifest (v3.5.1)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050119_876.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Editing Toolbar plugin manifest (v3.1.18)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050119_892.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Handwriting OCR plugin manifest (v1.0.0)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050119_902.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Linear plugin manifest (v1.1.1)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050119_921.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "make.md plugin manifest (v1.2.2)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050119_937.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Mindmap plugin manifest (v0.3.3)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050119_958.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Mini-Rag plugin manifest (v1.0.0)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050119_978.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Natural Language Dates plugin manifest",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050120_009.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Excalidraw plugin manifest (v2.15.1)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050120_023.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Obsidian Git-family plugin manifest by Vinzent",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050120_035.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Kanban plugin manifest (v2.0.51)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050120_053.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Tasks plugin manifest (v7.21.0)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050120_088.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Omnisearch plugin manifest (v1.27.2)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050120_118.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "QuickAdd plugin manifest (v2.1.0)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050120_136.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Recent Files plugin manifest (v1.7.4)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050120_156.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Smart Connections plugin manifest (embedding-based note similarity)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050120_198.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Advanced Tables plugin manifest",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050120_217.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Tag Wrangler plugin manifest",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/manifest_20260815_050120_228.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Templater plugin manifest (v2.14.1)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin metadata artifact",
+  "tags": [
+   "obsidian-plugin-manifest"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/memory.consolidation.msg.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Consolidation request wrapper presenting memory area, timestamps and context for processing",
+  "reusability_score": 5,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Hierarchical_Agent_Memory_and_Context_Consolidation.md",
+  "rationale": "Input contract of the memory-consolidation pipeline",
+  "tags": [
+   "agent-zero",
+   "memory",
+   "consolidation"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/memory.consolidation.sys.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Memory Consolidation Analysis System role: specialist guidelines for merging, pruning and structuring Agent Zero memory areas",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Hierarchical_Agent_Memory_and_Context_Consolidation.md",
+  "rationale": "Flagship consolidation methodology prompt of its target playbook",
+  "valuable_content": [
+   {
+    "type": "prompt",
+    "description": "Full consolidation-specialist system prompt"
+   },
+   {
+    "type": "mental_model",
+    "description": "Merge/prune/structure memory lifecycle"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "memory",
+   "consolidation",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/memory.keyword_extraction.msg.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Keyword-extraction request template analyzing stored memory content into search keywords",
+  "reusability_score": 5,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Hierarchical_Agent_Memory_and_Context_Consolidation.md",
+  "rationale": "Retrieval-enabling keyword step of memory pipeline",
+  "tags": [
+   "agent-zero",
+   "memory",
+   "keywords"
+  ]
  }
 ]
