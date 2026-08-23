@@ -15,15 +15,13 @@ test suite — all non-destructive to the original raw files.
 | Status | CLAIMED |
 
 ## 3. Current Status
-🟢 M1–M4 DONE & verified. **M5 DEEP-PROCESSING: ✅ COMPLETE — 443/443 files
-classified** (2026-08-23, batches 01–11, commits through 74bcf50+).
-Final stats: 251 merged into playbooks · 123 archived · 65 reference-only ·
-117 files scored 8+ (gems) · avg reusability 4.92. All 4 new_gm_needed flags
-resolved (targets exist). Credentials audit: 50 risky in Raw_copies + 24
-outside + RAG DB excluded from git. **NEXT:** re-index RAG/KG with new
-metadata, regenerate dashboards, run 96-test suite, then semantic search
-layer (owner-chosen M5b). GitHub push pending owner repo decision (Private
-recommended; scrub dashboard exports first).
+🟢 **M5 DEEP-PROCESSING: COMPLETE.** 443/443 files classified; 96/96 E2E tests
+passing (100%). Session delivered: crash recovery → credentials audit (50 raw +
+repo-wide scan, placeholder-aware scanner) → live keys redacted from public
+tiers (2 GM playbooks + 6 library copies; originals untouched in Raw_copies) →
+RAG/KG rebuilt across all tiers (502 docs / 10,785 chunks) → dashboards aligned.
+**NEXT:** semantic/vector search layer (owner-chosen M5b); GitHub push pending
+owner repo decision — recommend Private; scrub dashboard exports first.
 
 ## 4. Milestone Log
 | Date | Milestone | Status | Notes |
@@ -34,6 +32,16 @@ recommended; scrub dashboard exports first).
 | 2026-08-18 | M4 E2E test suite + forensic audit | DONE | see TEST_READY.md |
 | 2026-08-18 (crashed) | M5 deep-processing 443 files | PARTIAL | 186/443 deep-classified; run died at ~186 |
 | 2026-08-23 | Crash recovery & mission reconstruction | DONE | owner confirmed lost context; resumed M5 |
+| 2026-08-23 | M5 deep-processing 443/443 + security hardening | DONE | 96/96 tests; see batches 01-11 + redaction commits |
+
+## 5.1 M5 Final Statistics (2026-08-23)
+- Classification: 251 merge_into_gm · 123 archive · 65 reference_only · 0 pending
+- 117 files scored reusability ≥8 ("gems"); avg score 4.92
+- Credentials: live keys found in my_api_keys_backup.md, key.txt (DeepInfra+Jina),
+  test.env.txt (Groq), Google OAuth client-secret json — all local-only
+- Redacted from public tiers: sk- key ×3 (GM_Developer_Assistant), Tavily key ×3
+  (GM_AI_Search) + 6 library copies. Originals preserved in Raw_copies.
+- Git protections: Raw_copies/, vault, RAG DB + 7 residual risky files excluded
 
 ## 5. Achievements
 - 443 raw assets preserved immutably (`Raw_copies/`)
@@ -81,18 +89,21 @@ recommended; scrub dashboard exports first).
 ## 10. 🔄 Handoff Capsule (paste into any other AI tool)
 ```
 CONTEXT: C:\knowledgeBase_staging — Second Brain KB: 443 raw files refined
-into vault + 10-domain library (46 playbooks) + FTS5/KG database +
-dashboards + tests. Owner is non-technical, decides in natural language.
-STATE:   M1–M4 DONE. M5 ACTIVE = deep-processing all 443 files; 186 done in
-Processed_Assets/file_classification_manifest.json, 257 remain (run crashed
-2026-08-18 mid-batch). Resume batching with identical schema, commit every
-~30 files.
-NEXT:    finish 257 → credentials audit → local git checkpoint of outputs →
-semantic search layer (owner-chosen). GitHub push only with owner approval.
+into vault + 10-domain library (49 playbooks) + FTS5/KG database (502 docs,
+10785 chunks) + dashboards + 96-test suite at 100% pass. Owner is
+non-technical, decides in natural language.
+STATE:   M1-M4 DONE. M5 DONE 2026-08-23: every file deep-classified in
+Processed_Assets/file_classification_manifest.json (251 merged, 123 archive,
+65 reference, 117 gems scored 8+). Credentials audited; public tiers
+sanitized; git protections verified by test suite.
+NEXT:    semantic/vector search layer (owner-chosen). GitHub push only after
+owner names repo + approves; recommend Private; scrub Excel/HTML dashboard
+exports for embedded content first.
 GOTCHAS: free providers/quota drops interrupt runs — small committed
-increments only. Never touch Raw_copies/ contents or weaken .gitignore.
-Raw_copies contains API-key backups + Aadhaar PDF + bank statements — NEVER
-commit them to git/GitHub.
+increments only (m5_merge_batch.py validator + per-batch commits is the
+pattern). Raw_copies/ + vault + RAG DB stay out of git. Live keys exist in
+key.txt, my_api_keys_backup.md, test.env.txt, google oauth json — rotate
+before any external sharing.
 RULES:   read+update this PROJECT_STATE.md, claim 🔒 Active Worker before
 work, commit checkpoints, never delete data / spend money / publish without
 owner approval.
