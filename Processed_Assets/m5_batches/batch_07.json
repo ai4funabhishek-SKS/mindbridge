@@ -1,0 +1,463 @@
+[
+ {
+  "raw_path": "Raw_copies/agent.system.tool.search_engine.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "search_engine tool doc: query in, ranked list of URLs with titles and descriptions out, plus usage example",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Web-search tool contract of the runtime",
+  "tags": [
+   "agent-zero",
+   "search",
+   "tool-doc"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tool.wait.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "wait tool: pause execution for seconds/minutes/hours/days or until a timestamp",
+  "reusability_score": 5,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Timing-control primitive documentation",
+  "tags": [
+   "agent-zero",
+   "timing",
+   "tool-doc"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tools.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Tools-available header template injecting the {{tools}} list into prompts",
+  "reusability_score": 2,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Placeholder wrapper only",
+  "tags": [
+   "agent-zero",
+   "stub"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent.system.tools_vision.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Multimodal vision tool suite: vision_load to attach image data to LLM context for visual analysis",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Vision-capability extension documents multimodal agent design",
+  "valuable_content": [
+   {
+    "type": "use_case",
+    "description": "Image-understanding agent flows"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "vision",
+   "multimodal"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/agent1-example agent (1).json",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".json",
+  "content_summary": "13-node personal-assistant example agent wiring Airtable, Gmail and Google Calendar tools around an OpenAI chat model with windowed memory",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_AI_Agent_Army_Generation_and_Subworkflow_Orchestration.md",
+  "rationale": "Canonical tool-using assistant starter graph",
+  "tags": [
+   "n8n",
+   "assistant",
+   "airtable",
+   "calendar"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/application - chaitanya.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Hindi-language formal application letter addressed to the Dean of Mahatma Gandhi Memorial Medical College (third-party document)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Third-party personal/administrative letter; no KB value",
+  "tags": [
+   "personal-record",
+   "hindi",
+   "third-party"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/available_free_models_catalog.md",
+  "domain": "09_LLM_Conversations_and_Syntheses",
+  "file_type": ".md",
+  "content_summary": "OmniRoute configured free-models catalog dated 2026-08-13: complete provider and model listing powering zero-cost routing decisions",
+  "reusability_score": 9,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Zero_Cost_Multi_Provider_LLM_Routing_and_OmniRoute_Matrix.md",
+  "rationale": "Authoritative dataset behind provider selection in the routing matrix playbook",
+  "tags": [
+   "omniroute",
+   "free-models",
+   "catalog",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/beena yadav resume (1).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Beena Yadav health-coordinator resume copy 1 (MSW/B.Com qualifications)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Personal CV containing PII",
+  "tags": [
+   "cv",
+   "pii",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/beena yadav resume (2).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Beena Yadav health-coordinator resume copy 2",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Duplicate personal CV",
+  "tags": [
+   "cv",
+   "pii",
+   "duplicate",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/beena yadav resume.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Beena Yadav state-coordinator resume base copy",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Base personal CV with PII",
+  "tags": [
+   "cv",
+   "pii",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/behaviour.merge.msg.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Message template pairing current ruleset with pending adjustments for behaviour merging",
+  "reusability_score": 4,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Half of the behaviour self-modification merge pair",
+  "tags": [
+   "agent-zero",
+   "behaviour",
+   "template"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/behaviour.merge.sys.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "System prompt instructing assistant to apply adjustment diffs onto an existing markdown ruleset cleanly",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Clean self-modification merge algorithm as a prompt",
+  "tags": [
+   "agent-zero",
+   "behaviour",
+   "self-modification"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/behaviour.search.sys.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "System prompt searching conversation history for implicit behaviour-adjustment requests from the user",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Implicit-instruction detection pattern worth preserving",
+  "tags": [
+   "agent-zero",
+   "behaviour",
+   "intent-detection"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/behaviour.updated.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "One-line confirmation message that behaviour has been updated",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Trivial status stub",
+  "tags": [
+   "agent-zero",
+   "stub"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/client_secret_33848024425-s56jn3cgcejt2h52108dt9dd62r1of73.apps.googleusercontent.com.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Google OAuth client-secret JSON with web client ID and secret credential material",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Live credential file - strictly local, already excluded from git via Raw_copies rule",
+  "tags": [
+   "oauth",
+   "google",
+   "credentials",
+   "critical-keep-aside"
+  ],
+  "credentials_note": "REAL CLIENT SECRET - never publish, rotate if leaked"
+ },
+ {
+  "raw_path": "Raw_copies/connectivity.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Agent Zero Connectivity Guide: external API endpoints, API token information and all connection methods for outside callers",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Integration surface documentation enabling external automation against Agent Zero",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "API endpoint + token usage examples"
+   }
+  ],
+  "tags": [
+   "agent-zero",
+   "api",
+   "connectivity",
+   "high-value"
+  ],
+  "credentials_note": "contains API-token info; sanitize before any publish"
+ },
+ {
+  "raw_path": "Raw_copies/copilot-setup.md",
+  "domain": "05_Code_Snippets_and_Dev_Tools",
+  "file_type": ".md",
+  "content_summary": "GitHub Copilot setup guide tracking extension install status and remaining configuration steps",
+  "reusability_score": 4,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md",
+  "rationale": "IDE tooling setup record for the dev-environment playbook",
+  "tags": [
+   "copilot",
+   "ide-setup"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/data_20260815_050119_860.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Obsidian plugin settings snapshot (menu commands, aesthetic styles)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Editor config artifact",
+  "tags": [
+   "obsidian",
+   "config",
+   "snapshot"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/data_20260815_050119_994.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Excalidraw plugin settings snapshot (folders, embed options)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin config artifact",
+  "tags": [
+   "obsidian",
+   "excalidraw",
+   "config"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/data_20260815_050120_071.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Omnisearch plugin settings snapshot (cache, recency boost, diacritics filters)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Search plugin config artifact",
+  "tags": [
+   "obsidian",
+   "omnisearch",
+   "config"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/data_20260815_050120_103.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "QuickAdd-style plugin settings snapshot (choices, input prompt mode, template folder path)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin config artifact",
+  "tags": [
+   "obsidian",
+   "quickadd",
+   "config"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/data_20260815_050120_134.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Recent-files plugin snapshot listing inbox note references and omitted paths/tags/bookmarks",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Stateful plugin artifact",
+  "tags": [
+   "obsidian",
+   "recent-files",
+   "config"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/data_20260815_050120_178.json",
+  "domain": "ARCHIVE",
+  "file_type": ".json",
+  "content_summary": "Formatting plugin settings snapshot (ribbon icon, enter/tab bindings)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Plugin config artifact",
+  "tags": [
+   "obsidian",
+   "config"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/extensions_20260815_050119_385.json",
+  "domain": "05_Code_Snippets_and_Dev_Tools",
+  "file_type": ".json",
+  "content_summary": "Workspace extension recommendations list: github copilot, copilot-chat, gitlens and related dev tooling",
+  "reusability_score": 3,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Tooling preference manifest; minor reference value",
+  "tags": [
+   "vscode",
+   "extensions",
+   "tooling"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/fw.ai_response.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Framework wrapper injecting {{message}} into AI response context",
+  "reusability_score": 2,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Single-placeholder framework fragment",
+  "tags": [
+   "agent-zero",
+   "stub"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/fw.bulk_summary.msg.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Bulk-summary message wrapper presenting full message history content for condensation",
+  "reusability_score": 4,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Hierarchical_Agent_Memory_and_Context_Consolidation.md",
+  "rationale": "Bulk-condensation input pattern for memory consolidation playbook",
+  "tags": [
+   "agent-zero",
+   "summarization",
+   "template"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/fw.bulk_summary.sys.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Bulk summarizer system role: condense long conversation histories while preserving key facts",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Hierarchical_Agent_Memory_and_Context_Consolidation.md",
+  "rationale": "Core consolidation algorithm-as-prompt for the memory playbook",
+  "tags": [
+   "agent-zero",
+   "summarization",
+   "prompt"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/fw.code.info.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Framework fragment emitting [SYSTEM: {{info}}] notices during code execution",
+  "reusability_score": 2,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Micro-notification fragment",
+  "tags": [
+   "agent-zero",
+   "stub"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/fw.code.max_time.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "Timeout notice telling agent control returned after N seconds while process still runs, prompting next decision",
+  "reusability_score": 4,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "rationale": "Long-running-process handback pattern useful for agent reliability",
+  "tags": [
+   "agent-zero",
+   "timeout-handling"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/fw.code.no_out_time.md",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".md",
+  "content_summary": "No-output timeout notice returning control after silence with process still running",
+  "reusability_score": 4,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Agent_Zero_Core_Runtime_and_Subordinate_Tooling.md",
+  "tags": [
+   "agent-zero",
+   "timeout-handling"
+  ],
+  "rationale": "Silence-detection variant of process handback"
+ }
+]
