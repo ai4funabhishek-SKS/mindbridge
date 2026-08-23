@@ -15,13 +15,15 @@ test suite — all non-destructive to the original raw files.
 | Status | CLAIMED |
 
 ## 3. Current Status
-🟢 M1–M4 DONE & verified. **M5 IN PROGRESS — deep-processing all 443 raw
-files.** Phase 0 recovery + Phase 1 credentials audit DONE (50 risky in
-Raw_copies + 24 outside; all protected via .gitignore; local git checkpoints).
-**Deep-classification: 305/443 done (batches committed through 91f1617);
-138 remain.** Digest pipeline: m5_digest_extractor.py → m5_review_slice.py →
-hand-classified batches in Processed_Assets/m5_batches/ → m5_merge_batch.py
-(validator) → commit after each batch.
+🟢 M1–M4 DONE & verified. **M5 DEEP-PROCESSING: ✅ COMPLETE — 443/443 files
+classified** (2026-08-23, batches 01–11, commits through 74bcf50+).
+Final stats: 251 merged into playbooks · 123 archived · 65 reference-only ·
+117 files scored 8+ (gems) · avg reusability 4.92. All 4 new_gm_needed flags
+resolved (targets exist). Credentials audit: 50 risky in Raw_copies + 24
+outside + RAG DB excluded from git. **NEXT:** re-index RAG/KG with new
+metadata, regenerate dashboards, run 96-test suite, then semantic search
+layer (owner-chosen M5b). GitHub push pending owner repo decision (Private
+recommended; scrub dashboard exports first).
 
 ## 4. Milestone Log
 | Date | Milestone | Status | Notes |
