@@ -10,15 +10,17 @@ test suite — all non-destructive to the original raw files.
 ## 2. 🔒 Active Worker
 | Field | Value |
 |---|---|
-| Claimed by | opencode (session: AI-Employee setup) |
-| Claimed at | 2026-08-23 ~15:45 local |
+| Claimed by | opencode (session: crash-recovery + M5 resume) |
+| Claimed at | 2026-08-23 17:48 local |
 | Status | CLAIMED |
 
 ## 3. Current Status
-🟢 All four planned milestones (M1–M4) are DONE and verified.
-**Resume here:** choose the next milestone (M5). Pending housekeeping: the
-crashed run left `Processed_Assets/my_rag_data.db` and `migration_log.csv`
-modified but uncommitted — review & commit or restore them as first action.
+🟢 M1–M4 DONE & verified. **M5 IN PROGRESS — deep-processing of all 443 raw
+files.** Recovered context (owner confirmed 2026-08-23): an interrupted run
+had deep-classified 186/443 files into
+`Processed_Assets/file_classification_manifest.json`; **257 files remain**.
+Resume Phase 2 batching. Housekeeping done: stale lock removed, crash
+checkpoint committed, credentials audit + local git checkpoint next.
 
 ## 4. Milestone Log
 | Date | Milestone | Status | Notes |
@@ -27,6 +29,8 @@ modified but uncommitted — review & commit or restore them as first action.
 | 2026-08-17 | M2 10-domain taxonomy + 46 playbooks | DONE | YAML frontmatter + lineage standardized |
 | 2026-08-17→18 | M3 Dashboards + RAG/KG DB + CLI search | DONE | Excel 8-tab, 2 HTML navigators, sub-second BM25 |
 | 2026-08-18 | M4 E2E test suite + forensic audit | DONE | see TEST_READY.md |
+| 2026-08-18 (crashed) | M5 deep-processing 443 files | PARTIAL | 186/443 deep-classified; run died at ~186 |
+| 2026-08-23 | Crash recovery & mission reconstruction | DONE | owner confirmed lost context; resumed M5 |
 
 ## 5. Achievements
 - 443 raw assets preserved immutably (`Raw_copies/`)
@@ -45,10 +49,19 @@ modified but uncommitted — review & commit or restore them as first action.
 | Aug 2026 | Move active work to quota-independent tools (opencode/Kilo) | Antigravity quota kept blocking deadlines | Waiting for quota reset |
 
 ## 7. Next Steps & Open Questions
-1. Review uncommitted changes (`my_rag_data.db`, `migration_log.csv`) → commit as checkpoint or restore.
-2. Antigravity transcripts exported to `C:\Users\FTT\Documents\Antigravity_Transcripts\` — import needed context into Kilo Code.
-3. Decide M5 goal with owner (e.g., semantic/vector layer? publishing pipeline? automation?).
-4. Remove stale lock file `.~lock.migration_log.csv#` if LibreOffice not using it.
+1. **M5 Phase 2 (active):** deep-process remaining 257 files — per-file: nature,
+   purpose, reusability, valuable content (business ideas / half-baked projects /
+   code snippets / prompts), topic categorization + tags + metadata. Append to
+   `file_classification_manifest.json` using the exact schema of the 186 done
+   entries. Commit after every ~30-file batch.
+2. Credentials audit → authoritative risky list (60 flagged in index + fresh scan);
+   keep risky aside via .gitignore; commit safe outputs locally; GitHub only after
+   owner provides repo + approves push (recommend Private).
+3. Fix anomaly: manifest shows 11 distinct domains vs canonical 10.
+4. After M5 processing completes → semantic/vector search layer (owner-chosen).
+5. Owner memory anchor (2026-08-23): "go through each and every file, identify
+   what it is, categorise it, tag metadata — know exactly what I have and whether
+   it is useful for future projects."
 
 ## 8. Blockers & Gotchas
 - Antigravity quota exhaustion repeatedly interrupted work (resets daily).
@@ -67,14 +80,17 @@ modified but uncommitted — review & commit or restore them as first action.
 CONTEXT: C:\knowledgeBase_staging — Second Brain KB: 443 raw files refined
 into vault + 10-domain library (46 playbooks) + FTS5/KG database +
 dashboards + tests. Owner is non-technical, decides in natural language.
-STATE:   Milestones M1–M4 all DONE & verified. RESUME AT choosing milestone
-M5; first review uncommitted changes to Processed_Assets/my_rag_data.db and
-migration_log.csv (left by an interrupted run).
-NEXT:    Ask owner to pick M5 direction; then plan → small verified steps.
-GOTCHAS: Antigravity/free providers hit quotas & drop connections — work in
-small committed increments. Never touch Raw_copies/ contents or weaken
-.gitignore (vault privacy).
-RULES:   read+update this PROJECT_STATE.md, commit checkpoints, claim the
-🔒 Active Worker section before working, never delete data / spend money /
-publish without owner approval.
+STATE:   M1–M4 DONE. M5 ACTIVE = deep-processing all 443 files; 186 done in
+Processed_Assets/file_classification_manifest.json, 257 remain (run crashed
+2026-08-18 mid-batch). Resume batching with identical schema, commit every
+~30 files.
+NEXT:    finish 257 → credentials audit → local git checkpoint of outputs →
+semantic search layer (owner-chosen). GitHub push only with owner approval.
+GOTCHAS: free providers/quota drops interrupt runs — small committed
+increments only. Never touch Raw_copies/ contents or weaken .gitignore.
+Raw_copies contains API-key backups + Aadhaar PDF + bank statements — NEVER
+commit them to git/GitHub.
+RULES:   read+update this PROJECT_STATE.md, claim 🔒 Active Worker before
+work, commit checkpoints, never delete data / spend money / publish without
+owner approval.
 ```
