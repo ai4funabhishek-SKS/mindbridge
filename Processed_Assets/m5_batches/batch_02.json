@@ -1,0 +1,577 @@
+[
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_AIS News Reader Hedra.json",
+  "domain": "07_Content_Creation_and_Media_Engines",
+  "file_type": ".json",
+  "content_summary": "29-node n8n news-reader pipeline: form trigger, Google Drive, HTTP merge and OpenAI feeding Hedra avatar video generation of daily news",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Generative_AI_Video_and_Avatar_Cloning_Workflows.md",
+  "rationale": "Complete news-to-avatar-video automation; core pattern for the generative video playbook",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "News-to-Hedra avatar video node graph"
+   },
+   {
+    "type": "use_case",
+    "description": "Automated daily news channel"
+   }
+  ],
+  "tags": [
+   "n8n",
+   "hedra",
+   "avatar-video",
+   "news-automation"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_AI_Lab_Credential_Manager_v2.xlsx",
+  "domain": "ARCHIVE",
+  "file_type": ".xlsx",
+  "content_summary": "Duplicate of the LLM API credential manager workbook (global + Chinese providers, aggregators)",
+  "reusability_score": 2,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Sensitive credentials duplicate; keep aside",
+  "tags": [
+   "credentials",
+   "duplicate",
+   "sensitive",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Abhishek_yadav_CV_ Jul 2024 1-2_20260815_042251_141.docx",
+  "domain": "ARCHIVE",
+  "file_type": ".docx",
+  "content_summary": "Timestamped duplicate of Abhishek Yadav CV (210 paragraphs)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "PII duplicate in quarantine",
+  "tags": [
+   "cv",
+   "pii",
+   "duplicate"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Account Statement (2).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Encrypted bank statement duplicate",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Encrypted financial duplicate",
+  "tags": [
+   "bank-statement",
+   "encrypted",
+   "duplicate",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Account Statement.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Encrypted bank statement duplicate",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Encrypted financial duplicate",
+  "tags": [
+   "bank-statement",
+   "encrypted",
+   "duplicate",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Account_Statement_2024 (2).xlsx",
+  "domain": "ARCHIVE",
+  "file_type": ".xlsx",
+  "content_summary": "Bank statement Excel duplicate (same 4-sheet transaction structure)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Financial data duplicate",
+  "tags": [
+   "bank-statement",
+   "duplicate",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Account_Statement_2024.xlsx",
+  "domain": "ARCHIVE",
+  "file_type": ".xlsx",
+  "content_summary": "Bank statement Excel duplicate (same 4-sheet transaction structure)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Financial data duplicate",
+  "tags": [
+   "bank-statement",
+   "duplicate",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Acct_Statement_XXXXXXXX0064_20102025 (2).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Image-only scanned statement duplicate (account ending 0064)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Scanned financial duplicate",
+  "tags": [
+   "bank-statement",
+   "scanned",
+   "duplicate",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Acct_Statement_XXXXXXXX0064_20102025 (3).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Third copy of image-only scanned statement (account ending 0064)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Scanned financial duplicate",
+  "tags": [
+   "bank-statement",
+   "scanned",
+   "duplicate",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Acct_Statement_XXXXXXXX0064_20102025.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Base copy of image-only scanned statement (account ending 0064)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Scanned financial duplicate set member",
+  "tags": [
+   "bank-statement",
+   "scanned",
+   "duplicate",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Acct_Statement_XXXXXXXX7106_26092025.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Image-only scanned statement duplicate (account ending 7106)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Scanned financial duplicate",
+  "tags": [
+   "bank-statement",
+   "scanned",
+   "duplicate",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Build a Premium Skool Resource Downloader & LLM Thread Collator Web Application.docx",
+  "domain": "05_Code_Snippets_and_Dev_Tools",
+  "file_type": ".docx",
+  "content_summary": "Full-stack build brief for a premium Skool resource downloader and LLM thread collator web application (128 paragraphs of spec)",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Skool_Community_Resource_Downloader_and_LLM_Thread_Collator.md",
+  "rationale": "Original product spec of an existing Golden Master project; enriches it with source brief detail",
+  "valuable_content": [
+   {
+    "type": "half_baked_project",
+    "description": "Skool downloader + thread collator app spec"
+   },
+   {
+    "type": "use_case",
+    "description": "Community content archival pipeline"
+   }
+  ],
+  "tags": [
+   "spec",
+   "web-app",
+   "skool",
+   "project-brief"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Claude Project System Prompt.pdf",
+  "domain": "03_Prompt_Engineering_and_Frameworks",
+  "file_type": ".pdf",
+  "content_summary": "Claude Project system prompt: agent instructions for fully-importable output generation with role, overview and behavior contract",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Developer_Assistant_System_Prompts_and_Custom_Instructions.md",
+  "rationale": "Production-grade Claude system prompt exemplar for the developer-assistant prompt playbook",
+  "valuable_content": [
+   {
+    "type": "prompt",
+    "description": "Full Claude Project system prompt text"
+   }
+  ],
+  "tags": [
+   "claude",
+   "system-prompt",
+   "prompt-engineering",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Claude Prompt Guidelines.pdf",
+  "domain": "03_Prompt_Engineering_and_Frameworks",
+  "file_type": ".pdf",
+  "content_summary": "7-page n8n Workflow Prompt Framework and Guidelines: core prompt structure, conventions and patterns for generating workflows via prompts",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Frontier_Prompt_Engineering_Principles_and_Mental_Models.md",
+  "rationale": "Bridges prompt engineering to n8n workflow generation; strengthens both prompt playbooks",
+  "valuable_content": [
+   {
+    "type": "prompt",
+    "description": "Workflow-generation prompt framework"
+   },
+   {
+    "type": "mental_model",
+    "description": "Core prompt structure layers"
+   }
+  ],
+  "tags": [
+   "claude",
+   "n8n",
+   "prompt-framework",
+   "guidelines"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_CommercialVehicleProposal_QVPVC0212250.pdf",
+  "domain": "08_Business_Operations_and_Subbroking",
+  "file_type": ".pdf",
+  "content_summary": "Passenger vehicle insurance proposal form naming PROBUS INS BROKER as intermediary (AG code BA504000, proposal PF156)",
+  "reusability_score": 4,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Real subbroking-industry document showing proposal-form workflow; useful as a domain artifact but contains client/business data",
+  "valuable_content": [
+   {
+    "type": "use_case",
+    "description": "Insurance proposal form field map for subbroking ops"
+   }
+  ],
+  "tags": [
+   "insurance",
+   "subbroking",
+   "probus",
+   "business-record"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Copy of YouTube Comments (TEMPLATE).xlsx",
+  "domain": "07_Content_Creation_and_Media_Engines",
+  "file_type": ".xlsx",
+  "content_summary": "Empty YouTube comments tracker spreadsheet template",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Empty template duplicate",
+  "tags": [
+   "template",
+   "youtube",
+   "empty"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Copy of YouTube Videos (TEMPLATE).xlsx",
+  "domain": "07_Content_Creation_and_Media_Engines",
+  "file_type": ".xlsx",
+  "content_summary": "Empty YouTube videos tracker spreadsheet template ('Step 1' sheet only)",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Empty template duplicate",
+  "tags": [
+   "template",
+   "youtube",
+   "empty"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Copy of compiled-n8n-docs.docx",
+  "file_type": ".docx",
+  "domain": "02_Workflow_Automations_n8n",
+  "content_summary": "Duplicate copy of the compiled official n8n documentation (791 paragraphs starting from README)",
+  "reusability_score": 5,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Reference corpus duplicate; canonical copy already synthesized into n8n playbooks",
+  "tags": [
+   "n8n",
+   "documentation",
+   "duplicate",
+   "reference-corpus"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_D155472913.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Go Digit General Insurance private car policy schedule/certificate (UIN IRDAN158, 4 pages)",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Personal vehicle insurance record",
+  "tags": [
+   "insurance",
+   "vehicle",
+   "personal-record"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Email_Inbox_Manager.json",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".json",
+  "content_summary": "21-node Gmail inbox-manager agent: gmailTrigger, OpenAI classification, conditional routing and Slack notification",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Human_in_the_Loop_and_Executive_Inbox_Automation.md",
+  "rationale": "Working email-triage agent exactly matching inbox-automation playbook scope",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Gmail+Slack triage agent node graph"
+   }
+  ],
+  "tags": [
+   "n8n",
+   "gmail",
+   "email-agent",
+   "slack",
+   "triage"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Fee-Receipt.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "University of Delhi School of Open Learning fee receipt",
+  "reusability_score": 1,
+  "action": "reference_only",
+  "target_gm": "",
+  "rationale": "Personal academic receipt",
+  "tags": [
+   "receipt",
+   "personal-record"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Google_Calendar_MCP (1).json",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".json",
+  "content_summary": "7-node n8n MCP-trigger workflow exposing Google Calendar as Model Context Protocol tool",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Model_Context_Protocol_MCP_and_Superpowers_Integration.md",
+  "rationale": "Concrete MCP-server-via-n8n pattern for the MCP integration playbook",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Google Calendar MCP tool wrapper workflow"
+   }
+  ],
+  "tags": [
+   "mcp",
+   "google-calendar",
+   "n8n",
+   "tooling"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Inbox Manager Documentation.pdf",
+  "domain": "01_AI_Agents_and_Autonomous_Systems",
+  "file_type": ".pdf",
+  "content_summary": "22-page design doc for an email agent that categorizes incoming mail (internal/support/promotions/admin) with handling rules per category",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Human_in_the_Loop_and_Executive_Inbox_Automation.md",
+  "rationale": "System-design companion to the inbox-manager workflow; adds taxonomy and rules depth",
+  "valuable_content": [
+   {
+    "type": "use_case",
+    "description": "Email categorization taxonomy"
+   },
+   {
+    "type": "sop",
+    "description": "Per-category handling procedures"
+   }
+  ],
+  "tags": [
+   "email-agent",
+   "design-doc",
+   "taxonomy",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_OCR_Reader_Test.json",
+  "domain": "05_Code_Snippets_and_Dev_Tools",
+  "file_type": ".json",
+  "content_summary": "10-node OCR test workflow: Google Drive fetch, information extractor with OpenAI, results into Google Sheets",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Universal_Document_and_Code_Extraction_Pipelines.md",
+  "rationale": "Document-to-data extraction pattern matching extraction-pipeline playbook",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Drive→OCR→Sheets extraction flow"
+   }
+  ],
+  "tags": [
+   "ocr",
+   "extraction",
+   "google-drive",
+   "n8n"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Project codename_ FlowScribe.docx",
+  "domain": "10_R_and_D_Incubator_Half_Baked_Ideas",
+  "file_type": ".docx",
+  "content_summary": "Master build brief for Project FlowScribe: production-grade full-stack audio intelligence app for a non-technical user (284 paragraphs)",
+  "reusability_score": 9,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Project_FlowScribe_Autonomous_Audio_Intelligence_Engine.md",
+  "rationale": "Canonical source brief of a flagship incubated project already honored by its own playbook",
+  "valuable_content": [
+   {
+    "type": "half_baked_project",
+    "description": "FlowScribe audio-intelligence full-stack app spec"
+   },
+   {
+    "type": "business_idea",
+    "description": "Autonomous app-building for non-coders"
+   }
+  ],
+  "tags": [
+   "flowscribe",
+   "project-brief",
+   "flagship",
+   "high-value"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_SOP_ Download & Compile n8n Documentation into Google Docs.pdf",
+  "domain": "05_Code_Snippets_and_Dev_Tools",
+  "file_type": ".pdf",
+  "content_summary": "3-page step-by-step SOP for downloading and compiling n8n documentation into Google Docs (starts with Git install)",
+  "reusability_score": 6,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Universal_Document_and_Code_Extraction_Pipelines.md",
+  "rationale": "Reusable documentation-compilation SOP; complements extraction pipelines playbook",
+  "valuable_content": [
+   {
+    "type": "sop",
+    "description": "Docs download-and-compile procedure"
+   }
+  ],
+  "tags": [
+   "sop",
+   "documentation",
+   "git",
+   "n8n"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Statement_OCT2025_585592536 (2).pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Encrypted October 2025 account statement duplicate",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Encrypted financial duplicate",
+  "tags": [
+   "bank-statement",
+   "encrypted",
+   "duplicate",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Statement_OCT2025_585592536.pdf",
+  "domain": "ARCHIVE",
+  "file_type": ".pdf",
+  "content_summary": "Encrypted October 2025 account statement base copy",
+  "reusability_score": 1,
+  "action": "archive",
+  "target_gm": "",
+  "rationale": "Encrypted financial duplicate set member",
+  "tags": [
+   "bank-statement",
+   "encrypted",
+   "duplicate",
+   "keep-aside"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Trending_YouTube_Videos_copy.json",
+  "domain": "07_Content_Creation_and_Media_Engines",
+  "file_type": ".json",
+  "content_summary": "12-node trend-research workflow: form trigger fetches trending YouTube videos via HTTP, filters through OpenAI, writes Google Sheets",
+  "reusability_score": 7,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_Faceless_YouTube_Production_Engine_and_Script_Generation.md",
+  "rationale": "Trend-discovery front-end of the YouTube content engine",
+  "valuable_content": [
+   {
+    "type": "code",
+    "description": "Trending-video research automation"
+   }
+  ],
+  "tags": [
+   "youtube",
+   "trends",
+   "research",
+   "n8n"
+  ]
+ },
+ {
+  "raw_path": "Raw_copies/Cleanup_Quarantine/20260816_123000/dup_Unlimited Content Ideas Documentation.pdf",
+  "domain": "07_Content_Creation_and_Media_Engines",
+  "file_type": ".pdf",
+  "content_summary": "21-page multi-agent content-idea machine doc: Agent 1 Labeler plus user prompt templates for endless idea generation",
+  "reusability_score": 8,
+  "action": "merge_into_existing_gm",
+  "target_gm": "GM_SEO_Blog_Generation_and_Content_Strategy_Playbook.md",
+  "rationale": "Idea-generation agent design with reusable prompt templates for content strategy playbook",
+  "valuable_content": [
+   {
+    "type": "prompt",
+    "description": "Labeler agent user-prompt templates"
+   },
+   {
+    "type": "sop",
+    "description": "Multi-agent idea pipeline"
+   }
+  ],
+  "tags": [
+   "content-ideas",
+   "prompts",
+   "multi-agent",
+   "high-value"
+  ]
+ }
+]
