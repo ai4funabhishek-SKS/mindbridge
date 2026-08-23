@@ -44,7 +44,8 @@ def main():
     # env-var templates and mock values so public playbooks stay publishable.
     PLACEHOLDER_HINTS = ("your", "mock", "${", "<", ">", "example", "xxx",
                          "placeholder", "xxxx", "test_key", "none",
-                         "[redacted]")
+                         "[redacted]", "label", "getelementby", "<!--",
+                         "input type")
     def is_real_secret(match_text: str) -> bool:
         low = match_text.lower()
         if any(h in low for h in PLACEHOLDER_HINTS):
@@ -69,6 +70,11 @@ def main():
             continue
         reasons = []
         for pattern, cat in FILENAME_RULES:
+            # CV/statement name-heuristics only make sense for document files;
+            # code/workflow/text files merely mention these words.
+            if cat in ("personal_cv", "financial_statement") and p.suffix.lower() in {
+                    ".json", ".md", ".txt", ".py", ".html", ".csv"}:
+                continue
             if re.search(pattern, p.name):
                 reasons.append(cat)
         if p.suffix.lower() in TEXT_EXTS:

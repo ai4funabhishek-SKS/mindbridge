@@ -1,0 +1,586 @@
+{
+  "name": "AIS Resume Indeed",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        128
+      ],
+      "id": "a0be5ac9-c19b-4c6d-a115-8390e61b251b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "1325BHdGnj4fIuo33WNr07LZvp8yxUEuxdnc9oaytoLs"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        832,
+        128
+      ],
+      "id": "50628225-64e2-47a9-bc35-6699afc5d652",
+      "name": "Get Original Resume",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "TJn4nCnT7WgyZuIE",
+          "name": "AIS Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        656,
+        128
+      ],
+      "id": "f780ee61-7811-4f13-bfd0-23ef80b8b4e6",
+      "name": "Limit 3"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Here is the job posting information:\nCompany Name: {{ $('Limit 3').item.json.company }}\nJob Description: {{ $('Limit 3').item.json.descriptionHTML }}\n\nHere is the candidate's resume: {{ $json.content }}"
+            },
+            {
+              "content": "=You are an expert Indeed filtering agent. Your task is to determine whether or not a job posting is suitable for a specific candidate with the provided resume.\n\nHere is the job posting information:\nCompany Name: {{ $('Limit 3').item.json.company }}\nJob Description: {{ $('Limit 3').item.json.descriptionHTML }}\n\nHere is the candidate's resume: {{ $json.content }}\n\nIf you believe that the job posting is suitable to the candidate according to their skills, experience and knowledge, output \"true\". If you do not think that the job posting is suitable, output \"false\".Also provide justification on how you arrived at that decision.\n\nOutput in this JSON format:\n{\n  \"company_name\": \"{{ $('Limit 3').item.json.company }}\",\n  \"job_description\": \"{{ $('Limit 3').item.json.description }}\",\n  \"is_suitable\": \"{{ $json.is_suitable }}\",\n  \"justification\": \"{{ $json.justification }}\"\n}\n\nFor the output of the job description, summarize into 3 sentences max.",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        992,
+        128
+      ],
+      "id": "8cf296c4-5fd0-4a40-bcd8-4fa3cb0c5b20",
+      "name": "Filtering Agent",
+      "credentials": {
+        "openAiApi": {
+          "id": "jVCpXQHd8woXOE4D",
+          "name": "AIS OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        128
+      ],
+      "id": "fadcbd9e-5cb0-4332-9550-abc9a7e9bf87",
+      "name": "Limit 1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4c4670f7-5bff-42b8-8d05-b514c6c3dd2d",
+              "leftValue": "={{ $json.message.content.is_suitable }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        128
+      ],
+      "id": "b5423269-ca92-43a1-b1cb-b64c75345a25",
+      "name": "Filter Only Suitable"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Job Posting Description:  {{ $json.message.content.job_description }}\nCandidate's Original Resume: {{ $('Get Original Resume').item.json.content }}",
+        "options": {
+          "systemMessage": "=You are a Resume Enhancement Specialist. Your task is to enhance the provided resume based on the job requirements from Indeed job postings.\n\nINSTRUCTIONS:\n1. Take the original resume content and the job posting details\n2. Enhance the resume to better match the job requirements\n3. Keep all original sections: Summary, Experience, Education, Skills, Projects, Awards & Certifications\n4. Improve the content to highlight relevant skills and experiences\n5. Maintain the professional structure and formatting\n6. Output the COMPLETE enhanced resume with ALL sections\n\nIMPORTANT FORMATTING RULES:\n- Output ONLY clean HTML content, no markdown formatting\n- Do NOT include ```html or ``` or backticks in your response\n- Do NOT include the word \"html\" at the beginning\n- Use this exact structure:\n\n<h1>David Smith</h1>\n<div class=\"job-title\"><strong>Software Engineer</strong></div>\n\n<div class=\"contact-section\">\n<strong>Contact:</strong>\n<ul>\n<li>San Francisco, CA | david.smith@email.com | (555) 123-4567 | linkedin.com/in/davidsmith </li>\n</ul>\n</div>\n\n<h2><strong>Summary</strong></h2>\n<p class=\"summary\">[Enhanced summary here]</p>\n\n<h2><strong>Experience</strong></h2>\n[Job entries with proper HTML structure]\n\nStart your response directly with <h1> and end with the last job entry. No extra text or formatting markers."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        256,
+        496
+      ],
+      "id": "5f57d4ae-234b-4bba-8a41-577711dc914a",
+      "name": "Resume Enhancement Specialist"
+    },
+    {
+      "parameters": {
+        "folderId": "default",
+        "title": "=Enhanced Resume - {{ $('Limit 1').item.json.message.content.company_name }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        784,
+        512
+      ],
+      "id": "eb29d9bc-be8b-416d-ad4f-ec709f2cb69f",
+      "name": "Create Enhanced Resume",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "TJn4nCnT7WgyZuIE",
+          "name": "AIS Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://www.googleapis.com/upload/drive/v3/files/{{ $json.id }}?uploadType=media",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"content-type\":\"text/html\"\n}",
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={{ $('HTML Formatter').item.json.enhanced_resume_html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        512
+      ],
+      "id": "1d36a145-7fba-4220-af5c-287e53a4c445",
+      "name": "Upload Updated Resume",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "TJn4nCnT7WgyZuIE",
+          "name": "AIS Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the enhanced resume content from the AI agent\nlet enhancedContent = $input.first().json.output;\n\n// Clean up any unwanted HTML artifacts or markdown formatting\nenhancedContent = enhancedContent\n    .replace(/^```html\\s*/i, '')  // Remove opening ```html\n    .replace(/\\s*```\\s*$/i, '')   // Remove closing ```\n    .replace(/^`html\\s*/i, '')    // Remove `html\n    .replace(/^html\\s*/i, '')     // Remove html at start\n    .replace(/^\\s*}\\s*html\\s*/i, '') // Remove }html\n    .replace(/^\\s*`\\s*/i, '')     // Remove leading backticks\n    .trim();\n\n// HTML template with styling to match original resume format exactly\nconst htmlTemplate = `\n<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            max-width: 800px;\n            margin: 0 auto;\n            padding: 40px;\n            line-height: 1.3;\n            color: #333;\n            background-color: white;\n            font-size: 14px;\n        }\n        \n        h1 {\n            font-size: 28px;\n            font-weight: bold;\n            margin-bottom: 8px;\n            margin-top: 0;\n            color: #000;\n        }\n        \n        .job-title {\n            font-size: 16px;\n            font-weight: bold;\n            margin-bottom: 15px;\n            margin-top: 5px;\n            color: #333;\n        }\n        \n        .contact-section {\n            margin-bottom: 20px;\n        }\n        \n        .contact-section strong {\n            font-weight: bold;\n            display: block;\n            margin-bottom: 8px;\n        }\n        \n        .contact-section ul {\n            list-style: disc;\n            margin-left: 18px;\n            margin-top: 0;\n            margin-bottom: 0;\n            padding: 0;\n        }\n        \n        .contact-section li {\n            margin-bottom: 2px;\n            line-height: 1.2;\n        }\n        \n        h2 {\n            font-size: 16px;\n            font-weight: bold;\n            margin-top: 20px;\n            margin-bottom: 10px;\n            color: #000;\n        }\n        \n        .job-entry {\n            margin-bottom: 20px;\n        }\n        \n        .job-title-line {\n            font-weight: bold;\n            margin-bottom: 2px;\n            line-height: 1.2;\n        }\n        \n        .job-company {\n            font-style: italic;\n            margin-bottom: 8px;\n            line-height: 1.2;\n        }\n        \n        .job-duties ul {\n            list-style: disc;\n            margin-left: 18px;\n            margin-top: 5px;\n            margin-bottom: 0;\n            padding: 0;\n        }\n        \n        .job-duties li {\n            margin-bottom: 5px;\n            line-height: 1.3;\n        }\n        \n        p {\n            margin-bottom: 10px;\n            margin-top: 0;\n            text-align: justify;\n            line-height: 1.3;\n        }\n        \n        a {\n            color: #0066cc;\n            text-decoration: none;\n        }\n        \n        a:hover {\n            text-decoration: underline;\n        }\n        \n        .summary {\n            text-align: justify;\n            margin-bottom: 20px;\n            line-height: 1.3;\n        }\n        \n        /* Ensure proper spacing for different elements */\n        strong {\n            font-weight: bold;\n        }\n        \n        em {\n            font-style: italic;\n        }\n        \n        /* Remove extra spacing from nested elements */\n        ul {\n            margin-top: 0;\n            margin-bottom: 0;\n        }\n        \n        li {\n            line-height: 1.3;\n        }\n    </style>\n</head>\n<body>\n    ${enhancedContent}\n</body>\n</html>\n`;\n\n// Return the formatted HTML\nreturn [{ \n    json: { \n        enhanced_resume_html: htmlTemplate,\n        enhanced_resume_formatted: enhancedContent,\n        original_ai_output: enhancedContent\n    } \n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        512
+      ],
+      "id": "fff7b5c7-fa41-4095-8131-f124e6eff393",
+      "name": "HTML Formatter"
+    },
+    {
+      "parameters": {
+        "content": "# Scrape Indeed Job Openings",
+        "height": 400,
+        "width": 768,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -32
+      ],
+      "id": "80a2d50b-f145-4c8f-b922-be11e760aee8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Find Suitable Positions",
+        "height": 400,
+        "width": 928,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -32
+      ],
+      "id": "85487bd8-57b8-4e1d-8e64-76b9cfcc45ab",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Enhance & Email",
+        "height": 352,
+        "width": 1728,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        384
+      ],
+      "id": "9943a42a-89a1-40b8-9f06-dfc319c30d5c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "sendTo": "sunkonark@gmail.com",
+        "subject": "={{ $json.name }} Completed",
+        "emailType": "text",
+        "message": "={{ $json.name }} Completed\n\nCheck it here: https://docs.google.com/document/d/{{ $json.id }}/edit",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        512
+      ],
+      "id": "393014b9-a889-4ff7-bfce-bc28ff03240f",
+      "name": "Email Response",
+      "webhookId": "10cce0ab-32dd-4f1b-b947-4b7c332fa06c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qmEGVPxG059QdFxW",
+          "name": "AIS Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        624
+      ],
+      "id": "c0c83fef-de28-4a94-b41c-c05c0f21b396",
+      "name": "4.1 mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "jVCpXQHd8woXOE4D",
+          "name": "AIS OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7da61d56-aee4-4910-a775-c14759c23759",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "SUCCEEDED",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        304,
+        128
+      ],
+      "id": "18c4ed7f-3ddc-4ee4-b87c-9bd38410d953",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Workflow Failed, please check"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        544,
+        -16
+      ],
+      "id": "19dcf155-49e7-4204-8cca-7d13aa1691c6",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "hMvNSpz3JnHgl5jkh",
+          "mode": "list",
+          "cachedResultName": "Indeed Scraper (misceres/indeed-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/hMvNSpz3JnHgl5jkh/input"
+        },
+        "customBody": "{\n    \"country\": \"US\",\n    \"followApplyRedirects\": false,\n    \"location\": \"San Francisco\",\n    \"maxItems\": 10,\n    \"parseCompanyDetails\": false,\n    \"position\": \"software engineer\",\n    \"saveOnlyUniqueItems\": true\n}",
+        "timeout": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        176,
+        128
+      ],
+      "id": "f9436edc-68a0-43f4-a5fa-de9042d9db25",
+      "name": "Indeed scraper",
+      "credentials": {
+        "apifyApi": {
+          "id": "xVcTlBUwgcPRJalP",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "datasetId": "={{ $json.defaultDatasetId }}",
+        "offset": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        464,
+        128
+      ],
+      "id": "7ac3b527-81af-42b2-bc8f-5a727fe759a5",
+      "name": "Get Indeed Jobs",
+      "credentials": {
+        "apifyApi": {
+          "id": "xVcTlBUwgcPRJalP",
+          "name": "Apify account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Indeed scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Original Resume": {
+      "main": [
+        [
+          {
+            "node": "Filtering Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit 3": {
+      "main": [
+        [
+          {
+            "node": "Get Original Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtering Agent": {
+      "main": [
+        [
+          {
+            "node": "Filter Only Suitable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Only Suitable": {
+      "main": [
+        [
+          {
+            "node": "Limit 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit 1": {
+      "main": [
+        [
+          {
+            "node": "Resume Enhancement Specialist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume Enhancement Specialist": {
+      "main": [
+        [
+          {
+            "node": "HTML Formatter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Enhanced Resume": {
+      "main": [
+        [
+          {
+            "node": "Upload Updated Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML Formatter": {
+      "main": [
+        [
+          {
+            "node": "Create Enhanced Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Updated Resume": {
+      "main": [
+        [
+          {
+            "node": "Email Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4.1 mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Resume Enhancement Specialist",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get Indeed Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Indeed scraper": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Indeed Jobs": {
+      "main": [
+        [
+          {
+            "node": "Limit 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1dabd8b4-1048-4538-b092-debc477ebe4c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "g3O1NE1e4l070Ohp",
+  "tags": []
+}

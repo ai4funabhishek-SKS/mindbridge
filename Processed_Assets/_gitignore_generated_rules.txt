@@ -11,5 +11,3 @@
 /Processed_Assets/Prompts/trading/trading_1_v1.md
 /Processed_Assets/Prompts/workflow/workflow_1_v1.md
 /04_Archive_Cold_Storage/classified_archive/24feb2026.txt
-/02_Assets_Library/08_Business_Operations_and_Subbroking/AIS Resume Indeed.json
-/02_Assets_Library/10_R_and_D_Incubator_Half_Baked_Ideas/Non-Coder's_GuidetoAI-PoweredWd_PRECONFIG.txt
