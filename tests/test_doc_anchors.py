@@ -123,9 +123,11 @@ class TestEndToEndAnchorBuild(unittest.TestCase):
             blobs = [r[0] for r in conn.execute(
                 "SELECT embedding FROM doc_anchors WHERE model=?", (bda.EMBED_MODEL,)
             ).fetchall()]
+            n_docs = conn.execute("SELECT COUNT(*) FROM documents").fetchone()[0]
         finally:
             conn.close()
-        self.assertGreater(len(blobs), 400)
+        self.assertGreater(len(blobs), 100)
+        self.assertEqual(len(blobs), n_docs)  # anchors match live document count
         norms = []
         for b in blobs:
             vec = np.frombuffer(b, dtype=np.float32)

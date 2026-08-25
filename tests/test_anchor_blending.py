@@ -7,6 +7,8 @@ E2E tests verify that vague business queries surface the right playbook
 subbroking playbook near the top instead of regulatory PDFs/CVs).
 """
 import sys
+
+import sqlite3
 import unittest
 import subprocess
 from pathlib import Path
@@ -79,7 +81,13 @@ class TestFuseMaths(unittest.TestCase):
 class TestAnchorInfrastructure(unittest.TestCase):
     def test_i01_anchor_loader_returns_aligned_arrays(self):
         doc_ids, matrix = search_engine._load_anchor_matrix()
-        self.assertGreater(len(doc_ids), 400)
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            n_docs = conn.execute("SELECT COUNT(*) FROM documents").fetchone()[0]
+        finally:
+            conn.close()
+        self.assertGreater(len(doc_ids), 100)
+        self.assertEqual(len(doc_ids), n_docs)  # every document carries an anchor
         self.assertEqual(matrix.shape[0], len(doc_ids))
         self.assertEqual(matrix.shape[1], 768)
 

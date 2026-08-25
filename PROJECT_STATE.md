@@ -10,32 +10,38 @@ test suite — all non-destructive to the original raw files.
 ## 2. 🔒 Active Worker
 | Field | Value |
 |---|---|
-| Claimed by | — (opencode finished M7 documentation session; slot released) |
-| Claimed at | 2026-08-25 18:05 → released 18:25 |
+| Claimed by | — (opencode finished M8 GK-cleanup session; slot released) |
+| Claimed at | 2026-08-25 20:10 → released 20:40 |
 | Status | FREE |
 
 ## 3. Current Status
-🟢 **M6 COMPLETE + CLOUD BRAIN SHIPPED + M7 DOCS LAYER (2026-08-25).**
-Ask mode defaults to **Groq free-tier cloud brain `openai/gpt-oss-120b`**
-(zero local RAM); local Ollama kept as manual fallback (`--model phi3`).
-**Test suite: 181 passed / 0 failed / 0 skipped** (~60s wall clock).
-**M7 (this session) shipped:** security audit of full push set (548 tracked
-files → ZERO key hits, zero forbidden paths); `START_HERE.md` non-coder
-onboarding; `DO_NOT_MOVE_TO_KB.md` exclusion rules; `JOURNEY_AND_BUSINESS_
-PLAN.md` (community traction + product ladder incl. DFY refinement service);
-portable `_handoff/L1_second_brain_refinement/SKILL.md` for the 8GB laptop;
-hygiene: Briefings/ + *.err + _trash_* gitignored, embed_run.err relocated.
-Key mechanics from M6f still in force:
-- Key discovery: GROQ_API_KEY env var → first `gsk_...` match under
-  `01_Vault_Private/credentials_and_keys/` (never printed/logged).
-- Cloudflare edge requires real User-Agent header (`SecondBrainKB/10`) —
-  bare urllib UA gets error-1010 blocked before reaching the API.
-- Model lineup live-verified: gpt-oss-120b + qwen3.6-27b available;
-  llama-70b/8b-instant RETIRED on this key.
-- Auto retry-once on HTTP 429 honouring Retry-After (TPM = 8k/min).
-Remaining open items: GitHub push to **KBmomentum-2Braininprocess**
-(Private) awaiting owner GO after audit PASS; Task-7 review actioning;
-key rotation before any public mirror; data debt (242 generic topics).
+🟢 **M8 DATA-DEBT CLEANUP EXECUTED (2026-08-25) — library fully curated.**
+The 242-file "General Knowledge" catch-all was individually reviewed
+(`GK_242_FILE_REVIEW.csv`, owner decisions stamped in every row) and resolved:
+- **164 evicted from search index only** (framework plumbing ~95, dup/clone
+  ~29, secrets+PII ~18, logs/boilerplate) — originals untouched in Raw_copies.
+- **78 keepers re-shelved** into proper homes incl. new labels
+  `04_Prompt_Engineering_quick_prompts` (15), `03_RnD_Incubator_Business_Ideas`
+  (8, owner's business-gold), `05_Reference_Documentation_tool_configs` (39).
+- Owner rescued 2: KNOWLEDGE.md (KB operating manual) + Oracle lab reference;
+  evicted the other 4 REVIEW files.
+- Live DB now: **338 docs / 10,075 chunks**, all tables aligned, KG intact,
+  VACUUMed; anchors rebuilt 338/338; folder indexes + master CSV + dashboards +
+  navigator all regenerated.
+- v1 surgery over-deleted 11 same-named docs → restored from cold-storage
+  backup, re-ran topic-scoped (v2). Lesson baked into L1 skill (P2.5 hygiene
+  gate + bulk-mutation safety rules).
+- Two tests fixed: hardcoded ">400 anchors" thresholds replaced with
+  relative invariants (anchors == live document count).
+**Test suite: 181 passed / 0 failed / 0 skipped.**
+Spot-proof: crypto-sentiment prompts now rank #1; key-material unfindable;
+fw-junk unfindable.
+Earlier milestones still in force: Ask mode default = Groq cloud brain
+`openai/gpt-oss-120b` (User-Agent header required; 429 auto-retry); security
+audit of push set PASSED (548 files, 0 keys). Open items: GitHub push to
+KBmomentum-2Braininprocess awaiting owner GO; key rotation pre-public;
+Task-7 review actioning; legacy friendly-vs-numbered topic names may be
+normalized someday (cosmetic).
 
 ## 4. Milestone Log
 | Date | Milestone | Status | Notes |
@@ -57,6 +63,7 @@ key rotation before any public mirror; data debt (242 generic topics).
 | 2026-08-25 | M6e ask mode + briefings + model ladder | CODE DONE | live proof blocked by RAM |
 | 2026-08-25 | M6f Groq cloud brain (gpt-oss-120b) default | DONE | 181/181 green; live E2E proven |
 | 2026-08-25 | M7 docs layer: onboarding, journey/business plan, L1 skill, exclusions, security audit PASS | DONE | push set clean: 548 files, 0 key hits |
+| 2026-08-25 | M8 GK catch-all cleanup: 164 evicted / 78 re-shelved; DB rebuilt; L1 skill hardened with hygiene gate + surgery rules | DONE | 181/181 green; backup kept in cold storage |
 
 ## 5.1 M5 Final Statistics (2026-08-23, split corrected 2026-08-24)
 - Classification: 255 merge_into_gm · 149 archive · 39 reference_only · 0 pending
@@ -90,9 +97,10 @@ key rotation before any public mirror; data debt (242 generic topics).
    scrub dashboard exports first; rotate live keys before any external sharing.
 3. ~~M6 finish line: free RAM → live Ask E2E~~ DONE via cloud brain (M6f).
 4. Task-7 brutal review: report exists, actioning still open.
-5. Known data debt: 242 docs carry generic topic "General Knowledge"; 145/156
-   library files have rich catalogue entries, 11 generated artifacts don't.
-   Optional future pass: relabel topics + AI-enrich descriptions.
+5. ~~Data debt: 242 docs under "General Knowledge"~~ DONE (M8): 164 evicted
+   from index, 78 re-shelved; review record in GK_242_FILE_REVIEW.csv.
+6. Optional cosmetic pass: merge legacy friendly topic names
+   ("AI & Automation") with numbered-domain equivalents someday.
 
 ## 8. Blockers & Gotchas
 - Antigravity quota exhaustion repeatedly interrupted work (resets daily).
@@ -115,24 +123,28 @@ key rotation before any public mirror; data debt (242 generic topics).
 ## 10. 🔄 Handoff Capsule (paste into any other AI tool)
 ```
 CONTEXT: C:\knowledgeBase_staging — Second Brain KB: 443 raw files refined
-into vault + 10-domain library (49 playbooks) + FTS5/KG database (502 docs,
-10785 chunks, 502 doc anchors) + dashboards + CSV asset indexes + 181-test
-suite (ALL GREEN, 0 skips). Onboarding: START_HERE.md. Exclusion rules:
-DO_NOT_MOVE_TO_KB.md. Business/community: JOURNEY_AND_BUSINESS_PLAN.md.
-Portable L1 skill: _handoff/L1_second_brain_refinement/SKILL.md.
-STATE:   M1-M7 DONE 2026-08-25. Ask mode DEFAULT brain = Groq free-tier
+into vault + 10-domain library (49 playbooks) + FTS5/KG database (338 docs,
+10075 chunks, 338 anchors — post-M8 cleanup) + dashboards + CSV asset
+indexes + 181-test suite (ALL GREEN, 0 skips). Onboarding: START_HERE.md.
+Exclusion rules: DO_NOT_MOVE_TO_KB.md. Review record: GK_242_FILE_REVIEW.csv.
+Business/community: JOURNEY_AND_BUSINESS_PLAN.md. Portable L1 skill:
+_handoff/L1_second_brain_refinement/SKILL.md (now incl. P2.5 hygiene gate).
+STATE:   M1-M8 DONE 2026-08-25. Ask mode DEFAULT brain = Groq free-tier
 `openai/gpt-oss-120b` (key auto-found in vault, never printed; User-Agent
-header REQUIRED — Cloudflare err-1010 otherwise; 429 auto-retry). Aliases:
-groq | groq-fast(qwen3.6-27b) | phi3/llama3.2/mistral = local Ollama w/
-RAM ctx-ladder. Retrieval local+private; excerpts go to Groq only for the
-synthesis step. Security audit of full push set PASSED (548 files, 0 keys).
-NEXT:    Owner GO → push to Private repo KBmomentum-2Braininprocess;
-then key rotation; optional public sanitized mirror per business plan;
-Task-7 review actioning; relabel 242 "General Knowledge" topics (debt).
-GOTCHAS: .wslconfig caps WSL VM at 4GB → no local llama3.2 as primary.
+header REQUIRED; 429 auto-retry). Aliases: groq | groq-fast(qwen3.6-27b)
+| phi3/llama3.2/mistral = local Ollama w/ RAM ctx-ladder. M8 purged the
+General-Knowledge junk drawer: secrets/PII/plumbing unfindable, keepers
+re-shelved (business ideas now their own label). Bulk-surgery rules live
+in the L1 skill: topic-scoped doc-id deletes, cold-storage DB backup first,
+relative test invariants.
+NEXT:    Owner GO -> push to Private repo KBmomentum-2Braininprocess; then
+key rotation; optional public sanitized mirror per business plan; Task-7
+review actioning; someday normalize legacy friendly vs numbered topics.
+GOTCHAS: .wslconfig caps WSL VM at 4GB -> no local llama3.2 as primary.
 Ollama lives in Docker-in-WSL; needs Docker Desktop after reboot. Groq
-model lineup changed vs old notes — query /v1/models, don't trust memory.
-RULES:   read+update PROJECT_STATE.md, claim 🔒 Active Worker before work,
+model lineup changed vs old notes - query /v1/models, don't trust memory.
+Filenames are NOT unique DB keys - scope bulk ops by topic+id lists.
+RULES:   read+update PROJECT_STATE.md, claim Active Worker before work,
 commit checkpoints, verify-before-done mandate is in global AGENTS.md,
 never delete data / spend money / publish without owner approval; vault
 never leaves this machine unencrypted.

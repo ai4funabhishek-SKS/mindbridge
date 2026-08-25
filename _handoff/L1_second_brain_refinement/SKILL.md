@@ -65,6 +65,19 @@ dependencies/source_files_synthesized) + explicit lineage & merge rationale +
 mental models + clean code/n8n JSON blocks + deployment SOPs.
 Target density over volume (443 files → ~49 playbooks is healthy).
 
+### P2.5 — TOPIC HYGIENE GATE (run EARLY, not at the end!)
+Lesson from L2: 48% of the library silently piled onto a "General
+Knowledge" catch-all and was only discovered weeks later.
+- Right AFTER first ingestion, audit `SELECT topic, COUNT(*) GROUP BY topic`.
+- HARD RULE: no catch-all/default topic may hold >15% of documents. If it
+  does, STOP and classify those files WITH THE OWNER before continuing.
+- Build the do-not-index manifest at ingestion time, not retroactively:
+  framework plumbing (`agent.*`, `fw.*`, `memory.*`, `behaviour.*`), vendor
+  boilerplate (README/welcome of bundled tools), run logs, timestamped
+  clones, `dup_*` copies, and ANY file whose content matches key patterns.
+- Personal PII (CVs, statements, IDs) is vault-only: it must never enter
+  the searchable index even as a copy.
+
 ### P3 — Database, Dashboards, Search Engine
 SQLite DB (`Processed_Assets/my_rag_data.db`): documents/chunks/chunks_fts
 (FTS5/BM25)/kg_nodes/kg_edges. Build Excel dashboard + interactive HTML
@@ -95,6 +108,23 @@ Pytest suite covering every acceptance criterion + adversarial cases
 green including live E2E. Write START_HERE.md (building-metaphor onboarding),
 DO_NOT_MOVE_TO_KB.md, README pitch, Handoff Capsule update.
 
+## Bulk-Mutation Safety Rules (learned via an accidental over-delete on L2)
+
+1. **Filenames are NOT unique keys.** The same `file_name` can exist under
+   several topics. Every bulk DELETE/UPDATE must scope by doc-id lists
+   captured from a topic-scoped SELECT (e.g., `WHERE topic='X' AND
+   file_name IN (...)`) — never by name alone across the whole DB.
+2. **Backup before any bulk mutation:** copy the DB to cold storage, verify
+   the copy opens, only then operate. Restore is the rollback.
+3. **Post-surgery invariant check:** counts of documents == doc_anchors and
+   chunks == chunks_fts == chunk_embeddings must stay aligned; run VACUUM,
+   then re-run the full test suite.
+4. **Never hardcode volume numbers in tests** (`> 400 anchors` broke when
+   cleanup legitimately shrank the library). Assert relative invariants:
+   anchor count == live document count; floor values generous.
+5. Review CSVs may be locked open in Excel — write stamped copies to a new
+   filename if `PermissionError`, never block the pipeline.
+
 ## Known Failure Modes → Fast Fixes
 
 | Symptom | Root cause | Fix |
@@ -106,6 +136,9 @@ DO_NOT_MOVE_TO_KB.md, README pitch, Handoff Capsule update.
 | Search returns CVs/SEBI PDFs for vague queries | Pure similarity ranking | Anchor fingerprints + per-doc cap |
 | Same doc floods results | No diversity control | MAX_PER_DOC=2 walk |
 | 429 bursts | TPM caps | Retry-once honoring Retry-After |
+| Half the library on one catch-all topic | Default tag + no early gate | P2.5 hygiene gate: >15% = STOP and classify with owner |
+| Bulk delete removed same-named docs from other topics | Name used as unique key | Topic-scoped doc-id lists (rule 1 above) |
+| Tests fail after legit cleanup | Hardcoded volume thresholds | Relative invariants (rule 4 above) |
 
 ## Final Verification Ritual (before telling owner "done")
 
