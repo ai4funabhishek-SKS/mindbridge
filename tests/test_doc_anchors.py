@@ -28,13 +28,22 @@ class TestAnchorTextComposition(unittest.TestCase):
             "asset_title": "Subbroking Growth Engine",
             "problem_solved": "How to find clients for finance advisory",
             "tags": "finance, clients",
-            "rating_tier": "Must Keep - High Reusability",
+            "rating_tier": "Deployable Template",
             "topic": "08_Business_Operations_and_Subbroking",
         }
         txt = bda.build_anchor_text(row)
         for part in ("Subbroking Growth Engine", "find clients", "finance",
-                     "Must Keep", "Business_Operations"):
+                     "Deployable Template", "Business_Operations"):
             self.assertIn(part, txt)
+
+    def test_u01b_filler_tier_not_embedded(self):
+        txt = bda.build_anchor_text({
+            "asset_title": "Doc",
+            "problem_solved": "Knowledge asset storage",
+            "rating_tier": "Must Keep - High Reusability",
+        })
+        self.assertNotIn("Knowledge asset storage", txt)
+        self.assertNotIn("Must Keep", txt)
 
     def test_u02_skips_empty_parts_no_double_separators(self):
         txt = bda.build_anchor_text({"asset_title": "Only Title", "topic": None})
@@ -45,6 +54,21 @@ class TestAnchorTextComposition(unittest.TestCase):
     def test_u03_truncated_to_budget(self):
         big = {"asset_title": "x" * 5000}
         self.assertLessEqual(len(bda.build_anchor_text(big)), bda.ANCHOR_MAX_CHARS)
+
+    def test_u04_filler_metadata_stripped(self):
+        row = {
+            "asset_title": "Account Statement",
+            "problem_solved": "Knowledge asset storage",
+            "tags": ".json, JSON",
+            "rating_tier": "Reference Knowledge",
+            "topic": "",
+        }
+        txt = bda.build_anchor_text(row)
+        self.assertEqual(txt, "Account Statement")
+
+    def test_u05_tags_keep_meaningful_tokens(self):
+        self.assertEqual(bda._clean_tags("n8n, agent, .json, JSON, trading"),
+                         "n8n, agent, trading")
 
 
 def _ollama_up() -> bool:
@@ -93,11 +117,24 @@ class TestEndToEndAnchorBuild(unittest.TestCase):
         self.assertEqual(n_docs, n_anchor, f"docs={n_docs} anchors={n_anchor}")
 
     def test_e03_embeddings_wellformed(self):
-        _, _, sample = self._counts()
-        self.assertIsNotNone(sample, "no anchor rows found")
-        vec = __import__("numpy").frombuffer(sample[0], dtype=__import__("numpy").float32)
-        self.assertEqual(len(vec), 768)
-        self.assertAlmostEqual(float((vec ** 2).sum()) ** 0.5, 1.0, places=2)
+        import numpy as np
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            blobs = [r[0] for r in conn.execute(
+                "SELECT embedding FROM doc_anchors WHERE model=?", (bda.EMBED_MODEL,)
+            ).fetchall()]
+        finally:
+            conn.close()
+        self.assertGreater(len(blobs), 400)
+        norms = []
+        for b in blobs:
+            vec = np.frombuffer(b, dtype=np.float32)
+            norms.append(float((vec ** 2).sum()) ** 0.5)
+        unit = sum(1 for n in norms if abs(n - 1.0) < 0.01)
+        zero = sum(1 for n in norms if n == 0.0)
+        self.assertEqual(unit + zero, len(blobs),
+                         "every anchor must be unit-norm (real) or exactly zero (hollow)")
+        self.assertGreater(unit, 0, "no real anchors at all?")
 
     def test_e04_idempotent_rerun(self):
         self.assertEqual(self.proc2.returncode, 0)

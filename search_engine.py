@@ -25,6 +25,24 @@ DB_PATH = BASE_DIR / "Processed_Assets" / "my_rag_data.db"
 EMBED_MODEL = "nomic-embed-text"
 OLLAMA_URL = "http://localhost:11434/api/embed"
 RRF_K = 60  # standard reciprocal rank fusion constant
+ANCHOR_WEIGHT = 1.0  # weight of document-anchor rank bonus vs chunk rank
+MAX_PER_DOC = 2      # result slots any single document may occupy
+
+
+def diverse_top(indices, chunk_ids, chunk_doc_map, limit,
+                max_per_doc=MAX_PER_DOC):
+    """Walks ranked chunk indices, capping how many slots one document takes."""
+    out = []
+    counts = {}
+    for i in indices:
+        did = chunk_doc_map.get(int(chunk_ids[i]))
+        if counts.get(did, 0) >= max_per_doc:
+            continue
+        counts[did] = counts.get(did, 0) + 1
+        out.append(int(i))
+        if len(out) >= limit:
+            break
+    return out
 
 def sanitize_fts5_query(query: str) -> str:
     """Extracts valid alphanumeric search tokens and formats for FTS5 prefix matching."""
@@ -237,6 +255,117 @@ def _fetch_chunk_metadata(chunk_ids):
         conn.close()
 
 
+def blend_scores(chunk_sims: np.ndarray, anchor_sims: np.ndarray,
+                 weight: float = ANCHOR_WEIGHT) -> np.ndarray:
+    """Blends chunk-level and document-anchor similarity scores."""
+    if chunk_sims.shape != anchor_sims.shape:
+        raise ValueError("chunk_sims and anchor_sims must have the same shape")
+    return (1.0 - weight) * chunk_sims + weight * anchor_sims
+
+
+def fuse_chunk_anchor_scores(chunk_sims: np.ndarray, chunk_doc_ids,
+                             anchor_rank_map: dict,
+                             weight: float = ANCHOR_WEIGHT, k: int = RRF_K) -> np.ndarray:
+    """Rank-fusion of chunk similarity with document-anchor identity.
+
+    Every row gets a reciprocal-rank score from its chunk position, plus a
+    weighted reciprocal-rank bonus from where its parent document sits in
+    the document-anchor ranking. Rank-based fusion amplifies meaningful
+    ordering instead of tiny raw-score deltas.
+    """
+    n = len(chunk_sims)
+    order = np.argsort(-chunk_sims)
+    out = np.empty(n, dtype=np.float64)
+    out[order] = 1.0 / (k + np.arange(1, n + 1))
+    for i, did in enumerate(chunk_doc_ids):
+        r = anchor_rank_map.get(int(did)) if did is not None else None
+        if r:
+            out[i] += weight / (k + r)
+    return out
+
+
+_ANCHOR_CACHE = {}   # (db_mtime) -> (doc_ids, matrix) | (None, None)
+_CHUNKDOC_CACHE = {}  # (db_mtime) -> {chunk_id: doc_id}
+
+
+def _load_anchor_matrix():
+    """Loads document anchor embeddings; returns (doc_ids, matrix) or (None, None)."""
+    mtime = DB_PATH.stat().st_mtime
+    cached = _ANCHOR_CACHE.get(mtime)
+    if cached is not None:
+        return cached
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        rows = conn.execute(
+            "SELECT doc_id, embedding FROM doc_anchors WHERE model=?",
+            (EMBED_MODEL,),
+        ).fetchall()
+    except sqlite3.OperationalError:
+        rows = []
+    finally:
+        conn.close()
+    if not rows:
+        result = (None, None)
+    else:
+        doc_ids = np.array([r[0] for r in rows], dtype=np.int64)
+        matrix = np.frombuffer(b"".join(r[1] for r in rows), dtype=np.float32).reshape(
+            len(rows), -1
+        )
+        result = (doc_ids, matrix)
+    _ANCHOR_CACHE.clear()
+    _ANCHOR_CACHE[mtime] = result
+    return result
+
+
+def _load_chunk_doc_map():
+    """Returns {chunk_id: doc_id} for every chunk in the database."""
+    mtime = DB_PATH.stat().st_mtime
+    cached = _CHUNKDOC_CACHE.get(mtime)
+    if cached is not None:
+        return cached
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        rows = conn.execute("SELECT id, doc_id FROM chunks").fetchall()
+    finally:
+        conn.close()
+    mapping = {int(cid): int(did) for cid, did in rows}
+    _CHUNKDOC_CACHE.clear()
+    _CHUNKDOC_CACHE[mtime] = mapping
+    return mapping
+
+
+def _anchor_sims_for_chunks(chunk_ids: np.ndarray, qvec: np.ndarray) -> np.ndarray:
+    """Per-chunk document-anchor similarity (0 where no anchor exists)."""
+    doc_ids, doc_matrix = _load_anchor_matrix()
+    n = len(chunk_ids)
+    out = np.zeros(n, dtype=np.float32)
+    if doc_ids is None or not len(doc_ids):
+        return out
+    doc_pos = {int(d): i for i, d in enumerate(doc_ids)}
+    chunk_doc = _load_chunk_doc_map()
+    idx = np.full(n, -1, dtype=np.int64)
+    for i, cid in enumerate(chunk_ids):
+        did = chunk_doc.get(int(cid))
+        if did is not None:
+            pos = doc_pos.get(did)
+            if pos is not None:
+                idx[i] = pos
+    mask = idx >= 0
+    if mask.any():
+        out[mask] = doc_matrix[idx[mask]] @ qvec
+    return out
+
+
+def _anchor_rank_map(qvec: np.ndarray) -> dict:
+    """{doc_id: 1-based rank} of all anchored documents for this query."""
+    doc_ids, doc_matrix = _load_anchor_matrix()
+    if doc_ids is None or not len(doc_ids):
+        return {}
+    sims = doc_matrix @ qvec
+    order = np.argsort(-sims)
+    return {int(doc_ids[i]): pos + 1 for pos, i in enumerate(order)}
+
+
 def search_semantic(query: str, limit: int = 8):
     """Cosine similarity search over pre-computed chunk embeddings."""
     if not DB_PATH.exists():
@@ -269,10 +398,16 @@ def search_semantic(query: str, limit: int = 8):
         return
 
     sims = matrix @ qvec
-    order = np.argsort(-sims)[:actual_limit]
+    chunk_doc_map = _load_chunk_doc_map()
+    row_doc_ids = [chunk_doc_map.get(int(cid)) for cid in chunk_ids]
+    scores = fuse_chunk_anchor_scores(
+        sims, row_doc_ids, _anchor_rank_map(qvec)
+    )
+    order = np.argsort(-scores)
+    picked = diverse_top(order, chunk_ids, chunk_doc_map, actual_limit)
     elapsed = time.time() - t0
 
-    results = [(int(chunk_ids[i]), float(sims[i])) for i in order]
+    results = [(int(chunk_ids[i]), float(scores[i])) for i in picked]
     meta = _fetch_chunk_metadata([cid for cid, _ in results])
 
     print(f"{print_header(len(results))}")
@@ -325,8 +460,14 @@ def search_hybrid(query: str, limit: int = 8):
         qvec = _embed_query(query)
         chunk_ids, matrix = _load_embedding_matrix()
         sims = matrix @ qvec
-        order = np.argsort(-sims)[:pool]
-        sem_ranks = [int(chunk_ids[i]) for i in order]
+        chunk_doc_map = _load_chunk_doc_map()
+        row_doc_ids = [chunk_doc_map.get(int(cid)) for cid in chunk_ids]
+        scores = fuse_chunk_anchor_scores(
+            sims, row_doc_ids, _anchor_rank_map(qvec)
+        )
+        order = np.argsort(-scores)
+        picked = diverse_top(order, chunk_ids, chunk_doc_map, pool)
+        sem_ranks = [int(chunk_ids[i]) for i in picked]
     except Exception as e:
         print(f"\n[!] Semantic leg unavailable ({e}).")
         print("    Start Ollama with:  ollama serve   (or use --mode linear)")
@@ -339,7 +480,18 @@ def search_hybrid(query: str, limit: int = 8):
     for rank, cid in enumerate(sem_ranks, 1):
         fused[cid] = fused.get(cid, 0.0) + 1.0 / (RRF_K + rank)
 
-    top = sorted(fused.items(), key=lambda kv: -kv[1])[:actual_limit]
+    ranked = sorted(fused.items(), key=lambda kv: -kv[1])
+    chunk_doc_map = _load_chunk_doc_map()
+    top = []
+    seen_per_doc = {}
+    for cid, sc in ranked:
+        did = chunk_doc_map.get(int(cid))
+        if seen_per_doc.get(did, 0) >= MAX_PER_DOC:
+            continue
+        seen_per_doc[did] = seen_per_doc.get(did, 0) + 1
+        top.append((cid, sc))
+        if len(top) >= actual_limit:
+            break
     elapsed = time.time() - t0
 
     meta = _fetch_chunk_metadata([cid for cid, _ in top])
