@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-gray-900 mb-3">API Keys & Configuration</h1>
+        <p class="text-gray-600">Configure API keys for your LLM providers. Keys are stored locally in <code>.env</code> file.</p>
+    </div>
+    
+    <div class="space-y-6" id="keys-container">
+        {% for name, config in providers.items() %}
+        <div class="provider-config card" data-provider="{{ name }}">
+            <div class="flex items-start space-x-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                    {% if name == 'opencode' %}
+                        <i class="fas fa-code text-white text-3xl"></i>
+                    {% elif name == 'groq' %}
+                        <i class="fas fa-bolt text-white text-3xl"></i>
+                    {% elif name == 'ollama' %}
+                        <i class="fas fa-cube text-white text-3xl"></i>
+                    {% else %}
+                        <i class="fas fa-cloud text-white text-3xl"></i>
+                    {% endif %}
+                </div>
+                
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 capitalize">{{ name }}</h3>
+                        <span class="px-2 py-1 text-xs font-medium rounded-full 
+                            {% if name == 'opencode' %}bg-blue-100 text-blue-800
+                            {% elif name == 'groq' %}bg-green-100 text-green-800
+                            {% elif name == 'ollama' %}bg-purple-100 text-purple-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {% if name == 'opencode' %}No Key Required
+                            {% elif name == 'groq' %}API Key Required
+                            {% elif name == 'ollama' %}Local - No Key
+                            {% else %}Optional{% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        {% if name != 'opencode' and name != 'ollama' %}
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">API Key</label>
+                            <div class="relative">
+                                <input type="password" name="api_key" class="input-field pr-10" 
+                                       placeholder="Enter your {{ name }} API key"
+                                       x-model="apiKeys[provider]"
+                                       @input="saveKey(provider, $event.target.value)">
+                                <button type="button" 
+                                        @click="toggleKeyVisibility(provider)"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                    <i class="fas" :class="showKey[provider] ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Get your API key from 
+                                {% if name == 'groq' %}<a href="https://console.groq.com/keys" target="_blank" class="text-blue-600 hover:underline">Groq Console</a>
+                                {% elif name == 'openai_compatible' %}<a href="https://platform.openai.com/api-keys" target="_blank" class="text-blue-600 hover:underline">OpenAI Platform</a>
+                                {% else %}provider dashboard{% endif %}
+                            </p>
+                        </div>
+                        {% endif %}
+                        
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Base URL (optional)</label>
+                            <input type="text" class="input-field" 
+                                   x-model="configs[provider].base_url" 
+                                   placeholder="https://api.groq.com/openai/v1">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Model</label>
+                            <select class="input-field" x-model="configs[provider].model">
+                                {% if name == 'opencode' %}
+                                    <option value="freemodel">freemodel</option>
+                                {% elif name == 'groq' %}
+                                    <option value="openai/gpt-oss-120b">gpt-oss-120b (120B)</option>
+                                    <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
+                                    <option value="qwen/qwen3-32b">qwen3-32b</option>
+                                    <option value="gemma2-9b-it">gemma2-9b-it</option>
+                                {% elif name == 'ollama' %}
+                                    <option value="llama3.2">llama3.2</option>
+                                    <option value="phi3:mini">phi3:mini</option>
+                                    <option value="qwen2.5:7b-instruct">qwen2.5:7b-instruct</option>
+                                    <option value="gemma2:9b">gemma2:9b</option>
+                                    <option value="mistral">mistral</option>
+                                {% else %}
+                                    <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                                    <option value="gpt-4">gpt-4</option>
+                                    <option value="gpt-4-turbo">gpt-4-turbo</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <button type="button" 
+                                    @click="testProvider(name, configs[name].model, apiKeys[name], configs[name].base_url)"
+                                    class="btn-secondary w-full"
+                                    :disabled="testing[name]">
+                                <i class="fas fa-spinner fa-spin mr-2" x-show="testing[name]"></i>
+                                <span x-text="testing[name] ? 'Testing...' : 'Test Connection'"></span>
+                            </button>
+                            <div x-show="testResult[name]" class="mt-2 p-3 rounded-lg" 
+                                 :class="testSuccess[name] ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'">
+                                <span x-text="testMessage[name]"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="mt-8 p-4 bg-blue-50 rounded-xl">
+        <h3 class="font-semibold text-blue-900 mb-2">How to Get API Keys</h3>
+        <div class="grid md:grid-cols-2 gap-4 text-sm text-blue-700">
+            <div>
+                <strong>Groq (Free)</strong>
+                <ol class="list-decimal list-inside mt-1 space-y-1">
+                    <li>Go to <a href="https://console.groq.com/keys" target="_blank" class="underline">console.groq.com/keys</a></li>
+                    <li>Sign in with GitHub/Google</li>
+                    <li>Click "Create API Key"</li>
+                    <li>Copy key (starts with <code>gsk_</code>)</li>
+                </ol>
+            </div>
+            <div>
+                <strong>OpenCode Zen</strong>
+                <ol class="list-decimal list-inside mt-1 space-y-1">
+                    <li>No API key needed!</li>
+                    <li>Just select "opencode" as provider</li>
+                    <li>Uses freemodel by default</li>
+                </ol>
+            </div>
+            <div>
+                <strong>Ollama (Local)</strong>
+                <ol class="list-decimal list-inside mt-1 space-y-1">
+                    <li>Install Docker Desktop</li>
+                    <li>Run: <code>wsl ollama pull llama3.2</code></li>
+                    <li>No API key needed</li>
+                </ol>
+            </div>
+            <div>
+                <strong>OpenAI Compatible</strong>
+                <ol class="list-decimal list-inside mt-1 space-y-1">
+                    <li>Get key from provider dashboard</li>
+                    <li>Set base URL (e.g., OpenAI, Azure, local)</li>
+                    <li>Enter key and select model</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-8 flex justify-between">
+        <button @click="prevStep()" class="btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i>Back
+        </button>
+        <button @click="nextStep()" class="btn-primary">
+            Next <i class="fas fa-arrow-right ml-2"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('keysStep', () => ({
+            providers: {},
+            apiKeys: {},
+            configs: {},
+            testing: {},
+            testResult: {},
+            testSuccess: {},
+            testMessage: {},
+            showKey: {},
+            
+            init() {
+                this.loadProviders();
+            },
+            
+            loadProviders() {
+                fetch('/api/config')
+                    .then(r => r.json())
+                    .then(config => {
+                        this.providers = config.llm_providers || {};
+                        // Initialize reactive properties
+                        Object.keys(this.providers).forEach(name => {
+                            if (!this.apiKeys[name]) this.apiKeys[name] = '';
+                            if (!this.configs[name]) this.configs[name] = {};
+                            if (!this.testing[name]) this.testing[name] = false;
+                            if (!this.testResult[name]) this.testResult[name] = false;
+                            if (!this.testSuccess[name]) this.testSuccess[name] = false;
+                            if (!this.testMessage[name]) this.testMessage[name] = '';
+                            if (!this.showKey[name]) this.showKey[name] = false;
+                        });
+                    });
+            },
+            
+            toggleKeyVisibility(provider) {
+                this.showKey[provider] = !this.showKey[provider];
+            },
+            
+            saveKey(provider, value) {
+                this.apiKeys[provider] = value;
+            },
+            
+            async testProvider(name, model, apiKey, baseUrl) {
+                this.testing[name] = true;
+                this.testResult[name] = false;
+                this.testMessage[name] = '';
+                
+                try {
+                    const response = await fetch('/api/test/llm', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            provider: name,
+                            model: model,
+                            api_key: apiKey,
+                            base_url: baseUrl
+                        })
+                    });
+                    const result = await response.json();
+                    
+                    this.testResult[name] = true;
+                    this.testSuccess[name] = result.success;
+                    this.testMessage[name] = result.success ? 
+                        `✓ Connected! Response: ${result.response?.substring(0, 100)}` : 
+                        `✗ Failed: ${result.error}`;
+                } catch (error) {
+                    this.testResult[name] = true;
+                    this.testSuccess[name] = false;
+                    this.testMessage[name] = `Error: ${error.message}`;
+                } finally {
+                    this.testing[name] = false;
+                }
+            }
+        });
+    </script>
+{% endblock %}

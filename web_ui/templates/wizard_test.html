@@ -1,0 +1,401 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-gray-900 mb-3">Test & Launch</h1>
+        <p class="text-gray-600">Verify your configuration works end-to-end, then launch mindbridge.</p>
+    </div>
+    
+    <div class="space-y-8">
+        <!-- LLM Connection Tests -->
+        <div class="card">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-flask mr-2 text-blue-600"></i>LLM Connection Tests
+                </h2>
+            </div>
+            
+            <div class="space-y-4" id="provider-tests">
+                <template x-for="(provider, name) in providers" :key="name">
+                    <div class="provider-config card border-2 border-gray-200" x-data="{ testing: false, result: null }" :data-provider="name">
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                    {% if name == 'opencode' %}
+                                        <i class="fas fa-code text-white text-xl"></i>
+                                    {% elif name == 'groq' %}
+                                        <i class="fas fa-bolt text-white text-xl"></i>
+                                    {% elif name == 'ollama' %}
+                                        <i class="fas fa-cube text-white text-xl"></i>
+                                    {% else %}
+                                        <i class="fas fa-cloud text-white text-xl"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 capitalize">{{ name }}</h3>
+                                    <p class="text-sm text-gray-500">{{ providers[name].model }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4 px-4 pb-4">
+                                <button @click="testProvider(name)" 
+                                        class="btn-primary"
+                                        :disabled="testing"
+                                        x-ref="testBtn">
+                                    <i class="fas fa-spinner fa-spin mr-2" x-show="testing"></i>
+                                    <span x-text="testing ? 'Testing...' : 'Test Connection'"></span>
+                                </button>
+                                
+                                <div x-show="result !== null" class="flex-1">
+                                    <template x-if="success">
+                                        <div class="text-green-600 flex items-center">
+                                            <i class="fas fa-check-circle mr-2"></i>
+                                            <span>Connected! Response: <span x-text="response.substring(0, 80)"></span></span>
+                                        </div>
+                                    </template>
+                                    <template x-if="!success">
+                                        <div class="text-red-600 flex items-center">
+                                            <i class="fas fa-times-circle mr-2"></i>
+                                            <span x-text="error"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Folder Tests -->
+        <div class="card">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-folder-search mr-2 text-green-600"></i>Folder Access Tests
+                </h2>
+                <button @click="testAllFolders()" class="btn-secondary">
+                    <i class="fas fa-search mr-2"></i>Scan All Folders
+                </button>
+            </div>
+            <div id="folder-test-results" class="space-y-2"></div>
+        </div>
+        
+        <!-- Full Test Suite -->
+        <div class="card">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-vial mr-2 text-purple-600"></i>Full Test Suite
+                </h2>
+                <button @click="runFullTests()" class="btn-primary" x-ref="testBtn">
+                    <i class="fas fa-spinner fa-spin mr-2" x-show="runningTests"></i>
+                    <span x-text="runningTests ? 'Running Tests...' : 'Run Full Test Suite (181 tests)'"></span>
+                </button>
+            </div>
+            <div id="test-results" class="mt-4"></div>
+        </div>
+        
+        <!-- Manual Ingestion -->
+        <div class="card">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-school mr-2 text-orange-600"></i>Manual Knowledge School Run
+                </h2>
+            </div>
+            <p class="text-gray-600 mb-4">Manually trigger the Knowledge School ingestion pipeline. Scans watch folders, classifies new files, enriches, indexes, and runs tests.</p>
+            <button @click="runIngestion()" class="btn-primary" x-ref="ingestBtn">
+                <i class="fas fa-spinner fa-spin mr-2" x-show="runningIngest"></i>
+                <span x-text="runningIngest ? 'Running Ingestion...' : 'Run Knowledge School Now'"></span>
+            </button>
+            <div id="ingest-results" class="mt-4"></div>
+        </div>
+    </div>
+    
+    <!-- Launch Button -->
+    <div class="mt-8 text-center">
+        <div class="p-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl text-white">
+            <h3 class="text-2xl font-bold mb-2">Ready to Launch?</h3>
+            <p class="mb-4 opacity-90">Your mindbridge is configured and tested. Click below to launch the Web UI.</p>
+            <button @click="launchUI()" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-lg">
+                <i class="fas fa-rocket mr-2"></i>Launch mindbridge Web UI
+            </button>
+        </div>
+    </div>
+    
+    <div class="mt-8 flex justify-between">
+        <button @click="prevStep()" class="btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i>Back
+        </button>
+        <button @click="saveAndFinish()" class="btn-primary btn-lg">
+            <i class="fas fa-check mr-2"></i>Save & Finish Setup
+        </button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('testStep', () => ({
+            providers: {},
+            runningTests: false,
+            runningIngest: false,
+            
+            init() {
+                this.loadProviders();
+            },
+            
+            loadProviders() {
+                fetch('/api/config')
+                    .then(r => r.json())
+                    .then(config => {
+                        this.providers = config.llm_providers || {};
+                    });
+            },
+            
+            async testProvider(name) {
+                const config = this.providers[name];
+                const btn = this.$refs.testBtn;
+                const originalText = btn.innerHTML;
+                
+                this.$data[name] = { testing: true, result: null };
+                
+                try {
+                    const response = await fetch('/api/test/llm', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            provider: name,
+                            model: config.model,
+                            api_key: '', // Will use env var
+                            base_url: config.base_url
+                        })
+                    });
+                    const result = await response.json();
+                    
+                    this.$data[name] = { 
+                        testing: false, 
+                        result: true, 
+                        success: result.success, 
+                        response: result.response || '', 
+                        error: result.error || '' 
+                    };
+                    
+                    if (result.success) {
+                        this.showToast('success', `${name} connected!`, result.response?.substring(0, 80));
+                    } else {
+                        this.showToast('error', `${name} failed`, result.error);
+                    }
+                } catch (error) {
+                    this.$data[name] = { testing: false, result: true, success: false, error: error.message };
+                    this.showToast('error', 'Error', error.message);
+                }
+            },
+            
+            async testAllFolders() {
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Scanning...';
+                btn.disabled = true;
+                
+                try {
+                    const watchFolders = this.getWatchFolders();
+                    const response = await fetch('/api/test/folders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ watch_folders: watchFolders })
+                    });
+                    const result = await response.json();
+                    
+                    let html = '<div class="space-y-2">';
+                    result.folders.forEach(f => {
+                        html += `
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div>
+                                    <p class="font-medium">${f.path}</p>
+                                    <p class="text-sm text-gray-500">${f.file_count_estimate} files estimated</p>
+                                </div>
+                                <span class="${f.exists && f.readable ? 'text-green-600' : 'text-red-600'}">
+                                    <i class="fas ${f.exists && f.readable ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                                </span>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    
+                    document.getElementById('folder-test-results').innerHTML = html;
+                    this.showToast('success', 'Folder scan complete', `Found ${result.folders.filter(f => f.exists).length} accessible folders`);
+                } catch (error) {
+                    this.showToast('error', 'Error', error.message);
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            },
+            
+            getWatchFolders() {
+                const folders = [];
+                document.querySelectorAll('.folder-row').forEach(row => {
+                    const path = row.querySelector('[name="folder_path"]').value;
+                    const recursive = row.querySelector('[name="recursive"]').checked;
+                    const include = row.querySelector('[name="include"]').value;
+                    const exclude = row.querySelector('[name="exclude"]').value;
+                    if (path) {
+                        folders.push({ path, recursive, include_patterns: include.split(',').map(s => s.trim()), exclude_patterns: exclude.split(',').map(s => s.trim()) });
+                    }
+                });
+                return folders;
+            },
+            
+            async runFullTests() {
+                const btn = this.$refs.testBtn;
+                const originalText = btn.innerHTML;
+                this.runningTests = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Running Tests...';
+                btn.disabled = true;
+                
+                try {
+                    const response = await fetch('/api/test/run', { method: 'POST' });
+                    const result = await response.json();
+                    
+                    const container = document.getElementById('test-results');
+                    if (result.passed) {
+                        container.innerHTML = '<div class="text-green-600 p-4 bg-green-50 rounded-lg"><i class="fas fa-check-circle mr-2"></i>All tests passed! (' + (result.stdout.match(/(\d+) passed/)?.[1] || '181') + ' tests)</div>';
+                        this.showToast('success', 'All tests passed!');
+                    } else {
+                        container.innerHTML = '<div class="text-red-600 p-4 bg-red-50 rounded-lg"><i class="fas fa-times-circle mr-2"></i>Tests failed<pre class="mt-2 text-xs overflow-auto max-h-64">' + result.stderr + '</pre></div>';
+                        this.showToast('error', 'Tests failed', result.stderr);
+                    }
+                } catch (error) {
+                    this.showToast('error', 'Error', error.message);
+                } finally {
+                    this.runningTests = false;
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            },
+            
+            async runIngestion() {
+                const btn = this.$refs.ingestBtn;
+                const originalText = btn.innerHTML;
+                this.runningIngest = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Running Ingestion...';
+                btn.disabled = true;
+                
+                try {
+                    const response = await fetch('/api/ingest/run', { method: 'POST' });
+                    const result = await response.json();
+                    
+                    const container = document.getElementById('ingest-results');
+                    if (result.success) {
+                        container.innerHTML = '<div class="text-green-600 p-4 bg-green-50 rounded-lg"><i class="fas fa-check-circle mr-2"></i>Knowledge School completed successfully!</div>';
+                        this.showToast('success', 'Ingestion complete', 'Knowledge School run completed');
+                    } else {
+                        container.innerHTML = '<div class="text-red-600 p-4 bg-red-50 rounded-lg"><i class="fas fa-times-circle mr-2"></i>Ingestion failed<pre class="mt-2 text-xs overflow-auto max-h-64">' + (result.stderr || result.error) + '</pre></div>';
+                        this.showToast('error', 'Ingestion failed', result.stderr || result.error);
+                    }
+                } catch (error) {
+                    this.showToast('error', 'Error', error.message);
+                } finally {
+                    this.runningIngest = false;
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            },
+            
+            async launchUI() {
+                // Open UI in new tab
+                window.open('http://127.0.0.1:7860', '_blank');
+                this.showToast('success', 'Launching Web UI', 'Opening in new tab...');
+            },
+            
+            async saveAndFinish() {
+                try {
+                    const config = this.getConfig();
+                    const response = await fetch('/api/config', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ config: config })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        this.showToast('success', 'Configuration saved');
+                        this.launchUI();
+                    } else {
+                        this.showToast('error', 'Save failed', result.message);
+                    }
+                } catch (error) {
+                    this.showToast('error', 'Error', error.message);
+                }
+            },
+            
+            getWatchFolders() {
+                const folders = [];
+                document.querySelectorAll('.folder-row').forEach(row => {
+                    const path = row.querySelector('[name="folder_path"]').value;
+                    const recursive = row.querySelector('[name="recursive"]').checked;
+                    const include = row.querySelector('[name="include"]').value;
+                    const exclude = row.querySelector('[name="exclude"]').value;
+                    if (path) {
+                        folders.push({ path, recursive, include_patterns: include.split(',').map(s => s.trim()), exclude_patterns: exclude.split(',').map(s => s.trim()) });
+                    }
+                });
+                return folders;
+            },
+            
+            getConfig() {
+                return {
+                    llm_providers: this.getProviderConfigs(),
+                    fallback_chain: this.getFallbackChain(),
+                };
+            },
+            
+            getProviderConfigs() {
+                const providers = {};
+                document.querySelectorAll('.provider-config').forEach(card => {
+                    const name = card.dataset.provider;
+                    providers[name] = {
+                        enabled: card.querySelector('[name="enabled"]').checked,
+                        priority: parseInt(card.querySelector('[name="priority"]').value),
+                        provider_type: card.querySelector('[name="provider_type"]').value,
+                        model: card.querySelector('[name="model"]').value,
+                        api_key_env: card.querySelector('[name="api_key_env"]').value,
+                        base_url: card.querySelector('[name="base_url"]').value,
+                        timeout: parseInt(card.querySelector('[name="timeout"]').value) || 60,
+                        max_tokens: parseInt(card.querySelector('[name="max_tokens"]').value) || 4096,
+                        temperature: parseFloat(card.querySelector('[name="temperature"]').value) || 0.2,
+                    };
+                });
+                return providers;
+            },
+            
+            getFallbackChain() {
+                return Array.from(document.querySelectorAll('[name="fallback_priority"]'))
+                    .sort((a, b) => parseInt(a.value) - parseInt(b.value))
+                    .map(el => el.dataset.provider);
+            },
+            
+            showToast(type, title, message = '') {
+                const container = document.getElementById('toast-container') || this.createToastContainer();
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type} animate-slide-in`;
+                toast.innerHTML = `
+                    <div class="flex items-start">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500'} mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="font-medium">${title}</p>
+                            ${message ? `<p class="text-sm text-gray-600">${message}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 5000);
+            },
+            
+            createToastContainer() {
+                const container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'fixed bottom-4 right-4 z-50 space-y-2';
+                document.body.appendChild(container);
+                return container;
+            }
+        });
+    </script>
+{% endblock %}

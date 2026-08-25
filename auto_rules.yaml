@@ -1,0 +1,527 @@
+# mindbridge Auto-Ingestion Rules Configuration
+# Configure folder watching, classification rules, and enrichment options
+# This file is watched for changes - no restart needed for rule updates
+
+# ============================================================================
+# WATCH FOLDERS
+# ============================================================================
+# Folders to monitor for new files
+# Use ~ for home directory, relative paths are from project root
+
+watch_folders:
+  - path: "~/Desktop"
+    recursive: true
+    include_patterns: ["*"]
+    exclude_patterns:
+      - "*.tmp"
+      - "*.temp"
+      - "*.log"
+      - "~$*"
+      - ".~lock*"
+      - "Thumbs.db"
+      - "Desktop.ini"
+  
+  - path: "~/Downloads"
+    recursive: true
+    include_patterns: ["*"]
+    exclude_patterns:
+      - "*.tmp"
+      - "*.temp"
+      - "*.crdownload"
+      - "*.partial"
+      - "*.log"
+      - "~$*"
+      - ".~lock*"
+  
+  - path: "~/Documents/Inbox"
+    recursive: true
+    include_patterns: ["*"]
+    exclude_patterns:
+      - "*.tmp"
+      - "*.temp"
+      - "*.log"
+      - "~$*"
+      - ".~lock*"
+  
+  - path: "Raw_copies/incoming"
+    recursive: true
+    include_patterns: ["*"]
+    exclude_patterns:
+      - "*.tmp"
+      - "*.temp"
+      - "*.log"
+      - "~$*"
+      - ".~lock*"
+
+# ============================================================================
+# CLASSIFICATION RULES
+# ============================================================================
+# Rules are evaluated in order - first match wins
+# action: vault, cold_storage, domain_name, or skip
+
+classification_rules:
+  # Security - Secrets and credentials (HIGHEST PRIORITY)
+  - name: "secrets_and_keys"
+    priority: 10
+    patterns:
+      - "*key*.txt"
+      - "*.env"
+      - "*.env.*"
+      - "*secret*"
+      - "*credential*"
+      - "*.key"
+      - "*api*key*"
+      - "*access*token*"
+      - "*private*key*"
+    action: "vault"
+    description: "API keys, secrets, credentials - send to vault"
+
+  # Personal Identifiable Information
+  - name: "personal_pii"
+    priority: 20
+    patterns:
+      - "*cv*"
+      - "*resume*"
+      - "*passport*"
+      - "*aadhar*"
+      - "*pan*card*"
+      - "*bank*statement*"
+      - "*account*statement*"
+      - "*tax*return*"
+      - "*salary*slip*"
+      - "*pay*slip*"
+    action: "vault"
+    description: "Personal documents - send to vault"
+
+  # Temporary and system files
+  - name: "temp_and_system"
+    priority: 30
+    patterns:
+      - "*.tmp"
+      - "*.temp"
+      - "*.log"
+      - "*.bak"
+      - "*.bak*"
+      - "*.old"
+      - "*.swp"
+      - "*.swo"
+      - "~$*"
+      - ".~lock*"
+      - "Thumbs.db"
+      - "Desktop.ini"
+      - "*.crdownload"
+      - "*.partial"
+      - "*.part"
+      - "*.swp"
+      - "*.swo"
+      - "*.lock"
+      - "*.pid"
+    action: "cold_storage"
+    description: "Temporary and system files - cold storage"
+
+  # Vendor boilerplate and generic files
+  - name: "vendor_boilerplate"
+    priority: 40
+    patterns:
+      - "README*"
+      - "LICENSE*"
+      - "CHANGELOG*"
+      - "CONTRIBUTING*"
+      - "CODE_OF_CONDUCT*"
+      - "CODEOWNERS*"
+      - "SECURITY*"
+      - "welcome*"
+      - "Welcome*"
+      - "000_home*"
+      - "INSTALL*"
+      - "INSTALLATION*"
+      - "GETTING_STARTED*"
+      - "QUICKSTART*"
+    action: "cold_storage"
+    description: "Generic boilerplate files - cold storage"
+
+  # Duplicate files
+  - name: "duplicates"
+    priority: 50
+    patterns:
+      - "dup_*"
+      - "*_dup*"
+      - "*(1).*"
+      - "*(2).*"
+      - "*(3).*"
+      - "*copy*"
+      - "*Copy*"
+      - "*COPY*"
+    action: "cold_storage"
+    description: "Duplicate files - cold storage"
+
+  # Development and build artifacts
+  - name: "build_artifacts"
+    priority: 50
+    patterns:
+      - "*.pyc"
+      - "*.pyo"
+      - "__pycache__"
+      - "*.egg-info"
+      - "dist/"
+      - "build/"
+      - "*.egg"
+      - "node_modules/"
+      - ".venv/"
+      - "venv/"
+      - "env/"
+      - ".env"
+      - ".env.*"
+      - "*.egg"
+      - "*.whl"
+      - "*.tar.gz"
+      - "*.zip"
+      - "*.rar"
+      - "*.7z"
+      - "*.exe"
+      - "*.dll"
+      - "*.so"
+      - "*.dylib"
+    action: "cold_storage"
+    description: "Build artifacts and dependencies - cold storage"
+
+  # IDE and editor files
+  - name: "ide_files"
+    priority: 50
+    patterns:
+      - ".vscode/"
+      - ".idea/"
+      - "*.swp"
+      - "*.swo"
+      - "*.sublime-*"
+      - "*.code-workspace"
+      - ".project"
+      - ".classpath"
+      - ".settings/"
+      - "*.sln"
+      - "*.csproj"
+      - "*.vcxproj"
+      - "*.user"
+      - "*.suo"
+    action: "cold_storage"
+    description: "IDE configuration files - cold storage"
+
+  # Operating system files
+  - name: "os_files"
+    priority: 50
+    patterns:
+      - "Thumbs.db"
+      - "Desktop.ini"
+      - ".DS_Store"
+      - "._*"
+      - ".Spotlight-V100"
+      - ".Trashes"
+      - "ehthumbs.db"
+      - "ehthumbs_vista.db"
+    action: "cold_storage"
+    description: "OS metadata files - cold storage"
+
+  # Knowledge domains - AI & Automation
+  - name: "ai_automation"
+    priority: 60
+    patterns:
+      - "*agent*"
+      - "*ai*prompt*"
+      - "*llm*"
+      - "*langchain*"
+      - "*autogen*"
+      - "*crewai*"
+      - "*autogpt*"
+      - "*babyagi*"
+      - "*agent*framework*"
+      - "*ai*agent*"
+    action: "01_AI_Agents_and_Autonomous_Systems"
+    description: "AI agents and automation content"
+
+  # Knowledge domains - Workflow Automation (n8n)
+  - name: "workflow_automation"
+    priority: 60
+    patterns:
+      - "*n8n*"
+      - "*workflow*"
+      - "*automation*"
+      - "*zapier*"
+      - "*make*"
+      - "*ifttt*"
+      - "*flow*"
+      - "*integration*"
+      - "*webhook*"
+      - "*api*workflow*"
+    action: "02_Workflow_Automations_n8n"
+    description: "Workflow automation content"
+
+  # Knowledge domains - Prompt Engineering
+  - name: "prompt_engineering"
+    priority: 60
+    patterns:
+      - "*prompt*"
+      - "*system*prompt*"
+      - "*user*prompt*"
+      - "*few*shot*"
+      - "*zero*shot*"
+      - "*chain*of*thought*"
+      - "*cot*"
+      - "*prompt*engineering*"
+      - "*prompt*template*"
+      - "*prompt*library*"
+    action: "03_Prompt_Engineering_and_Frameworks"
+    description: "Prompt engineering content"
+
+  # Knowledge domains - Mobile & Android
+  - name: "mobile_android"
+    priority: 60
+    patterns:
+      - "*android*"
+      - "*flutter*"
+      - "*dart*"
+      - "*kotlin*"
+      - "*swift*"
+      - "*ios*"
+      - "*mobile*app*"
+      - "*mobile*dev*"
+      - "*react*native*"
+      - "*expo*"
+    action: "04_Mobile_and_Android_Ecosystem"
+    description: "Mobile and Android development"
+
+  # Knowledge domains - Code Snippets
+  - name: "code_snippets"
+    priority: 60
+    patterns:
+      - "*snippet*"
+      - "*code*snippet*"
+      - "*utility*"
+      - "*helper*"
+      - "*function*"
+      - "*class*"
+      - "*module*"
+      - "*script*"
+      - "*boilerplate*"
+      - "*template*"
+      - "*example*"
+      - "*demo*"
+    action: "05_Code_Snippets_and_Dev_Tools"
+    description: "Code snippets and development tools"
+
+  # Knowledge domains - Quantitative Finance
+  - name: "quant_finance"
+    priority: 60
+    patterns:
+      - "*quant*"
+      - "*trading*"
+      - "*stock*"
+      - "*crypto*"
+      - "*forex*"
+      - "*option*"
+      - "*future*"
+      - "*derivative*"
+      - "*backtest*"
+      - "*strategy*"
+      - "*portfolio*"
+      - "*risk*"
+      - "*quantitative*"
+    action: "06_Quantitative_Finance_and_Trading"
+    description: "Quantitative finance and trading"
+
+  # Knowledge domains - Content Creation
+  - name: "content_creation"
+    priority: 60
+    patterns:
+      - "*content*"
+      - "*blog*"
+      - "*article*"
+      - "*video*"
+      - "*youtube*"
+      - "*tiktok*"
+      - "*reels*"
+      - "*shorts*"
+      - "*thumbnail*"
+      - "*caption*"
+      - "*hashtag*"
+      - "*seo*"
+      - "*marketing*"
+      - "*copywriting*"
+    action: "07_Content_Creation_and_Media_Engines"
+    description: "Content creation and media"
+
+  # Knowledge domains - Business Operations
+  - name: "business_operations"
+    priority: 60
+    patterns:
+      - "*business*"
+      - "*startup*"
+      - "*entrepreneur*"
+      - "*saas*"
+      - "*product*"
+      - "*growth*"
+      - "*marketing*"
+      - "*sales*"
+      - "*crm*"
+      - "*crm*"
+      - "*lead*"
+      - "*conversion*"
+      - "*funnel*"
+      - "*subbroking*"
+      - "*broker*"
+    action: "08_Business_Operations_and_Subbroking"
+    description: "Business operations and subbroking"
+
+  # Knowledge domains - LLM Conversations
+  - name: "llm_conversations"
+    priority: 60
+    patterns:
+      - "*chat*"
+      - "*conversation*"
+      - "*dialogue*"
+      - "*interview*"
+      - "*qa*"
+      - "*question*answer*"
+      - "*transcript*"
+      - "*discussion*"
+      - "*thread*"
+    action: "09_LLM_Conversations_and_Syntheses"
+    description: "LLM conversations and syntheses"
+
+  # Knowledge domains - R&D Incubator
+  - name: "rnd_incubator"
+    priority: 60
+    patterns:
+      - "*research*"
+      - "*experiment*"
+      - "*prototype*"
+      - "*poc*"
+      - "*proof*of*concept*"
+      - "*mvp*"
+      - "*minimum*viable*"
+      - "*idea*"
+      - "*brainstorm*"
+      - "*innovation*"
+      - "*incubator*"
+      - "*rnd*"
+      - "*r&d*"
+    action: "10_R_and_D_Incubator_Half_Baked_Ideas"
+    description: "R&D and half-baked ideas"
+
+  # Reference Documentation (fallback for docs)
+  - name: "reference_docs"
+    priority: 70
+    patterns:
+      - "*manual*"
+      - "*guide*"
+      - "*tutorial*"
+      - "*howto*"
+      - "*how*to*"
+      - "*reference*"
+      - "*documentation*"
+      - "*docs*"
+      - "*spec*"
+      - "*specification*"
+      - "*api*doc*"
+      - "*readme*"
+      - "*wiki*"
+    action: "05_Reference_Documentation"
+    description: "Reference documentation"
+
+  # Prompt Engineering (quick prompts)
+  - name: "quick_prompts"
+    priority: 65
+    patterns:
+      - "*emojif*"
+      - "*eli5*"
+      - "*fix*grammar*"
+      - "*glossary*"
+      - "*table*of*content*"
+      - "*make*longer*"
+      - "*make*shorter*"
+      - "*simplif*"
+      - "*summarize*"
+      - "*translate*"
+      - "*rewrite*tweet*"
+      - "*remove*url*"
+      - "*custom*instruction*"
+      - "*content*template*"
+    action: "04_Prompt_Engineering_quick_prompts"
+    description: "Quick prompt utilities"
+
+  # Catch-all for remaining files
+  - name: "catch_all"
+    priority: 100
+    patterns:
+      - "*"
+    action: "review"
+    description: "Requires manual review"
+
+# ============================================================================
+# ENRICHMENT OPTIONS
+# ============================================================================
+
+enrichment:
+  # Extract named entities (people, orgs, locations, etc.)
+  extract_entities: true
+  
+  # Generate AI summary of content
+  generate_summary: true
+  
+  # Suggest relevant tags
+  suggest_tags: true
+  
+  # Find related documents in knowledge base
+  find_related: true
+  
+  # Extract action items and todos
+  extract_actions: true
+  
+  # Detect language
+  detect_language: true
+  
+  # Generate embeddings for semantic search
+  generate_embeddings: true
+
+# ============================================================================
+# POST-INGESTION ACTIONS
+# ============================================================================
+
+post_ingestion:
+  # Rebuild search index after ingestion
+  rebuild_search_index: true
+  
+  # Rebuild folder indexes
+  rebuild_folder_indexes: true
+  
+  # Regenerate dashboards
+  regenerate_dashboards: true
+  
+  # Run test suite
+  run_tests: true
+  
+  # Send email report
+  send_email_report: true
+  email_recipient: "Aiadoptionconsultant@gmail.com"
+
+# ============================================================================
+# PERFORMANCE SETTINGS
+# ============================================================================
+
+performance:
+  # Maximum concurrent file processing
+  max_concurrent_files: 4
+  
+  # Batch size for embedding generation
+  embedding_batch_size: 32
+  
+  # Maximum file size to process (MB)
+  max_file_size_mb: 100
+  
+  # Timeout for LLM classification (seconds)
+  classification_timeout: 30
+  
+  # Maximum retries for failed operations
+  max_retries: 3
+  
+  # Retry delay (seconds)
+  retry_delay: 5

@@ -1,0 +1,264 @@
+# mindbridge Configuration
+# Main configuration file for mindbridge Second Brain
+# Copy this file and customize for your setup
+
+# ============================================================================
+# LLM PROVIDER CONFIGURATION
+# ============================================================================
+# Supports multiple providers with automatic fallback chain
+# Order in fallback_chain determines priority
+
+llm_providers:
+  # OpenCode Zen (free, cloud) - Primary
+  opencode:
+    enabled: true
+    priority: 1
+    provider_type: "opencode"
+    model: "freemodel"
+    # No API key needed for OpenCode Zen
+    base_url: null
+    timeout: 60
+    max_tokens: 4096
+    temperature: 0.2
+
+  # Groq (free tier, cloud) - Secondary
+  groq:
+    enabled: true
+    priority: 2
+    provider_type: "groq"
+    model: "openai/gpt-oss-120b"  # or llama-3.1-8b-instant for speed
+    api_key_env: "GROQ_API_KEY"
+    base_url: "https://api.groq.com/openai/v1"
+    timeout: 60
+    max_tokens: 4096
+    temperature: 0.2
+
+  # Ollama (local) - Tertiary fallback
+  ollama:
+    enabled: true
+    priority: 3
+    provider_type: "ollama"
+    model: "llama3.2"
+    base_url: "http://localhost:11434"
+    timeout: 120
+    max_tokens: 4096
+    temperature: 0.2
+    fallback_models:
+      - "phi3:mini"
+      - "qwen2.5:7b-instruct"
+
+  # OpenAI-compatible (custom endpoints)
+  openai_compatible:
+    enabled: false
+    priority: 4
+    provider_type: "openai_compatible"
+    model: "gpt-3.5-turbo"
+    api_key_env: "OPENAI_API_KEY"
+    base_url: "https://api.openai.com/v1"
+    timeout: 60
+    max_tokens: 4096
+    temperature: 0.2
+
+# Fallback chain order (by priority)
+fallback_chain: ["opencode", "groq", "ollama"]
+
+# ============================================================================
+# EMBEDDING CONFIGURATION
+# ============================================================================
+# Embeddings are always local via Ollama for privacy
+
+embeddings:
+  provider: "ollama"
+  model: "nomic-embed-text"
+  base_url: "http://localhost:11434"
+  dimensions: 768
+  batch_size: 32
+
+# ============================================================================
+# ASK MODE CONFIGURATION
+# ============================================================================
+
+ask_mode:
+  default_provider: "auto"  # Uses fallback_chain
+  max_passages: 12
+  max_passage_chars: 700
+  context_window: 4096
+  temperature: 0.2
+  fallback_context_windows: [4096, 2048, 1024]
+  citation_format: "[S{num}]"
+  save_briefings: true
+  briefings_dir: "Briefings"
+
+# ============================================================================
+# AUTO INGESTION CONFIGURATION
+# ============================================================================
+
+auto_ingestion:
+  enabled: true
+  schedule: "weekly"  # weekly, daily, manual
+  schedule_time: "02:00"  # 2 AM
+  timezone: "local"
+  
+  watch_folders:
+    - "~/Desktop"
+    - "~/Downloads"
+    - "~/Documents/Inbox"
+    - "Raw_copies/incoming"
+  
+  classification_rules:
+    - pattern: "*key*.txt|*.env|*secret*"
+      action: "vault"
+    - pattern: "*README*|*license*|*changelog*"
+      action: "cold_storage"
+    - pattern: "*.pdf|*.docx|*.md"
+      action: "classify_with_llm"
+  
+  enrichment:
+    extract_entities: true
+    generate_summary: true
+    suggest_tags: true
+    find_related: true
+  
+  rebuild_on_ingest: true
+  run_tests_after: true
+  email_report: true
+  email_recipient: "Aiadoptionconsultant@gmail.com"
+
+# ============================================================================
+# WEB UI CONFIGURATION
+# ============================================================================
+
+web_ui:
+  enabled: true
+  host: "127.0.0.1"
+  port: 7860
+  auto_open_browser: true
+  auth:
+    enabled: false
+    # password: "your-password-here"  # Uncomment and set for password protection
+  
+  wizard:
+    enabled: true
+    steps:
+      - "welcome"
+      - "provider"
+      - "keys"
+      - "folders"
+      - "test"
+
+# ============================================================================
+# SEARCH CONFIGURATION
+# ============================================================================
+
+search:
+  default_mode: "ask"  # linear, graph, semantic, hybrid, ask
+  default_limit: 10
+  max_limit: 50
+  
+  bm25:
+    k1: 1.2
+    b: 0.75
+  
+  semantic:
+    top_k: 50
+    rerank: true
+  
+  hybrid:
+    rrf_k: 60
+    bm25_weight: 0.5
+    semantic_weight: 0.5
+  
+  diversity:
+    max_per_doc: 2
+
+# ============================================================================
+# DATABASE CONFIGURATION
+# ============================================================================
+
+database:
+  path: "Processed_Assets/my_rag_data.db"
+  backup_dir: "04_Archive_Cold_Storage/db_backups"
+  auto_backup: true
+  backup_before_mutations: true
+  vacuum_after_mutations: true
+
+# ============================================================================
+# DASHBOARD CONFIGURATION
+# ============================================================================
+
+dashboards:
+  enabled: true
+  output_dir: "00_Index_and_Dashboards"
+  regenerate_on_ingest: true
+  excel:
+    enabled: true
+    filename: "Master_Second_Brain_Dashboard.xlsx"
+  html_navigator:
+    enabled: true
+    filename: "Interactive_Knowledge_Mine_Navigator.html"
+  knowledge_graph:
+    enabled: true
+    filename: "Interactive_Knowledge_Graph.html"
+
+# ============================================================================
+# SECURITY & PRIVACY
+# ============================================================================
+
+security:
+  vault_path: "01_Vault_Private"
+  never_index_patterns:
+    - "*key*.txt"
+    - "*.env"
+    - "*secret*"
+    - "*credential*"
+    - "*.key"
+    - "*credential*"
+  redact_keys_in_logs: true
+  never_log_keys: true
+
+# ============================================================================
+# TESTING CONFIGURATION
+# ============================================================================
+
+testing:
+  run_after_ingest: true
+  run_after_config_change: true
+  pytest_args: ["-q", "--tb=line"]
+  coverage: false
+
+# ============================================================================
+# LOGGING CONFIGURATION
+# ============================================================================
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/mindbridge.log"
+  max_size_mb: 10
+  backup_count: 5
+  console: true
+
+# ============================================================================
+# ADVANCED SETTINGS
+# ============================================================================
+
+advanced:
+  max_concurrent_ingest: 4
+  chunk_size: 512
+  chunk_overlap: 50
+  max_file_size_mb: 100
+  supported_extensions:
+    - ".md"
+    - ".txt"
+    - ".pdf"
+    - ".docx"
+    - ".xlsx"
+    - ".csv"
+    - ".json"
+    - ".py"
+    - ".js"
+    - ".ts"
+    - ".html"
+    - ".css"
+    - ".md"
+    - ".rst"

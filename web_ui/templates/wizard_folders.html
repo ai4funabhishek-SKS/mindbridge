@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-gray-900 mb-3">Watch Folders</h1>
+        <p class="text-gray-600">Configure folders to monitor for new files. mindbridge will automatically classify, enrich, and index new files.</p>
+    </div>
+    
+    <div class="space-y-4" id="folders-container">
+        <template x-for="(folder, index) in watchFolders" :key="index">
+            <div class="folder-row card" x-data="{ expanded: false }">
+                <div class="flex items-center justify-between p-4">
+                    <div class="flex items-center space-x-4 flex-1">
+                        <button @click="expanded = !expanded" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas" :class="expanded ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                        </button>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center space-x-2">
+                                <input type="text" name="folder_path" class="input-field" 
+                                       x-model="folder.path" placeholder="Folder path (e.g. ~/Desktop)"
+                                       :value="folder.path" @input="folder.path = $event.target.value">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full 
+                                    {% if folder.recursive %}bg-green-100 text-green-800{% else %}bg-gray-100 text-gray-800{% endif %}"
+                                    @click="folder.recursive = !folder.recursive">
+                                    {% if folder.recursive %}Recursive{% else %}Flat{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <button @click="removeFolder(index)" class="text-red-500 hover:text-red-700 p-2" title="Remove folder">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    
+                    <div x-show="expanded" x-transition class="mt-4 pt-4 border-t border-gray-100">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Include Patterns (comma-separated)</label>
+                                <input type="text" name="include" class="input-field" 
+                                       x-model="folder.include_patterns" placeholder="*.pdf, *.md, *.txt"
+                                       :value="folder.include_patterns.join(', ') 
+                                       @input="folder.include_patterns = $event.target.value.split(',').map(s => s.trim())">
+                            <p class="text-xs text-gray-500 mt-1">Glob patterns to include</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Exclude Patterns (comma-separated)</label>
+                            <input type="text" name="exclude" class="input-field" 
+                                   x-model="folder.exclude_patterns" placeholder="*.tmp, *.log, ~$*"
+                                   :value="folder.exclude_patterns.join(', ') 
+                                   @input="folder.exclude_patterns = $event.target.value.split(',').map(s => s.trim())">
+                            <p class="text-xs text-gray-500 mt-1">Glob patterns to exclude</p>
+                        </div>
+                    </div>
+                    
+                    <div x-show="expanded" class="mt-4 pt-4 border-t border-gray-100">
+                        <button type="button" @click="testFolder(index)" class="btn-secondary text-sm">
+                            <i class="fas fa-search mr-2"></i>Test This Folder
+                        </button>
+                        <div id="folder-test-{{ index }}" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+    
+    <div class="mt-6">
+        <button @click="addFolder()" class="btn-secondary w-full md:w-auto">
+            <i class="fas fa-plus mr-2"></i>Add Watch Folder
+        </button>
+    </div>
+    
+    <div id="folder-test-results" class="mt-6"></div>
+    
+    <div class="mt-8 p-4 bg-blue-50 rounded-xl">
+        <h3 class="font-semibold text-blue-900 mb-2">Folder Setup Tips</h3>
+        <ul class="text-blue-700 text-sm space-y-2">
+            <li><strong>Desktop/Downloads:</strong> Great for capturing daily downloads and screenshots</li>
+            <li><strong>Documents/Inbox:</strong> Perfect for documents you want to process later</li>
+            <li><strong>Raw_copies/incoming:</strong> Drop files here for immediate processing</li>
+            <li><strong>Recursive vs Flat:</strong> Recursive scans subfolders; flat only checks top level</li>
+            <li><strong>Patterns:</strong> Use glob patterns like <code>*.pdf</code>, <code>*.md</code>, <code>*.txt</code></li>
+        </ul>
+    </div>
+    
+    <div class="mt-8 flex justify-between">
+        <button @click="prevStep()" class="btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i>Back
+        </button>
+        <button @click="nextStep()" class="btn-primary">
+            Next <i class="fas fa-arrow-right ml-2"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('foldersStep', () => ({
+            watchFolders: [
+                { path: "~/Desktop", recursive: true, include_patterns: ["*"], exclude_patterns: ["*.tmp", "*.temp", "*.log", "~$*", ".~lock*"] },
+                { path: "~/Downloads", recursive: true, include_patterns: ["*"], exclude_patterns: ["*.tmp", "*.temp", "*.crdownload", "*.partial"] },
+                { path: "~/Documents/Inbox", recursive: true, include_patterns: ["*"], exclude_patterns: ["*.tmp", "*.temp", "*.log"] },
+                { path: "Raw_copies/incoming", recursive: true, include_patterns: ["*"], exclude_patterns: ["*.tmp", "*.temp", "*.log"] }
+            ],
+            
+            init() {
+                this.loadFolders();
+            },
+            
+            loadFolders() {
+                fetch('/api/auto-rules')
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.watch_folders && data.watch_folders.length > 0) {
+                            this.watchFolders = data.watch_folders;
+                        }
+                    });
+            },
+            
+            addFolder() {
+                this.watchFolders.push({
+                    path: "",
+                    recursive: true,
+                    include_patterns: ["*"],
+                    exclude_patterns: ["*.tmp", "*.temp", "*.log", "~$*", ".~lock*"]
+                });
+            },
+            
+            removeFolder(index) {
+                this.watchFolders.splice(index, 1);
+            },
+            
+            async testFolder(index) {
+                const folder = this.watchFolders[index];
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Scanning...';
+                btn.disabled = true;
+                
+                try {
+                    const response = await fetch('/api/test/folders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ watch_folders: [folder] })
+                    });
+                    const result = await response.json();
+                    
+                    let html = '<div class="space-y-2 mt-2">';
+                    result.folders.forEach(f => {
+                        html += `
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div>
+                                    <p class="font-medium">${f.path}</p>
+                                    <p class="text-sm text-gray-500">${f.file_count_estimate} files estimated</p>
+                                </div>
+                                <span class="${f.exists && f.readable ? 'text-green-600' : 'text-red-600'}">
+                                    <i class="fas ${f.exists && f.readable ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                                </span>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    
+                    document.getElementById(`folder-test-${index}`).innerHTML = html;
+                    this.showToast('success', 'Folder scan complete', `Found ${result.folders.filter(f => f.exists).length} accessible folders`);
+                } catch (error) {
+                    this.showToast('error', 'Error', error.message);
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            },
+            
+            showToast(type, title, message = '') {
+                const container = document.getElementById('toast-container') || this.createToastContainer();
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type} animate-slide-in`;
+                toast.innerHTML = `
+                    <div class="flex items-start">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500'} mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="font-medium">${title}</p>
+                            ${message ? `<p class="text-sm text-gray-600">${message}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 5000);
+            },
+            
+            createToastContainer() {
+                const container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'fixed bottom-4 right-4 z-50 space-y-2';
+                document.body.appendChild(container);
+                return container;
+            }
+        });
+    </script>
+{% endblock %}

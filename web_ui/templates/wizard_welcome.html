@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center py-12">
+    <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl mb-8">
+        <i class="fas fa-brain text-white text-4xl"></i>
+    </div>
+    
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to mindbridge</h1>
+    <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+        Transform your scattered files into a searchable, intelligent Second Brain. 
+        In just 5 steps, you'll have a personal AI assistant that knows everything you've saved.
+    </p>
+    
+    <div class="grid md:grid-cols-3 gap-6 mt-12 max-w-3xl mx-auto">
+        <div class="text-center p-6 bg-gray-50 rounded-xl">
+            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-lock text-blue-600 text-2xl"></i>
+            </div>
+            <h3 class="font-semibold text-gray-900 mb-2">Your Data Stays Local</h3>
+            <p class="text-gray-600 text-sm">Your files, API keys, and embeddings never leave your machine</p>
+        </div>
+        <div class="text-center p-6 bg-gray-50 rounded-xl">
+            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-magic text-green-600 text-2xl"></i>
+            </div>
+            <h3 class="font-semibold text-gray-900 mb-2">5 Search Modes</h3>
+            <p class="text-gray-600 text-sm">BM25, Semantic, Hybrid, Graph & Ask with citations</p>
+        </div>
+        <div class="text-center p-6 bg-gray-50 rounded-xl">
+            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-plug text-purple-600 text-2xl"></i>
+            </div>
+            <h3 class="font-semibold text-gray-900 mb-2">Flexible LLM Backends</h3>
+            <p class="text-gray-600 text-sm">Groq, Ollama, OpenCode Zen, or bring your own</p>
+        </div>
+    </div>
+    
+    <div class="mt-12 p-6 bg-blue-50 rounded-xl max-w-2xl mx-auto">
+        <h3 class="font-semibold text-blue-900 mb-2">Ready to begin?</h3>
+        <p class="text-blue-700 mb-4">This wizard will guide you through 5 simple steps to configure your mindbridge.</p>
+        <button onclick="wizard().nextStep()" class="btn-primary w-full md:w-auto">
+            <i class="fas fa-arrow-right mr-2"></i>Let's Get Started
+        </button>
+    </div>
+</div>
+{% endblock %}

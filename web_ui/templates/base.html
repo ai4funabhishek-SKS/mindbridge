@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - mindbridge</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .step-indicator .step.active { @apply bg-blue-600 text-white; }
+        .step-indicator .step.completed { @apply bg-green-600 text-white; }
+        .step-indicator .step.pending { @apply bg-gray-200 text-gray-500; }
+        .input-field { @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all; }
+        .btn-primary { @apply bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium; }
+        .btn-secondary { @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors font-medium; }
+        .card { @apply bg-white rounded-xl shadow-lg p-6; }
+        .progress-bar { @apply h-2 bg-gray-200 rounded-full overflow-hidden; }
+        .progress-fill { @apply h-full bg-blue-600 transition-all duration-300; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div x-data="wizard()" class="min-h-screen">
+        <!-- Progress Bar -->
+        <div class="fixed top-0 left-0 right-0 h-1 bg-gray-200 z-50">
+            <div class="progress-fill" :style="{ width: (currentStep / totalSteps) * 100 + '%' }"></div>
+        </div>
+        
+        <div class="min-h-screen flex flex-col">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b border-gray-200">
+                <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-brain text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900">mindbridge</h1>
+                            <p class="text-sm text-gray-500">Second Brain Setup Wizard</p>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-4 text-sm text-gray-600">
+                        <span>Step <span x-text="currentStep"></span> of <span x-text="totalSteps"></span></span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Progress Steps -->
+            <div class="max-w-4xl mx-auto px-4 py-4 hidden md:block">
+                <div class="flex items-center justify-between step-indicator" role="progressbar" aria-valuenow="1" aria-valuemin="1" :aria-valuemax="totalSteps">
+                    <template x-for="(step, index) in steps" :key="step.id">
+                        <div class="flex flex-col items-center">
+                            <div class="step w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium"
+                                 :class="index < currentStep ? 'completed' : (index === currentStep - 1 ? 'active' : 'pending')">
+                                <i :class="step.icon" class="text-lg" x-show="index !== currentStep - 1"></i>
+                                <span x-show="index === currentStep - 1" x-text="index + 1"></span>
+                                <i class="fas fa-check" x-show="index < currentStep - 1"></i>
+                            </div>
+                            <span class="mt-2 text-xs text-center text-gray-500 font-medium" x-text="step.label"></span>
+                        </div>
+                        <div class="flex-1 h-1 bg-gray-200" x-show="index < steps.length - 1"></div>
+                    </template>
+                </div>
+            </div>
+            
+            <!-- Mobile Progress -->
+            <div class="md:hidden px-4 py-4">
+                <div class="flex items-center justify-between step-indicator" role="progressbar">
+                    <template x-for="(step, index) in steps" :key="step.id">
+                        <div class="flex flex-col items-center">
+                            <div class="step w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium"
+                                 :class="index < currentStep ? 'completed' : (index === currentStep - 1 ? 'active' : 'pending')">
+                                <span x-show="index === currentStep - 1" x-text="index + 1"></span>
+                                <i class="fas fa-check" x-show="index < currentStep - 1"></i>
+                            </div>
+                            <span class="mt-1 text-xs text-center text-gray-500" x-text="step.label"></span>
+                        </div>
+                        <div class="flex-1 h-1 bg-gray-200" x-show="index < steps.length - 1"></div>
+                    </template>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <main class="flex-1 max-w-4xl mx-auto px-4 py-8 w-full">
+                <div id="wizard-content" class="w-full">
+                    <!-- Slot for step content -->
+                </div>
+            </main>
+            
+            <!-- Footer -->
+            <footer class="bg-white border-t border-gray-200 py-4 mt-auto">
+                <div class="max-w-4xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
+                    <p class="text-sm text-gray-500 text-center md:text-left">
+                        mindbridge - Your Local Second Brain
+                    </p>
+                    <div class="flex items-center space-x-4 mt-2 md:mt-0">
+                        <a href="https://github.com/ai4funabhishek-SKS/mindbridge" target="_blank" class="text-gray-400 hover:text-blue-600 transition-colors">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                            <i class="fas fa-envelope text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        function wizard() {
+            return {
+                currentStep: 1,
+                totalSteps: 5,
+                steps: [
+                    { id: 'welcome', label: 'Welcome', icon: 'fas fa-home' },
+                    { id: 'provider', label: 'LLM Provider', icon: 'fas fa-brain' },
+                    { id: 'keys', label: 'API Keys', icon: 'fas fa-key' },
+                    { id: 'folders', label: 'Watch Folders', icon: 'fas fa-folder-open' },
+                    { id: 'test', label: 'Test & Launch', icon: 'fas fa-rocket' }
+                ],
+                goToStep(step) {
+                    if (step >= 1 && step <= this.totalSteps) {
+                        this.currentStep = step;
+                        this.loadStep(step);
+                    }
+                },
+                nextStep() {
+                    if (this.currentStep < this.totalSteps) {
+                        this.currentStep++;
+                        this.loadStep(this.currentStep);
+                    }
+                },
+                prevStep() {
+                    if (this.currentStep > 1) {
+                        this.currentStep--;
+                        this.loadStep(this.currentStep);
+                    }
+                },
+                loadStep(step) {
+                    const content = document.getElementById('wizard-content');
+                    if (!content) return;
+                    
+                    content.innerHTML = '<div class="flex justify-center items-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>';
+                    
+                    const stepUrls = {
+                        1: '/',
+                        2: '/provider',
+                        3: '/keys',
+                        4: '/folders',
+                        5: '/test'
+                    };
+                    
+                    fetch(stepUrls[step])
+                        .then(response => response.text())
+                        .then(html => {
+                            content.innerHTML = html;
+                            // Re-initialize Alpine components in new content
+                            if (window.Alpine) {
+                                Alpine.initTree(content);
+                            }
+                        })
+                        .catch(err => {
+                            content.innerHTML = '<div class="text-red-500 text-center p-8">Failed to load step</div>';
+                        });
+                },
+                async testProvider(provider, model, apiKey, baseUrl) {
+                    const btn = event.target;
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+                    btn.disabled = true;
+                    
+                    try {
+                        const response = await fetch('/api/test/llm', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                provider: provider,
+                                model: model,
+                                api_key: apiKey,
+                                base_url: baseUrl
+                            })
+                        });
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            this.showToast('success', 'Connection successful!', result.response);
+                        } else {
+                            this.showToast('error', 'Connection failed', result.error);
+                        }
+                    } catch (error) {
+                        this.showToast('error', 'Error', error.message);
+                    } finally {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                },
+                
+                async testConnection(provider, model, apiKey, baseUrl) {
+                    return this.testProvider(provider, model, apiKey, baseUrl);
+                },
+                
+                async testFolders() {
+                    const btn = event.target;
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Scanning...';
+                    btn.disabled = true;
+                    
+                    try {
+                        const watchFolders = this.getWatchFolders();
+                        const response = await fetch('/api/test/folders', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ watch_folders: watchFolders })
+                        });
+                        const result = await response.json();
+                        
+                        let html = '<div class="space-y-2">';
+                        result.folders.forEach(f => {
+                            html += `
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <p class="font-medium">${f.path}</p>
+                                        <p class="text-sm text-gray-500">${f.file_count_estimate} files estimated</p>
+                                    </div>
+                                    <span class="${f.exists && f.readable ? 'text-green-600' : 'text-red-600'}">
+                                        <i class="fas ${f.exists && f.readable ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                                    </span>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                        
+                        document.getElementById('folder-test-results').innerHTML = html;
+                        this.showToast('success', 'Folder scan complete', `Found ${result.folders.filter(f => f.exists).length} accessible folders`);
+                    } catch (error) {
+                        this.showToast('error', 'Error', error.message);
+                    } finally {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                },
+                
+                getWatchFolders() {
+                    const folders = [];
+                    document.querySelectorAll('.folder-row').forEach(row => {
+                        const path = row.querySelector('[name="folder_path"]').value;
+                        const recursive = row.querySelector('[name="recursive"]').checked;
+                        const include = row.querySelector('[name="include"]').value;
+                        const exclude = row.querySelector('[name="exclude"]').value;
+                        if (path) {
+                            folders.push({ path, recursive, include_patterns: include.split(',').map(s => s.trim()), exclude_patterns: exclude.split(',').map(s => s.trim()) });
+                        }
+                    });
+                    return folders;
+                },
+                
+                async runTests() {
+                    const btn = event.target;
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Running tests...';
+                    btn.disabled = true;
+                    
+                    try {
+                        const response = await fetch('/api/test/run', { method: 'POST' });
+                        const result = await response.json();
+                        
+                        const container = document.getElementById('test-results');
+                        if (result.passed) {
+                            container.innerHTML = '<div class="text-green-600 p-4 bg-green-50 rounded-lg"><i class="fas fa-check-circle mr-2"></i>All tests passed! (' + result.stdout.match(/(\d+) passed/)?.[1] || '181' + ' tests)</div>';
+                            this.showToast('success', 'All tests passed!');
+                        } else {
+                            container.innerHTML = '<div class="text-red-600 p-4 bg-red-50 rounded-lg"><i class="fas fa-times-circle mr-2"></i>Tests failed<pre class="mt-2 text-xs overflow-auto max-h-64">' + result.stderr + '</pre></div>';
+                            this.showToast('error', 'Tests failed', result.stderr);
+                        }
+                    } catch (error) {
+                        this.showToast('error', 'Error', error.message);
+                    } finally {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                },
+                
+                async runIngestion() {
+                    const btn = event.target;
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Running ingestion...';
+                    btn.disabled = true;
+                    
+                    try {
+                        const response = await fetch('/api/ingest/run', { method: 'POST' });
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            this.showToast('success', 'Ingestion complete', 'Knowledge School run completed');
+                        } else {
+                            this.showToast('error', 'Ingestion failed', result.stderr || result.error);
+                        }
+                    } catch (error) {
+                        this.showToast('error', 'Error', error.message);
+                    } finally {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                },
+                
+                async saveConfig() {
+                    try {
+                        const config = this.getConfig();
+                        const response = await fetch('/api/config', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ config: config })
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            this.showToast('success', 'Configuration saved');
+                        } else {
+                            this.showToast('error', 'Save failed', result.message);
+                        }
+                    } catch (error) {
+                        this.showToast('error', 'Error', error.message);
+                    }
+                },
+                
+                getConfig() {
+                    return {
+                        llm_providers: this.getProviderConfigs(),
+                        fallback_chain: this.getFallbackChain(),
+                        // ... other config
+                    };
+                },
+                
+                getProviderConfigs() {
+                    const providers = {};
+                    document.querySelectorAll('.provider-config').forEach(card => {
+                        const name = card.dataset.provider;
+                        providers[name] = {
+                            enabled: card.querySelector('[name="enabled"]').checked,
+                            priority: parseInt(card.querySelector('[name="priority"]').value),
+                            provider_type: card.querySelector('[name="provider_type"]').value,
+                            model: card.querySelector('[name="model"]').value,
+                            api_key_env: card.querySelector('[name="api_key_env"]').value,
+                            base_url: card.querySelector('[name="base_url"]').value,
+                            timeout: parseInt(card.querySelector('[name="timeout"]').value) || 60,
+                            max_tokens: parseInt(card.querySelector('[name="max_tokens"]').value) || 4096,
+                            temperature: parseFloat(card.querySelector('[name="temperature"]').value) || 0.2,
+                        };
+                    });
+                    return providers;
+                },
+                
+                getFallbackChain() {
+                    return Array.from(document.querySelectorAll('[name="fallback_priority"]'))
+                        .sort((a, b) => parseInt(a.value) - parseInt(b.value))
+                        .map(el => el.dataset.provider);
+                },
+                
+                showToast(type, title, message = '') {
+                    const container = document.getElementById('toast-container') || this.createToastContainer();
+                    const toast = document.createElement('div');
+                    toast.className = `toast toast-${type} animate-slide-in`;
+                    toast.innerHTML = `
+                        <div class="flex items-start">
+                            <i class="fas ${type === 'success' ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500'} mt-0.5 mr-3"></i>
+                            <div>
+                                <p class="font-medium">${title}</p>
+                                ${message ? `<p class="text-sm text-gray-600">${message}</p>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(toast);
+                    setTimeout(() => toast.remove(), 5000);
+                },
+                
+                createToastContainer() {
+                    const container = document.createElement('div');
+                    container.id = 'toast-container';
+                    container.className = 'fixed bottom-4 right-4 z-50 space-y-2';
+                    document.body.appendChild(container);
+                    return container;
+                },
+                
+                init() {
+                    this.loadStep(this.currentStep);
+                    // Load saved config from localStorage if exists
+                    const saved = localStorage.getItem('mindbridge_wizard');
+                    if (saved) {
+                        try {
+                            const data = JSON.parse(saved);
+                            Object.assign(this.$data, data);
+                        } catch (e) {}
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>

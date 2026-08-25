@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-gray-900 mb-3">Choose Your LLM Provider</h1>
+        <p class="text-gray-600">mindbridge supports multiple LLM backends. Choose your primary provider and configure fallbacks.</p>
+    </div>
+    
+    <div class="space-y-6" id="providers-container">
+        {% for name, config in providers.items() %}
+        <div class="provider-config card border-2 border-gray-200 hover:border-blue-300 transition-colors relative" 
+             data-provider="{{ name }}"
+             x-data="{ enabled: {{ 'true' if config.enabled else 'false' }} }">
+            
+            <div class="absolute top-4 right-4">
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="enabled" :checked="enabled" @change="enabled = !enabled" 
+                           class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
+            
+            <div class="flex items-start space-x-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                    {% if name == 'opencode' %}
+                        <i class="fas fa-code text-white text-3xl"></i>
+                    {% elif name == 'groq' %}
+                        <i class="fas fa-bolt text-white text-3xl"></i>
+                    {% elif name == 'ollama' %}
+                        <i class="fas fa-cube text-white text-3xl"></i>
+                    {% else %}
+                        <i class="fas fa-cloud text-white text-3xl"></i>
+                    {% endif %}
+                </div>
+                
+                <div class="flex-1 min-w-0 pt-1">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-semibold text-gray-900 capitalize">{{ name }}</h3>
+                        <span class="px-2 py-1 text-xs font-medium rounded-full 
+                            {% if name == 'opencode' %}bg-blue-100 text-blue-800
+                            {% elif name == 'groq' %}bg-green-100 text-green-800
+                            {% elif name == 'ollama' %}bg-purple-100 text-purple-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {% if name == 'opencode' %}Free Cloud
+                            {% elif name == 'groq' %}Free Tier
+                            {% elif name == 'ollama' %}Local
+                            {% else %}Custom{% endif %}
+                        </span>
+                    </div>
+                    
+                    <p class="text-gray-600 text-sm mb-4">
+                        {% if name == 'opencode' %}
+                            Free cloud models via OpenCode Zen. No API key required.
+                        {% elif name == 'groq' %}
+                            Blazing fast inference on LPU hardware. Free tier: 1K req/day for 120B model.
+                        {% elif name == 'ollama' %}
+                            Run models locally on your machine. Requires Ollama + Docker Desktop.
+                        {% else %}
+                            Any OpenAI-compatible endpoint (OpenAI, Azure, custom).
+                        {% endif %}
+                    </p>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Provider Type</label>
+                            <select name="provider_type" class="input-field"
+                                    x-model="config.provider_type">
+                                <option value="opencode">OpenCode Zen</option>
+                                <option value="groq">Groq</option>
+                                <option value="ollama">Ollama (Local)</option>
+                                <option value="openai_compatible">OpenAI Compatible</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Model</label>
+                            <select name="model" class="input-field" x-model="config.model">
+                                {% if name == 'opencode' %}
+                                    <option value="freemodel">freemodel</option>
+                                {% elif name == 'groq' %}
+                                    <option value="openai/gpt-oss-120b">gpt-oss-120b (120B)</option>
+                                    <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
+                                    <option value="qwen/qwen3-32b">qwen3-32b</option>
+                                    <option value="gemma2-9b-it">gemma2-9b-it</option>
+                                {% elif name == 'ollama' %}
+                                    <option value="llama3.2">llama3.2</option>
+                                    <option value="phi3:mini">phi3:mini</option>
+                                    <option value="qwen2.5:7b-instruct">qwen2.5:7b-instruct</option>
+                                    <option value="gemma2:9b">gemma2:9b</option>
+                                    <option value="mistral">mistral</option>
+                                {% else %}
+                                    <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                                    <option value="gpt-4">gpt-4</option>
+                                    <option value="gpt-4-turbo">gpt-4-turbo</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Priority</label>
+                            <select name="priority" class="input-field" x-model.number="config.priority">
+                                <option value="1">Primary (1st)</option>
+                                <option value="2">Secondary (2nd)</option>
+                                <option value="3">Tertiary (3rd)</option>
+                                <option value="4">Fallback (4th)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Timeout (s)</label>
+                            <input type="number" name="timeout" class="input-field" x-model.number="config.timeout" min="10" max="300">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-medium text-gray-500 mb-1">API Key Env Var</label>
+                                <input type="text" name="api_key_env" class="input-field" 
+                                       x-model="config.api_key_env" placeholder="e.g., GROQ_API_KEY">
+                            <p class="text-xs text-gray-500 mt-1">Set in .env or environment</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Base URL (optional)</label>
+                            <input type="text" name="base_url" class="input-field" 
+                                   x-model="config.base_url" placeholder="https://api.groq.com/openai/v1">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Fallback Models (comma-separated)</label>
+                        <input type="text" name="fallback_models" class="input-field" 
+                               x-model="config.fallback_models" placeholder="phi3:mini, qwen2.5:7b-instruct">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="mt-8 p-4 bg-blue-50 rounded-xl">
+        <h3 class="font-semibold text-blue-900 mb-2">Fallback Chain</h3>
+        <p class="text-blue-700 text-sm mb-4">Providers are tried in order until one succeeds. Drag to reorder:</p>
+        <div class="flex flex-wrap gap-2" id="fallback-chain">
+            <template x-for="name in fallbackChain" :key="name">
+                <div class="px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm flex items-center space-x-2"
+                     :data-provider="name">
+                    <i class="fas fa-grip-vertical text-gray-400 cursor-move"></i>
+                    <span class="capitalize">{{ name }}</span>
+                    <button type="button" @click="removeFromChain(name)" class="text-red-500 hover:text-red-700 ml-2">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </template>
+        </div>
+        <button type="button" @click="addToChain()" class="mt-4 btn-secondary">
+            <i class="fas fa-plus mr-2"></i>Add Provider to Chain
+        </button>
+    </div>
+    
+    <div class="mt-8 flex justify-between">
+        <button @click="prevStep()" class="btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i>Back
+        </button>
+        <button @click="nextStep()" class="btn-primary">
+            Next <i class="fas fa-arrow-right ml-2"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('providerStep', () => ({
+            providers: {},
+            fallbackChain: [],
+            
+            init() {
+                this.loadProviders();
+            },
+            
+            loadProviders() {
+                // Load from config
+                fetch('/api/config')
+                    .then(r => r.json())
+                    .then(config => {
+                        this.providers = config.llm_providers || {};
+                        this.fallbackChain = config.fallback_chain || ['opencode', 'groq', 'ollama'];
+                    });
+            },
+            
+            addToChain() {
+                const available = Object.keys(this.providers).filter(p => !this.fallbackChain.includes(p));
+                if (available.length > 0) {
+                    this.fallbackChain.push(available[0]);
+                }
+            },
+            
+            removeFromChain(name) {
+                this.fallbackChain = this.fallbackChain.filter(n => n !== name);
+            }
+        });
+    </script>
+{% endblock %}
