@@ -71,12 +71,24 @@ class TestAskHelpers(unittest.TestCase):
 
 
 def _llm_runnable() -> tuple:
-    """(bool, reason): can a local model actually load right now?"""
+    """(bool, reason): can the default brain answer right now?
+
+    Tries the Groq cloud brain first (the default), then mirrors the
+    production local RAM ladder as fallback. Skips only when both fail.
+    """
+    last_err = None
     try:
-        se._ollama_chat(se.ASK_MODEL_DEFAULT, "reply OK only.", "ping")
+        se._groq_chat(se.CLOUD_ALIASES["groq"], "reply OK only.", "ping")
         return True, ""
     except Exception as e:
-        return False, f"local LLM not loadable right now: {e}"
+        last_err = e
+    for ctx in (se.ASK_NUM_CTX, 2048, 1024):
+        try:
+            se._ollama_chat("phi3:mini", "reply OK only.", "ping", num_ctx=ctx)
+            return True, ""
+        except Exception as e:
+            last_err = e
+    return False, f"neither cloud nor local brain loadable right now: {last_err}"
 
 
 @unittest.skipUnless(DB_PATH.exists() and _ollama_up(), "DB or Ollama unavailable")
@@ -117,6 +129,11 @@ class TestAskEndToEnd(unittest.TestCase):
         self.assertGreater(p.stat().st_size, 0)
 
     def test_e04_model_alias_resolution(self):
+        self.assertEqual(se.resolve_model_name("groq"), "openai/gpt-oss-120b")
+        self.assertEqual(se.resolve_model_name("groq-fast"), "qwen/qwen3.6-27b")
+        self.assertEqual(se.resolve_model_name("groq/custom-id"), "custom-id")
+        self.assertTrue(se.is_cloud_model("groq"))
+        self.assertFalse(se.is_cloud_model("phi3"))
         self.assertEqual(se.resolve_model_name("llama"), "llama3.2")
         self.assertEqual(se.resolve_model_name("mistral").startswith("mistral"), True)
         with self.assertRaises(SystemExit):

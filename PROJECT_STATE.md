@@ -10,33 +10,32 @@ test suite — all non-destructive to the original raw files.
 ## 2. 🔒 Active Worker
 | Field | Value |
 |---|---|
-| Claimed by | opencode (session: search-quality improvement planning) |
-| Claimed at | 2026-08-25 12:30 |
-| Status | ACTIVE |
+| Claimed by | — (opencode finished Groq cloud-brain session; slot released) |
+| Claimed at | 2026-08-25 15:10 → released ~17:35 |
+| Status | FREE |
 
 ## 3. Current Status
-🟢 **M6 SMART SEARCH + SMART INDEXES (2026-08-25) — 6/7 tasks done.**
-New capabilities shipped and committed:
-- **M6a** Per-folder CSV indexes + MASTER_ASSET_INDEX.csv: all 156 Asset-Library
-  files catalogued (13 columns incl. related_files, gem flags); builder
-  `build_folder_indexes.py`; idempotent.
-- **M6b** Document fingerprints: `build_doc_anchors.py` → doc_anchors table,
-  502/502 docs (461 real + 41 hollow zero-vectors; filler metadata stripped).
-- **M6c** Anchor rank-fusion + per-doc result diversity in semantic/hybrid.
-  ACCEPTANCE PROVEN: "find clients for finance advisory" now ranks the
-  subbroking playbook #3 (was absent from top-50, buried under SEBI PDFs/CVs).
-- **M6d** `--topic` filter + `--topics` listing + `--gems` (rating≥8) on all modes.
-- **M6e** `--mode ask`: funnel retrieval → local LLM synthesis with [S#] source
-  citations; `--model` ladder (llama3.2 default → phi3 fallback) with automatic
-  RAM-fallback; native chat API keep_alive=0 frees RAM after each answer;
-  `--save` writes Obsidian-ready briefs to `Briefings/`.
-Test suite: **177 passed / 4 skipped** (skips = live LLM tests gated on free RAM).
-**PENDING:** live E2E proof of Ask mode blocked by machine RAM (~2.4-2.8GB
-free; model needs 2.9GB+). CRITICAL DISCOVERY: Ollama runs INSIDE WSL as a
-Docker container (docker-desktop distro) — `wsl --shutdown` kills the AI
-brain, and Docker Desktop auto-restarts WSL re-consuming the freed RAM.
-Best unblock: restart opencode (~1GB freed) then run Ask tests. Task 7
-brutal review delivered; GitHub push still parked pending owner decision.
+🟢 **M6 COMPLETE + CLOUD BRAIN SHIPPED (2026-08-25) — FULL SUITE GREEN.**
+Ask mode now defaults to **Groq free-tier cloud brain `openai/gpt-oss-120b`**
+(120B-class, zero local RAM); local Ollama kept as manual fallback (`--model phi3`).
+Live proof: all 4 previously RAM-blocked E2E Ask tests now PASS.
+**Test suite: 181 passed / 0 failed / 0 skipped** (~60s wall clock).
+Key mechanics shipped in M6f:
+- Key discovery: GROQ_API_KEY env var → first `gsk_...` match under
+  `01_Vault_Private/credentials_and_keys/` (never printed/logged).
+- Cloudflare edge requires real User-Agent header (`SecondBrainKB/1.0`) —
+  bare urllib UA gets error-1010 blocked before reaching the API.
+- Model menu changed vs old notes: llama-70B/8B-instant RETIRED on this key;
+  live-verified available: `openai/gpt-oss-120b`, `qwen/qwen3.6-27b`,
+  `groq/compound(-mini)`, `openai/gpt-oss-20b`.
+- Auto retry-once on HTTP 429 honouring Retry-After (TPM cap = 8k/min on
+  120b free tier; bursts of 3 asks can trip it without retry).
+- Aliases: `--model groq` (=gpt-oss-120b) | `groq-fast` (=qwen3.6-27b) |
+  local: phi3 | llama3.2 | mistral (RAM ladder unchanged).
+- ANSWER banner added to ask output (matches SOURCES banner).
+Remaining open items: Task-7 brutal review actioning; GitHub push parked
+pending owner repo name + approval (recommend Private; scrub exports first);
+minor debt: 2 cp1252 reader-thread warnings in t2_03/t2_05 (tests still pass).
 
 ## 4. Milestone Log
 | Date | Milestone | Status | Notes |
@@ -55,7 +54,8 @@ brutal review delivered; GitHub push still parked pending owner decision.
 | 2026-08-25 | M6b doc fingerprints 502/502 | DONE | filler stripped; hollow → zero-vec |
 | 2026-08-25 | M6c anchor fusion + diversity cap | DONE | finance-advisory acceptance PROVEN |
 | 2026-08-25 | M6d --topic/--topics/--gems | DONE | all modes; 174/174 at commit |
-| 2026-08-25 | M6e ask mode + briefings + model ladder | CODE DONE | live E2E pending free RAM |
+| 2026-08-25 | M6e ask mode + briefings + model ladder | CODE DONE | live proof blocked by RAM |
+| 2026-08-25 | M6f Groq cloud brain (gpt-oss-120b) default | DONE | 181/181 green; live E2E proven |
 
 ## 5.1 M5 Final Statistics (2026-08-23, split corrected 2026-08-24)
 - Classification: 255 merge_into_gm · 149 archive · 39 reference_only · 0 pending
@@ -81,14 +81,15 @@ brutal review delivered; GitHub push still parked pending owner decision.
 | Aug 2026 | SQLite FTS5 + KG tables instead of external vector DB | Free, local, no service dependency | Pinecone/cloud RAG |
 | Aug 2026 | Sensitive files out of git via `.gitignore` | Privacy + repo portability | Encrypted commits |
 | Aug 2026 | Move active work to quota-independent tools (opencode/Kilo) | Antigravity quota kept blocking deadlines | Waiting for quota reset |
+| 2026-08-25 | Ask brain → Groq free tier by default (owner Option A); local kept as `--model` fallback | RAM ceiling (.wslconfig=4GB) made local llama3.2 permanently borderline; cloud = smarter + zero RAM | B: qwen3.5-2b local swap; C: hybrid auto-ladder (revisit if privacy needs demand) |
 
 ## 7. Next Steps & Open Questions
 1. ~~M5 Phase 2 (active): deep-process remaining 257 files~~ DONE (see M5 log).
 2. GitHub push only after owner provides repo + approves; recommend Private;
    scrub dashboard exports first; rotate live keys before any external sharing.
-3. **M6 finish line:** free ~150MB RAM (owner decision: wsl --shutdown or close
-   apps) → run live Ask E2E tests → Task 7 brutal review report.
-4. Known data debt: 242 docs carry generic topic "General Knowledge"; 145/156
+3. ~~M6 finish line: free RAM → live Ask E2E~~ DONE via cloud brain (M6f).
+4. Task-7 brutal review: report exists, actioning still open.
+5. Known data debt: 242 docs carry generic topic "General Knowledge"; 145/156
    library files have rich catalogue entries, 11 generated artifacts don't.
    Optional future pass: relabel topics + AI-enrich descriptions.
 
@@ -96,6 +97,12 @@ brutal review delivered; GitHub push still parked pending owner decision.
 - Antigravity quota exhaustion repeatedly interrupted work (resets daily).
 - Free LLM providers via OmniRoute can drop connections mid-run ("Cannot connect"); sessions survive — always resume via PROJECT_STATE.md, never restart from scratch.
 - `.gitignore` protects vault/credentials — never weaken it.
+- Groq behind Cloudflare: requests WITHOUT a real User-Agent header get
+  error-1010 blocked at the edge (looks like auth failure but isn't).
+- Groq free tier TPM ≈ 8k/min on gpt-oss-120b: bursts of Ask queries need the
+  built-in 429 retry (shipped in M6f). RPD = 1,000/day on that model.
+- Vault contains FOUR gsk_ keys (all currently valid); `_load_groq_key` takes
+  first match (`my_api_keys_backup.md`). If it ever dies, try others manually.
 
 ## 9. Environment Map
 - Root: `C:\knowledgeBase_staging`
@@ -109,22 +116,25 @@ brutal review delivered; GitHub push still parked pending owner decision.
 CONTEXT: C:\knowledgeBase_staging — Second Brain KB: 443 raw files refined
 into vault + 10-domain library (49 playbooks) + FTS5/KG database (502 docs,
 10785 chunks, 502 doc anchors) + dashboards + CSV asset indexes (156 files,
-13 cols) + 177-test suite. Owner is non-technical, decides in plain language.
-STATE:   M1-M6a..e DONE 2026-08-25: search_engine.py has 5 modes — linear,
-graph, semantic, hybrid (RRF), ask (funnel retrieval → local LLM synthesis
-with [S#] citations; --model llama3.2 default w/ RAM fallback ladder;
---save writes Obsidian briefs to Briefings/). Doc-anchor fingerprints fused
-into ranking + per-doc diversity cap (MAX_PER_DOC=2) fixed vague-query
-failure: "find clients for finance advisory" → subbroking playbook top-3.
---topic/--topics/--gems filters on all modes.
-NEXT:    live Ask E2E blocked on ~150MB RAM (wsl --shutdown or close apps);
-then Task-7 brutal review; GitHub push only after owner names repo+approves
-(recommend Private; scrub dashboard exports first); rotate live keys before
-external sharing.
-GOTCHAS: free providers/quota drops interrupt runs — small committed
-increments only. Raw_copies/ + vault + RAG DB stay out of git. Live keys in
-01_Vault_Private/credentials_and_keys/. Semantic/ask modes need local Ollama;
-ask needs ~3GB free RAM (16GB machine, WSL VM eats 2.2GB).
+13 cols) + 181-test suite (ALL GREEN, 0 skips).
+STATE:   M1-M6f DONE 2026-08-25. search_engine.py: 5 modes — linear, graph,
+semantic, hybrid (RRF), ask. Ask mode DEFAULT brain = Groq free-tier cloud
+`openai/gpt-oss-120b` (120B-class; key auto-found in vault, never printed;
+User-Agent header REQUIRED — Cloudflare blocks bare urllib with err-1010;
+429 auto-retry honours Retry-After). Aliases: groq | groq-fast(qwen3.6-27b)
+| phi3/llama3.2/mistral = local Ollama w/ RAM ctx-ladder fallback.
+Retrieval stays local+private; only excerpts go to Groq during synthesis.
+Doc-anchor fingerprints fused into ranking + per-doc diversity cap
+(MAX_PER_DOC=2); --topic/--topics/--gems on all modes; --save writes
+Obsidian briefs to Briefings/.
+NEXT:    Task-7 brutal review actioning; GitHub push only after owner names
+repo+approves (Private recommended; scrub dashboard exports first); rotate
+live keys before external sharing. Optional: relabel 242 "General
+Knowledge" topics.
+GOTCHAS: .wslconfig caps WSL VM at 4GB → local llama3.2 permanently
+borderline (why cloud won). Ollama lives in Docker-in-WSL; reboot needs
+Docker Desktop started. Groq model lineup CHANGED vs old notes: llama-70b/
+8b-instant retired; gpt-oss-120b + qwen3.6-27b are the live picks.
 RULES:   read+update this PROJECT_STATE.md, claim 🔒 Active Worker before
 work, commit checkpoints, verify-before-done mandate is in global AGENTS.md,
 never delete data / spend money / publish without owner approval.

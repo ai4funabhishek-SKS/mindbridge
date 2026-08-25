@@ -614,9 +614,14 @@ def search_hybrid(query: str, limit: int = 8,
     print(f"(fused in {elapsed:.2f}s)")
 
 
-# ------------------------- ASK MODE (local LLM synthesis) ------------------
+# ------------------------- ASK MODE (LLM synthesis) -------------------------
 
-ASK_MODEL_DEFAULT = "llama3.2"
+GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
+CLOUD_ALIASES = {
+    "groq": "openai/gpt-oss-120b",      # flagship free brain (live-verified)
+    "groq-fast": "qwen/qwen3.6-27b",    # quicker alternative on same key
+}
+ASK_MODEL_DEFAULT = "groq"
 MODEL_ALIASES = {
     "llama": "llama3.2",
     "llama3.2": "llama3.2",
@@ -640,9 +645,97 @@ MODEL_FALLBACKS = {
 }
 
 
+def is_cloud_model(name: str) -> bool:
+    """True when the model name routes to the Groq cloud brain."""
+    k = name.strip().lower()
+    return k in CLOUD_ALIASES or k.startswith("groq/")
+
+
+def _load_groq_key() -> str:
+    """Finds the Groq API key: env var first, then vault files (gsk_ pattern).
+
+    The key never leaves this process and is never printed or logged.
+    """
+    import os
+    key = os.environ.get("GROQ_API_KEY", "").strip()
+    if key:
+        return key
+    cred_dir = BASE_DIR / "01_Vault_Private" / "credentials_and_keys"
+    if cred_dir.exists():
+        for p in sorted(cred_dir.glob("*")):
+            if not p.is_file():
+                continue
+            try:
+                text = p.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            m = re.search(r"gsk_[A-Za-z0-9]{20,}", text)
+            if m:
+                return m.group(0)
+    return ""
+
+
+def _groq_chat(model: str, system: str, user: str, retries: int = 2) -> str:
+    """One synchronous OpenAI-compatible chat call to Groq's free API.
+
+    Retries automatically on 429 (rate limit), honouring Retry-After.
+    """
+    key = _load_groq_key()
+    if not key:
+        raise RuntimeError(
+            "Groq selected but no API key found. Looked for GROQ_API_KEY "
+            "env var and a gsk_... key under 01_Vault_Private/credentials_and_keys/."
+        )
+    payload = {
+        "model": model,
+        "messages": [{"role": "system", "content": system},
+                     {"role": "user", "content": user}],
+        "temperature": 0.2,
+    }
+    req = urllib.request.Request(
+        GROQ_CHAT_URL,
+        data=json.dumps(payload).encode(),
+        headers={"Content-Type": "application/json",
+                 "Authorization": f"Bearer {key}",
+                 "User-Agent": "SecondBrainKB/1.0"},
+    )
+    for attempt in range(retries + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=300) as r:
+                data = json.loads(r.read())
+            break
+        except urllib.error.HTTPError as e:
+            body = b""
+            try:
+                body = e.read()
+            except Exception:
+                pass
+            try:
+                detail = json.loads(body).get("error", {}).get("message", "")
+            except Exception:
+                detail = body.decode("utf-8", errors="replace")[:200] or str(e)
+            if e.code == 429 and attempt < retries:
+                try:
+                    delay = float(e.headers.get("Retry-After") or 5)
+                except ValueError:
+                    delay = 5.0
+                time.sleep(min(delay, 60.0))
+                continue
+            raise RuntimeError(f"Groq chat failed ({e.code}): {detail}") from None
+    choices = data.get("choices") or [{}]
+    content = choices[0].get("message", {}).get("content", "").strip()
+    if not content:
+        raise RuntimeError("Groq returned an empty message")
+    return content
+
+
 def resolve_model_name(name: str) -> str:
-    """Resolves friendly aliases and verifies the model exists locally."""
+    """Resolves friendly aliases; verifies local models exist when local."""
     key = name.strip().lower()
+    if key in CLOUD_ALIASES:
+        return CLOUD_ALIASES[key]
+    if key.startswith("groq/"):
+        return key.split("/", 1)[1]
     model = MODEL_ALIASES.get(key, name.strip())
     try:
         req = urllib.request.Request("http://localhost:11434/api/tags")
@@ -755,7 +848,7 @@ def save_briefing(out_dir: Path, question: str, answer, sources, model: str) -> 
 
 def search_ask(query: str, limit: int = 6, model_name: str = ASK_MODEL_DEFAULT,
                save: bool = False, topic_doc_ids=None, gem_doc_ids=None):
-    """Funnel retrieval (BM25 + anchor-fused semantic) then local-LLM synthesis."""
+    """Funnel retrieval (BM25 + anchor-fused semantic) then LLM synthesis."""
     if not DB_PATH.exists():
         print(f"Error: Database not found at {DB_PATH}")
         return
@@ -763,6 +856,7 @@ def search_ask(query: str, limit: int = 6, model_name: str = ASK_MODEL_DEFAULT,
         print("[!] Ask needs a question.")
         return
 
+    cloud = is_cloud_model(model_name)
     model = resolve_model_name(model_name)
     allow = _allowed_doc_set(topic_doc_ids, gem_doc_ids)
     chunk_doc_map = _load_chunk_doc_map()
@@ -830,42 +924,52 @@ def search_ask(query: str, limit: int = 6, model_name: str = ASK_MODEL_DEFAULT,
 
     retrieval_s = time.time() - t0
 
-    # --- Synthesis stage (with RAM-aware fallback ladder) ---
+    # --- Synthesis stage ---
     system, user = build_ask_prompt(query, sources)
+    brain = f"Groq cloud ({model})" if cloud else f"local Ollama ({model})"
     print(f"\n{'='*70}")
     print(f" [ASK] '{query}'")
-    print(f" model: {model} | reading {len(sources)} passages "
+    print(f" brain: {brain} | reading {len(sources)} passages "
           f"(funnel took {retrieval_s:.2f}s; thinking...)")
     print(f"{'='*70}\n")
 
-    tried = [model] + MODEL_FALLBACKS.get(model, [])
-    last_err = None
-    answer = None
-    for candidate in tried:
-        # RAM-aware ladder: shrink thinking window before shrinking brain
-        for ctx in (ASK_NUM_CTX, 2048, 1024):
-            try:
-                answer = _ollama_chat(candidate, system, user, num_ctx=ctx)
-                if candidate != model or ctx != ASK_NUM_CTX:
-                    note = []
-                    if candidate != model:
-                        note.append(f"model '{model}' did not fit in free RAM")
-                    if ctx != ASK_NUM_CTX:
-                        note.append(f"context shrunk to {ctx} tokens")
-                    print(f"[i] Auto-adjusted: {'; '.join(note)}.")
+    if cloud:
+        try:
+            answer = _groq_chat(model, system, user)
+        except RuntimeError as e:
+            print(f"[!] {e}")
+            print("    Check internet / API key, or force offline brain:  --model phi3")
+            return
+    else:
+        tried = [model] + MODEL_FALLBACKS.get(model, [])
+        last_err = None
+        answer = None
+        for candidate in tried:
+            # RAM-aware ladder: shrink thinking window before shrinking brain
+            for ctx in (ASK_NUM_CTX, 2048, 1024):
+                try:
+                    answer = _ollama_chat(candidate, system, user, num_ctx=ctx)
+                    if candidate != model or ctx != ASK_NUM_CTX:
+                        note = []
+                        if candidate != model:
+                            note.append(f"model '{model}' did not fit in free RAM")
+                        if ctx != ASK_NUM_CTX:
+                            note.append(f"context shrunk to {ctx} tokens")
+                        print(f"[i] Auto-adjusted: {'; '.join(note)}.")
+                    break
+                except RuntimeError as e:
+                    last_err = e
+                    if "memory" not in str(e).lower():
+                        print(f"[!] {e}")
+                        print("    Free up RAM (close apps) and retry.")
+                        return
+            if answer:
                 break
-            except RuntimeError as e:
-                last_err = e
-                if "memory" not in str(e).lower():
-                    print(f"[!] {e}")
-                    print("    Free up RAM (close apps) and retry.")
-                    return
-        if answer:
-            break
-    if not answer:
-        print(f"[!] No local model could run: {last_err}")
-        print("    Free ~1 GB RAM (close editors/WSL) and retry.")
-        return
+        if not answer:
+            print(f"[!] No local model could run: {last_err}")
+            print("    Free ~1 GB RAM (close editors/WSL) and retry.")
+            return
+    print(f"\n{'='*70}\n ANSWER\n{'='*70}\n")
     print(answer)
 
     print(f"\n{'='*70}\n SOURCES")
@@ -887,7 +991,8 @@ if __name__ == "__main__":
                         default="linear", help="Search mode")
     parser.add_argument("--limit", type=int, default=6, help="Maximum results to return")
     parser.add_argument("--model", type=str, default=ASK_MODEL_DEFAULT,
-                        help="Ask-mode brain: llama3.2 (fast) | mistral | qwen | gemma")
+                        help="Ask-mode brain: groq (default, 70B cloud) | "
+                             "groq-fast (8B cloud) | phi3 | llama3.2 | mistral")
     parser.add_argument("--save", action="store_true",
                         help="ask mode: save an Obsidian-ready brief to Briefings/")
     parser.add_argument("--topics", action="store_true",
