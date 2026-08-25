@@ -10,19 +10,19 @@ test suite — all non-destructive to the original raw files.
 ## 2. 🔒 Active Worker
 | Field | Value |
 |---|---|
-| Claimed by | opencode (session: M5b embed resume #2 + parallel anomaly fix) |
-| Claimed at | 2026-08-24 — session complete, claim RELEASED |
+| Claimed by | opencode (session: M5c semantic search command) |
+| Claimed at | 2026-08-25 — session complete, claim RELEASED |
 | Status | FREE |
 
 ## 3. Current Status
-🟢 **M5b SEMANTIC INDEX: COMPLETE (2026-08-24).** All 10,785/10,785 chunks embedded
-(nomic-embed-text via Ollama, 768-dim, L2-normalised) in `chunk_embeddings` table.
-Domain anomaly RESOLVED: 42 manifest entries had action↔domain mismatches
-(archive-action vs ARCHIVE-bucket); all aligned — final split 149 archive /
-255 merge_into_gm / 39 reference_only = 443. ARCHIVE confirmed as intentional
-routing bucket, not an 11th content domain. 96/96 tests still pass.
-**NEXT:** build the semantic search command (cosine similarity over
-chunk_embeddings, hybrid with FTS5); GitHub push pending owner repo decision.
+🟢 **M5c SEMANTIC SEARCH: COMPLETE (2026-08-25).** `search_engine.py` now has 4
+modes: linear (FTS5/BM25), graph (KG), **semantic** (cosine over 10,785
+chunk_embeddings via Ollama nomic-embed-text, ~0.2s warm), **hybrid**
+(Reciprocal Rank Fusion of both legs). Embedding matrix cached in-process by
+DB mtime. Graceful fallback message if Ollama is down. Test suite grown to
+**139 tests, 100% pass** (96 e2e + 21 adversarial + 22 semantic/hybrid).
+**NEXT:** GitHub push pending owner repo decision (recommend Private; scrub
+dashboard exports first); rotate live keys before any external sharing.
 
 ## 4. Milestone Log
 | Date | Milestone | Status | Notes |
@@ -36,6 +36,7 @@ chunk_embeddings, hybrid with FTS5); GitHub push pending owner repo decision.
 | 2026-08-23 | M5 deep-processing 443/443 + security hardening | DONE | 96/96 tests; see batches 01-11 + redaction commits |
 | 2026-08-24 | M5b semantic index 10,785/10,785 embedded | DONE | survived UI freeze mid-run; crash-safe resume worked |
 | 2026-08-24 | Domain anomaly resolved (42 manifest fixes) | DONE | backup kept; 96/96 tests re-verified |
+| 2026-08-25 | M5c semantic + hybrid (RRF) search modes | DONE | 4 search modes; 139/139 tests pass |
 
 ## 5.1 M5 Final Statistics (2026-08-23, split corrected 2026-08-24)
 - Classification: 255 merge_into_gm · 149 archive · 39 reference_only · 0 pending
@@ -75,7 +76,12 @@ chunk_embeddings, hybrid with FTS5); GitHub push pending owner repo decision.
    2026-08-24: ARCHIVE is the routing bucket for cold storage (by design); 42
    mismatched action↔domain entries aligned; pre-fix backup at
    `_trash_manifest_backup_2026-08-24.json`.
-4. After M5 processing completes → semantic/vector search layer (owner-chosen).
+4. ~~After M5 processing completes → semantic/vector search layer (owner-chosen).~~ DONE
+   2026-08-25: `--mode semantic` + `--mode hybrid` (RRF) shipped. Honest quality
+   note: natural-language queries work well; one weak spot found — vague queries
+   like "find clients for finance advisory" rank CVs above the subbroking
+   playbook (embedding-level limitation; domain-specific phrasing fixes it).
+   Future option: embed title+summary alongside chunks for stronger anchors.
 5. Owner memory anchor (2026-08-23): "go through each and every file, identify
    what it is, categorise it, tag metadata — know exactly what I have and whether
    it is useful for future projects."
@@ -96,20 +102,21 @@ chunk_embeddings, hybrid with FTS5); GitHub push pending owner repo decision.
 ```
 CONTEXT: C:\knowledgeBase_staging — Second Brain KB: 443 raw files refined
 into vault + 10-domain library (49 playbooks) + FTS5/KG database (502 docs,
-10785 chunks) + dashboards + 96-test suite at 100% pass. Owner is
+10785 chunks) + dashboards + 139-test suite at 100% pass. Owner is
 non-technical, decides in natural language.
-STATE:   M1-M5 DONE. M5b semantic index DONE 2026-08-24: chunk_embeddings has
-10785/10785 chunks (nomic-embed-text, 768d). Domain anomaly resolved (ARCHIVE
-= routing bucket; 42 manifest entries aligned; 149/255/39 final split).
-Credentials audited; public tiers sanitized; 96/96 tests pass.
-NEXT:    semantic search command (cosine over chunk_embeddings, hybrid with
-FTS5). GitHub push only after owner names repo + approves; recommend Private;
-scrub Excel/HTML dashboard exports for embedded content first.
+STATE:   M1-M5 DONE. M5b semantic index DONE (10785/10785, nomic 768d).
+M5c search layer DONE 2026-08-25: search_engine.py has 4 modes — linear
+(FTS5), graph (KG), semantic (cosine over chunk_embeddings, ~0.2s warm),
+hybrid (RRF fusion, k=60). Ollama-down = friendly fallback message.
+Credentials audited; public tiers sanitized; 139/139 tests pass.
+NEXT:    GitHub push only after owner names repo + approves; recommend Private;
+scrub Excel/HTML dashboard exports for embedded content first; rotate live
+keys before any external sharing. Optional quality upgrade: embed title+
+summary anchors for better vague-query hits.
 GOTCHAS: free providers/quota drops interrupt runs — small committed
-increments only (m5_merge_batch.py validator + per-batch commits is the
-pattern). Raw_copies/ + vault + RAG DB stay out of git. Live keys exist in
-key.txt, my_api_keys_backup.md, test.env.txt, google oauth json — rotate
-before any external sharing.
+increments only. Raw_copies/ + vault + RAG DB stay out of git. Live keys exist
+in key.txt, my_api_keys_backup.md, test.env.txt, google oauth json — rotate
+before any external sharing. Semantic mode needs local Ollama running.
 RULES:   read+update this PROJECT_STATE.md, claim 🔒 Active Worker before
 work, commit checkpoints, never delete data / spend money / publish without
 owner approval.
