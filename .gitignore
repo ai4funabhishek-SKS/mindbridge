@@ -26,10 +26,15 @@ Raw_copies/
 *.tmp
 *.temp
 *.log
+*.err
 *.bak
 *.old
 *.wbk
 *.dmp
+
+# Owner's AI-generated briefings & crash-recovery backups (personal layer)
+Briefings/
+_trash_*
 
 # Python Cache & Build Artifacts
 __pycache__/
