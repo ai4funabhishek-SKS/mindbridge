@@ -840,23 +840,31 @@ def search_ask(query: str, limit: int = 6, model_name: str = ASK_MODEL_DEFAULT,
 
     tried = [model] + MODEL_FALLBACKS.get(model, [])
     last_err = None
+    answer = None
     for candidate in tried:
-        try:
-            answer = _ollama_chat(candidate, system, user)
-            if candidate != model:
-                print(f"[i] '{model}' did not fit in free RAM - "
-                      f"automatically fell back to '{candidate}'.")
+        # RAM-aware ladder: shrink thinking window before shrinking brain
+        for ctx in (ASK_NUM_CTX, 2048, 1024):
+            try:
+                answer = _ollama_chat(candidate, system, user, num_ctx=ctx)
+                if candidate != model or ctx != ASK_NUM_CTX:
+                    note = []
+                    if candidate != model:
+                        note.append(f"model '{model}' did not fit in free RAM")
+                    if ctx != ASK_NUM_CTX:
+                        note.append(f"context shrunk to {ctx} tokens")
+                    print(f"[i] Auto-adjusted: {'; '.join(note)}.")
+                break
+            except RuntimeError as e:
+                last_err = e
+                if "memory" not in str(e).lower():
+                    print(f"[!] {e}")
+                    print("    Free up RAM (close apps) and retry.")
+                    return
+        if answer:
             break
-        except RuntimeError as e:
-            last_err = e
-            if "memory" in str(e).lower() and candidate != tried[-1]:
-                continue
-            print(f"[!] {e}")
-            print("    Free up RAM (close browsers/WSL) and retry, or try:  "
-                  "python search_engine.py \"...\" --mode ask --model phi3")
-            return
-    else:
+    if not answer:
         print(f"[!] No local model could run: {last_err}")
+        print("    Free ~1 GB RAM (close editors/WSL) and retry.")
         return
     print(answer)
 
