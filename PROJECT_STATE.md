@@ -10,9 +10,9 @@ test suite — all non-destructive to the original raw files.
 ## 2. 🔒 Active Worker
 | Field | Value |
 |---|---|
-| Claimed by | opencode (session: M5c semantic search command) |
-| Claimed at | 2026-08-25 — session complete, claim RELEASED |
-| Status | FREE |
+| Claimed by | opencode (session: search-quality improvement planning) |
+| Claimed at | 2026-08-25 12:30 |
+| Status | ACTIVE |
 
 ## 3. Current Status
 🟢 **M5c SEMANTIC SEARCH: COMPLETE (2026-08-25).** `search_engine.py` now has 4
