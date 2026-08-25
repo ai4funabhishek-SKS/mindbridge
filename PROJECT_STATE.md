@@ -15,14 +15,25 @@ test suite — all non-destructive to the original raw files.
 | Status | ACTIVE |
 
 ## 3. Current Status
-🟢 **M5c SEMANTIC SEARCH: COMPLETE (2026-08-25).** `search_engine.py` now has 4
-modes: linear (FTS5/BM25), graph (KG), **semantic** (cosine over 10,785
-chunk_embeddings via Ollama nomic-embed-text, ~0.2s warm), **hybrid**
-(Reciprocal Rank Fusion of both legs). Embedding matrix cached in-process by
-DB mtime. Graceful fallback message if Ollama is down. Test suite grown to
-**139 tests, 100% pass** (96 e2e + 21 adversarial + 22 semantic/hybrid).
-**NEXT:** GitHub push pending owner repo decision (recommend Private; scrub
-dashboard exports first); rotate live keys before any external sharing.
+🟢 **M6 SMART SEARCH + SMART INDEXES (2026-08-25) — 6/7 tasks done.**
+New capabilities shipped and committed:
+- **M6a** Per-folder CSV indexes + MASTER_ASSET_INDEX.csv: all 156 Asset-Library
+  files catalogued (13 columns incl. related_files, gem flags); builder
+  `build_folder_indexes.py`; idempotent.
+- **M6b** Document fingerprints: `build_doc_anchors.py` → doc_anchors table,
+  502/502 docs (461 real + 41 hollow zero-vectors; filler metadata stripped).
+- **M6c** Anchor rank-fusion + per-doc result diversity in semantic/hybrid.
+  ACCEPTANCE PROVEN: "find clients for finance advisory" now ranks the
+  subbroking playbook #3 (was absent from top-50, buried under SEBI PDFs/CVs).
+- **M6d** `--topic` filter + `--topics` listing + `--gems` (rating≥8) on all modes.
+- **M6e** `--mode ask`: funnel retrieval → local LLM synthesis with [S#] source
+  citations; `--model` ladder (llama3.2 default → phi3 fallback) with automatic
+  RAM-fallback; native chat API keep_alive=0 frees RAM after each answer;
+  `--save` writes Obsidian-ready briefs to `Briefings/`.
+Test suite: **177 passed / 4 skipped** (skips = live LLM tests gated on free RAM).
+**PENDING:** live E2E proof of Ask mode blocked by machine RAM (<2.7GB free);
+needs ~150MB more freed (WSL shutdown or closing apps). Task 7 brutal review
+pending. GitHub push still parked pending owner repo decision.
 
 ## 4. Milestone Log
 | Date | Milestone | Status | Notes |
@@ -37,6 +48,11 @@ dashboard exports first); rotate live keys before any external sharing.
 | 2026-08-24 | M5b semantic index 10,785/10,785 embedded | DONE | survived UI freeze mid-run; crash-safe resume worked |
 | 2026-08-24 | Domain anomaly resolved (42 manifest fixes) | DONE | backup kept; 96/96 tests re-verified |
 | 2026-08-25 | M5c semantic + hybrid (RRF) search modes | DONE | 4 search modes; 139/139 tests pass |
+| 2026-08-25 | M6a CSV asset indexes (156 files, 13 cols) | DONE | per-folder + master; 8 tests |
+| 2026-08-25 | M6b doc fingerprints 502/502 | DONE | filler stripped; hollow → zero-vec |
+| 2026-08-25 | M6c anchor fusion + diversity cap | DONE | finance-advisory acceptance PROVEN |
+| 2026-08-25 | M6d --topic/--topics/--gems | DONE | all modes; 174/174 at commit |
+| 2026-08-25 | M6e ask mode + briefings + model ladder | CODE DONE | live E2E pending free RAM |
 
 ## 5.1 M5 Final Statistics (2026-08-23, split corrected 2026-08-24)
 - Classification: 255 merge_into_gm · 149 archive · 39 reference_only · 0 pending
@@ -64,27 +80,14 @@ dashboard exports first); rotate live keys before any external sharing.
 | Aug 2026 | Move active work to quota-independent tools (opencode/Kilo) | Antigravity quota kept blocking deadlines | Waiting for quota reset |
 
 ## 7. Next Steps & Open Questions
-1. **M5 Phase 2 (active):** deep-process remaining 257 files — per-file: nature,
-   purpose, reusability, valuable content (business ideas / half-baked projects /
-   code snippets / prompts), topic categorization + tags + metadata. Append to
-   `file_classification_manifest.json` using the exact schema of the 186 done
-   entries. Commit after every ~30-file batch.
-2. Credentials audit → authoritative risky list (60 flagged in index + fresh scan);
-   keep risky aside via .gitignore; commit safe outputs locally; GitHub only after
-   owner provides repo + approves push (recommend Private).
-3. ~~Fix anomaly: manifest shows 11 distinct domains vs canonical 10.~~ RESOLVED
-   2026-08-24: ARCHIVE is the routing bucket for cold storage (by design); 42
-   mismatched action↔domain entries aligned; pre-fix backup at
-   `_trash_manifest_backup_2026-08-24.json`.
-4. ~~After M5 processing completes → semantic/vector search layer (owner-chosen).~~ DONE
-   2026-08-25: `--mode semantic` + `--mode hybrid` (RRF) shipped. Honest quality
-   note: natural-language queries work well; one weak spot found — vague queries
-   like "find clients for finance advisory" rank CVs above the subbroking
-   playbook (embedding-level limitation; domain-specific phrasing fixes it).
-   Future option: embed title+summary alongside chunks for stronger anchors.
-5. Owner memory anchor (2026-08-23): "go through each and every file, identify
-   what it is, categorise it, tag metadata — know exactly what I have and whether
-   it is useful for future projects."
+1. ~~M5 Phase 2 (active): deep-process remaining 257 files~~ DONE (see M5 log).
+2. GitHub push only after owner provides repo + approves; recommend Private;
+   scrub dashboard exports first; rotate live keys before any external sharing.
+3. **M6 finish line:** free ~150MB RAM (owner decision: wsl --shutdown or close
+   apps) → run live Ask E2E tests → Task 7 brutal review report.
+4. Known data debt: 242 docs carry generic topic "General Knowledge"; 145/156
+   library files have rich catalogue entries, 11 generated artifacts don't.
+   Optional future pass: relabel topics + AI-enrich descriptions.
 
 ## 8. Blockers & Gotchas
 - Antigravity quota exhaustion repeatedly interrupted work (resets daily).
@@ -102,22 +105,24 @@ dashboard exports first); rotate live keys before any external sharing.
 ```
 CONTEXT: C:\knowledgeBase_staging — Second Brain KB: 443 raw files refined
 into vault + 10-domain library (49 playbooks) + FTS5/KG database (502 docs,
-10785 chunks) + dashboards + 139-test suite at 100% pass. Owner is
-non-technical, decides in natural language.
-STATE:   M1-M5 DONE. M5b semantic index DONE (10785/10785, nomic 768d).
-M5c search layer DONE 2026-08-25: search_engine.py has 4 modes — linear
-(FTS5), graph (KG), semantic (cosine over chunk_embeddings, ~0.2s warm),
-hybrid (RRF fusion, k=60). Ollama-down = friendly fallback message.
-Credentials audited; public tiers sanitized; 139/139 tests pass.
-NEXT:    GitHub push only after owner names repo + approves; recommend Private;
-scrub Excel/HTML dashboard exports for embedded content first; rotate live
-keys before any external sharing. Optional quality upgrade: embed title+
-summary anchors for better vague-query hits.
+10785 chunks, 502 doc anchors) + dashboards + CSV asset indexes (156 files,
+13 cols) + 177-test suite. Owner is non-technical, decides in plain language.
+STATE:   M1-M6a..e DONE 2026-08-25: search_engine.py has 5 modes — linear,
+graph, semantic, hybrid (RRF), ask (funnel retrieval → local LLM synthesis
+with [S#] citations; --model llama3.2 default w/ RAM fallback ladder;
+--save writes Obsidian briefs to Briefings/). Doc-anchor fingerprints fused
+into ranking + per-doc diversity cap (MAX_PER_DOC=2) fixed vague-query
+failure: "find clients for finance advisory" → subbroking playbook top-3.
+--topic/--topics/--gems filters on all modes.
+NEXT:    live Ask E2E blocked on ~150MB RAM (wsl --shutdown or close apps);
+then Task-7 brutal review; GitHub push only after owner names repo+approves
+(recommend Private; scrub dashboard exports first); rotate live keys before
+external sharing.
 GOTCHAS: free providers/quota drops interrupt runs — small committed
-increments only. Raw_copies/ + vault + RAG DB stay out of git. Live keys exist
-in key.txt, my_api_keys_backup.md, test.env.txt, google oauth json — rotate
-before any external sharing. Semantic mode needs local Ollama running.
+increments only. Raw_copies/ + vault + RAG DB stay out of git. Live keys in
+01_Vault_Private/credentials_and_keys/. Semantic/ask modes need local Ollama;
+ask needs ~3GB free RAM (16GB machine, WSL VM eats 2.2GB).
 RULES:   read+update this PROJECT_STATE.md, claim 🔒 Active Worker before
-work, commit checkpoints, never delete data / spend money / publish without
-owner approval.
+work, commit checkpoints, verify-before-done mandate is in global AGENTS.md,
+never delete data / spend money / publish without owner approval.
 ```
