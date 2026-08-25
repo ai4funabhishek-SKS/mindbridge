@@ -614,14 +614,274 @@ def search_hybrid(query: str, limit: int = 8,
     print(f"(fused in {elapsed:.2f}s)")
 
 
+# ------------------------- ASK MODE (local LLM synthesis) ------------------
+
+ASK_MODEL_DEFAULT = "llama3.2"
+MODEL_ALIASES = {
+    "llama": "llama3.2",
+    "llama3.2": "llama3.2",
+    "mistral": "mistral",
+    "qwen": "qwen2:7b-instruct",
+    "gemma": "gemma:7b-instruct",
+    "deepseek": "deepseek-r1:7b",
+    "phi3": "phi3:mini",
+}
+ASK_MAX_PASSAGES = 12
+ASK_EXCERPT_CHARS = 700
+ASK_NUM_CTX = 4096  # modest context = half the RAM for KV cache on 16GB machines
+# Ordered fallbacks when a model does not fit in available RAM
+MODEL_FALLBACKS = {
+    "llama3.2": ["phi3:mini"],
+    "mistral": ["llama3.2", "phi3:mini"],
+    "qwen2:7b-instruct": ["llama3.2", "phi3:mini"],
+    "gemma:7b-instruct": ["llama3.2", "phi3:mini"],
+    "deepseek-r1:7b": ["llama3.2", "phi3:mini"],
+    "phi3:mini": [],
+}
+
+
+def resolve_model_name(name: str) -> str:
+    """Resolves friendly aliases and verifies the model exists locally."""
+    key = name.strip().lower()
+    model = MODEL_ALIASES.get(key, name.strip())
+    try:
+        req = urllib.request.Request("http://localhost:11434/api/tags")
+        with urllib.request.urlopen(req, timeout=10) as r:
+            installed = {m.get("name", "").lower() for m in
+                         json.loads(r.read()).get("models", [])}
+    except Exception as e:
+        print(f"[!] Cannot reach Ollama ({e}). Start it with:  ollama serve")
+        raise SystemExit(1)
+    base = model.split(":")[0].lower()
+    if model.lower() in installed or any(n.startswith(base + ":") for n in installed):
+        return model
+    print(f"[!] Model '{model}' is not installed. Available models:")
+    for n in sorted(installed):
+        print(f"      {n}")
+    print("    Install with e.g.:  ollama pull mistral")
+    raise SystemExit(1)
+
+
+def _select_passages(ranked, doc_map, max_passages=ASK_MAX_PASSAGES,
+                     max_per_doc=MAX_PER_DOC):
+    """Picks diverse top passages from [(chunk_id, score), ...] under a
+    per-document cap so one PDF cannot monopolise the context window."""
+    counts = {}
+    out = []
+    for cid, score in ranked:
+        did = doc_map.get(int(cid))
+        if counts.get(did, 0) >= max_per_doc:
+            continue
+        counts[did] = counts.get(did, 0) + 1
+        out.append((int(cid), float(score)))
+        if len(out) >= max_passages:
+            break
+    return out
+
+
+def build_ask_prompt(question: str, sources):
+    """Builds grounded system+user prompts with numbered [S#] sources."""
+    system = (
+        "You are a precise research assistant for a personal knowledge base. "
+        "Answer ONLY using the numbered sources provided. Cite sources inline "
+        "as [S1], [S2] after each claim you take from them. If the sources do "
+        "not contain enough information to answer, say exactly that and suggest "
+        "what to search for instead. Be concise and concrete; no filler."
+    )
+    blocks = []
+    for i, (title, topic, excerpt) in enumerate(sources, 1):
+        blocks.append(f"[S{i}] Title: {title}\n    Topic: {topic}\n"
+                      f"    Excerpt: {(excerpt or '').strip()}")
+    user = f"QUESTION: {question}\n\nSOURCES:\n" + "\n\n".join(blocks)
+    return system, user
+
+
+def _ollama_chat(model: str, system: str, user: str,
+                 num_ctx: int = ASK_NUM_CTX) -> str:
+    """One synchronous native Ollama chat call; model unloaded from RAM after."""
+    payload = {
+        "model": model,
+        "messages": [{"role": "system", "content": system},
+                     {"role": "user", "content": user}],
+        "stream": False,
+        "keep_alive": 0,  # free the RAM as soon as the answer is done
+        "options": {"num_ctx": num_ctx, "temperature": 0.2},
+    }
+    req = urllib.request.Request(
+        "http://localhost:11434/api/chat",
+        data=json.dumps(payload).encode(),
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=600) as r:
+            data = json.loads(r.read())
+    except urllib.error.HTTPError as e:
+        try:
+            detail = json.loads(e.read()).get("error", "")
+        except Exception:
+            detail = str(e)
+        raise RuntimeError(f"Ollama chat failed ({e.code}): {detail}") from None
+    msg = data.get("message", {})
+    content = msg.get("content", "").strip()
+    if not content:
+        raise RuntimeError("Ollama returned an empty message")
+    return content
+
+
+def save_briefing(out_dir: Path, question: str, answer, sources, model: str) -> Path:
+    """Writes an Obsidian-ready markdown brief; returns its path."""
+    from datetime import datetime
+    out_dir.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now().strftime("%Y-%m-%d_%H%M")
+    slug = re.sub(r"[^a-z0-9]+", "-", question.lower())[:40].strip("-")
+    path = out_dir / f"{stamp}_{slug or 'ask'}.md"
+    src_lines = "\n".join(
+        f"| S{i} | {title} | {topic} |" for i, (title, topic, _) in enumerate(sources, 1)
+    )
+    content = (
+        f"---\n"
+        f"title: \"{question[:80]}\"\n"
+        f"date: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
+        f"model: {model}\n"
+        f"type: knowledge-brief\n"
+        f"tags: [briefing, second-brain]\n"
+        f"---\n\n"
+        f"# Ask: {question}\n\n## Answer\n\n{answer}\n\n"
+        f"## Sources\n\n| # | Document | Topic |\n|---|---|---|\n{src_lines}\n"
+    )
+    path.write_text(content, encoding="utf-8")
+    return path
+
+
+def search_ask(query: str, limit: int = 6, model_name: str = ASK_MODEL_DEFAULT,
+               save: bool = False, topic_doc_ids=None, gem_doc_ids=None):
+    """Funnel retrieval (BM25 + anchor-fused semantic) then local-LLM synthesis."""
+    if not DB_PATH.exists():
+        print(f"Error: Database not found at {DB_PATH}")
+        return
+    if not query.strip():
+        print("[!] Ask needs a question.")
+        return
+
+    model = resolve_model_name(model_name)
+    allow = _allowed_doc_set(topic_doc_ids, gem_doc_ids)
+    chunk_doc_map = _load_chunk_doc_map()
+
+    t0 = time.time()
+
+    # --- Funnel stage 1: BM25 leg ---
+    formatted_query = sanitize_fts5_query(query)
+    bm25_ranks = []
+    if formatted_query:
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            rows = conn.execute(
+                "SELECT rowid FROM chunks_fts WHERE chunks_fts MATCH ? "
+                "ORDER BY bm25(chunks_fts) LIMIT ?",
+                (formatted_query, 60),
+            ).fetchall()
+            bm25_ranks = [r[0] for r in rows]
+        except Exception:
+            pass
+        finally:
+            conn.close()
+
+    # --- Funnel stage 2: anchor-fused semantic leg ---
+    qvec = _embed_query(query)
+    chunk_ids, matrix = _load_embedding_matrix()
+    sims = matrix @ qvec
+    if allow is not None:
+        keep = np.array([chunk_doc_map.get(int(c), -1) in allow for c in chunk_ids])
+        sims = np.where(keep, sims, -np.inf)
+    row_doc_ids = [chunk_doc_map.get(int(cid)) for cid in chunk_ids]
+    scores = fuse_chunk_anchor_scores(sims, row_doc_ids, _anchor_rank_map(qvec))
+    sem_ranked = sorted(zip(map(int, chunk_ids), scores.tolist()),
+                        key=lambda kv: -kv[1])[:40]
+
+    # --- Fuse legs, pick diverse passages ---
+    fused = {}
+    for rank, cid in enumerate(bm25_ranks, 1):
+        fused[cid] = fused.get(cid, 0.0) + 1.0 / (RRF_K + rank)
+    for rank, (cid, _sc) in enumerate(sem_ranked, 1):
+        fused[cid] = fused.get(cid, 0.0) + 1.0 / (RRF_K + rank)
+    fused_ranked = sorted(fused.items(), key=lambda kv: -kv[1])
+    passages = _select_passages(fused_ranked, chunk_doc_map)
+
+    # --- Fetch metadata/excerpts for chosen passages ---
+    conn = sqlite3.connect(DB_PATH)
+    sources = []
+    try:
+        for cid, _sc in passages:
+            row = conn.execute(
+                """SELECT d.asset_title, d.topic, c.chunk_text
+                   FROM chunks c JOIN documents d ON c.doc_id = d.id
+                   WHERE c.id=?""", (cid,)
+            ).fetchone()
+            if row:
+                title, topic, text = row
+                sources.append((title or "?", topic or "?",
+                                (text or "")[:ASK_EXCERPT_CHARS]))
+    finally:
+        conn.close()
+
+    if not sources:
+        print("No matching records found in the funnel stage. Try broader keywords.")
+        return
+
+    retrieval_s = time.time() - t0
+
+    # --- Synthesis stage (with RAM-aware fallback ladder) ---
+    system, user = build_ask_prompt(query, sources)
+    print(f"\n{'='*70}")
+    print(f" [ASK] '{query}'")
+    print(f" model: {model} | reading {len(sources)} passages "
+          f"(funnel took {retrieval_s:.2f}s; thinking...)")
+    print(f"{'='*70}\n")
+
+    tried = [model] + MODEL_FALLBACKS.get(model, [])
+    last_err = None
+    for candidate in tried:
+        try:
+            answer = _ollama_chat(candidate, system, user)
+            if candidate != model:
+                print(f"[i] '{model}' did not fit in free RAM - "
+                      f"automatically fell back to '{candidate}'.")
+            break
+        except RuntimeError as e:
+            last_err = e
+            if "memory" in str(e).lower() and candidate != tried[-1]:
+                continue
+            print(f"[!] {e}")
+            print("    Free up RAM (close browsers/WSL) and retry, or try:  "
+                  "python search_engine.py \"...\" --mode ask --model phi3")
+            return
+    else:
+        print(f"[!] No local model could run: {last_err}")
+        return
+    print(answer)
+
+    print(f"\n{'='*70}\n SOURCES")
+    for i, (title, topic, _exc) in enumerate(sources, 1):
+        print(f" [S{i}] {title}  ({topic})")
+
+    if save:
+        path = save_briefing(BASE_DIR / "Briefings", query, answer, sources, model)
+        print(f"\n Briefing saved -> {path}")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Second Brain Search Engine (Linear FTS5, Semantic, Hybrid RRF & Knowledge Graph)"
     )
     parser.add_argument("query", type=str, nargs="?", default="", help="Search terms or entity name")
-    parser.add_argument("--mode", type=str, choices=["linear", "graph", "semantic", "hybrid"],
+    parser.add_argument("--mode", type=str,
+                        choices=["linear", "graph", "semantic", "hybrid", "ask"],
                         default="linear", help="Search mode")
     parser.add_argument("--limit", type=int, default=6, help="Maximum results to return")
+    parser.add_argument("--model", type=str, default=ASK_MODEL_DEFAULT,
+                        help="Ask-mode brain: llama3.2 (fast) | mistral | qwen | gemma")
+    parser.add_argument("--save", action="store_true",
+                        help="ask mode: save an Obsidian-ready brief to Briefings/")
     parser.add_argument("--topics", action="store_true",
                         help="list all topics with document counts, then exit")
     parser.add_argument("--topic", type=str, default=None,
@@ -652,6 +912,9 @@ if __name__ == "__main__":
     elif args.mode == "hybrid":
         search_hybrid(args.query, args.limit,
                       topic_doc_ids=topic_ids, gem_doc_ids=gem_ids)
+    elif args.mode == "ask":
+        search_ask(args.query, args.limit, model_name=args.model,
+                   save=args.save, topic_doc_ids=topic_ids, gem_doc_ids=gem_ids)
 
 
 
