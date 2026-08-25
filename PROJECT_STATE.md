@@ -31,9 +31,12 @@ New capabilities shipped and committed:
   RAM-fallback; native chat API keep_alive=0 frees RAM after each answer;
   `--save` writes Obsidian-ready briefs to `Briefings/`.
 Test suite: **177 passed / 4 skipped** (skips = live LLM tests gated on free RAM).
-**PENDING:** live E2E proof of Ask mode blocked by machine RAM (<2.7GB free);
-needs ~150MB more freed (WSL shutdown or closing apps). Task 7 brutal review
-pending. GitHub push still parked pending owner repo decision.
+**PENDING:** live E2E proof of Ask mode blocked by machine RAM (~2.4-2.8GB
+free; model needs 2.9GB+). CRITICAL DISCOVERY: Ollama runs INSIDE WSL as a
+Docker container (docker-desktop distro) — `wsl --shutdown` kills the AI
+brain, and Docker Desktop auto-restarts WSL re-consuming the freed RAM.
+Best unblock: restart opencode (~1GB freed) then run Ask tests. Task 7
+brutal review delivered; GitHub push still parked pending owner decision.
 
 ## 4. Milestone Log
 | Date | Milestone | Status | Notes |
