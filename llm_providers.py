@@ -5,6 +5,7 @@ Supports multiple LLM providers with automatic fallback chain.
 
 import os
 import json
+import re
 import yaml
 import urllib.request
 import urllib.error
@@ -15,6 +16,48 @@ from pathlib import Path
 import logging
 
 logger = logging.getLogger(__name__)
+
+_PROJECT_ROOT = Path(__file__).parent
+
+
+def _load_dotenv(path: Optional[Path] = None) -> None:
+    """Load KEY=VALUE pairs from .env into os.environ (never overrides existing)."""
+    env_path = path or (_PROJECT_ROOT / ".env")
+    if not env_path.exists():
+        return
+    try:
+        for line in env_path.read_text(encoding="utf-8", errors="replace").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if key and value:
+                os.environ.setdefault(key, value)
+    except OSError as e:
+        logger.warning(f"Could not read .env: {e}")
+
+
+_load_dotenv()
+
+
+def _scan_vault_for_groq_key() -> str:
+    """Fallback: find gsk_... key in vault credentials folder. Never logs value."""
+    cred_dir = _PROJECT_ROOT / "01_Vault_Private" / "credentials_and_keys"
+    if not cred_dir.exists():
+        return ""
+    for p in sorted(cred_dir.glob("*")):
+        if not p.is_file():
+            continue
+        try:
+            text = p.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        m = re.search(r"gsk_[A-Za-z0-9]{20,}", text)
+        if m:
+            return m.group(0)
+    return ""
 
 @dataclass
 class LLMConfig:
@@ -130,6 +173,7 @@ class OpenCodeProvider(LLMProvider):
         url = f"{self.base_url}/chat/completions"
         headers = {
             "Content-Type": "application/json",
+            "User-Agent": "mindbridge/1.0",
         }
         # OpenCode Zen doesn't require API key
         req = urllib.request.Request(
@@ -165,7 +209,10 @@ class OpenCodeProvider(LLMProvider):
             "stream": True,
         }
         url = f"{self.base_url}/chat/completions"
-        headers = {"Content-Type": "application/json"}
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "mindbridge/1.0",
+        }
         req = urllib.request.Request(
             url,
             data=json.dumps(payload).encode(),
@@ -197,7 +244,7 @@ class GroqProvider(LLMProvider):
     def __init__(self, config: LLMConfig):
         super().__init__(config)
         self.base_url = config.base_url_resolved or "https://api.groq.com/openai/v1"
-        self.api_key = config.get_api_key()
+        self.api_key = config.get_api_key() or _scan_vault_for_groq_key()
     
     def is_available(self) -> bool:
         return bool(self.api_key)
@@ -310,17 +357,38 @@ class OllamaProvider(LLMProvider):
             raise RuntimeError(f"Ollama API error {e.code}: {error_body}")
     
     def chat(self, messages: List[Dict[str, str]], **kwargs) -> str:
-        payload = {
-            "model": self.config.model,
-            "messages": messages,
-            "options": {
-                "temperature": kwargs.get("temperature", self.config.temperature),
-                "num_predict": kwargs.get("max_tokens", self.config.max_tokens),
-            },
-            "stream": False,
-        }
-        return self._make_request(payload)
-    
+        """Chat with RAM-aware context ladder: shrink num_ctx before giving up."""
+        models_to_try = [self.config.model] + [
+            m for m in self.config.fallback_models if m != self.config.model
+        ]
+        last_err = None
+        for model_name in models_to_try:
+            for ctx in kwargs.get("context_ladder", [4096, 2048, 1024]):
+                payload = {
+                    "model": model_name,
+                    "messages": messages,
+                    "options": {
+                        "temperature": kwargs.get("temperature", self.config.temperature),
+                        "num_predict": kwargs.get("max_tokens", self.config.max_tokens),
+                        "num_ctx": ctx,
+                    },
+                    "stream": False,
+                }
+                try:
+                    result = self._make_request(payload)
+                    if model_name != self.config.model or ctx != 4096:
+                        logger.info(f"Ollama auto-adjusted: model={model_name}, num_ctx={ctx}")
+                    return result
+                except RuntimeError as e:
+                    last_err = e
+                    err_lower = str(e).lower()
+                    if "not found" in err_lower or "404" in err_lower:
+                        break  # model not installed -> try next model
+                    if "memory" not in err_lower:
+                        raise
+                    continue  # try smaller context
+        raise last_err or RuntimeError("Ollama: no model/context combination fit in RAM")
+
     def stream_chat(self, messages: List[Dict[str, str]], **kwargs) -> Iterator[str]:
         payload = {
             "model": self.config.model,
@@ -328,6 +396,7 @@ class OllamaProvider(LLMProvider):
             "options": {
                 "temperature": kwargs.get("temperature", self.config.temperature),
                 "num_predict": kwargs.get("max_tokens", self.config.max_tokens),
+                "num_ctx": 2048,
             },
             "stream": True,
         }

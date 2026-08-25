@@ -3,31 +3,31 @@
 # Copy to mindbridge_config.yaml and customize
 
 llm_providers:
-  # OpenCode Zen (free, cloud) - default primary
+  # OpenCode Zen - NOT callable as external API (lives inside opencode CLI only).
+  # Kept for documentation; disable to avoid wasted fallback attempts.
   opencode:
-    enabled: true
+    enabled: false
     priority: 1
     provider_type: "opencode"
     model: "freemodel"
-    # No API key needed for OpenCode Zen
     base_url: null
     timeout: 60
     max_tokens: 4096
     temperature: 0.2
 
-  # Groq (free tier, cloud) - secondary
+  # Groq (free tier, cloud) - PRIMARY brain
   groq:
     enabled: true
     priority: 2
     provider_type: "groq"
-    model: "openai/gpt-oss-120b"  # or llama-3.1-8b-instant for speed
+    model: "openai/gpt-oss-120b"  # reasoning model; keep max_tokens >= 512
     api_key_env: "GROQ_API_KEY"
     base_url: "https://api.groq.com/openai/v1"
     timeout: 60
     max_tokens: 4096
     temperature: 0.2
 
-  # Ollama (local) - tertiary fallback
+  # Ollama (local) - offline/privacy fallback (RAM-aware ctx ladder built-in)
   ollama:
     enabled: true
     priority: 3
@@ -37,25 +37,12 @@ llm_providers:
     timeout: 120
     max_tokens: 4096
     temperature: 0.2
-    # Fallback models if primary fails
     fallback_models:
       - "phi3:mini"
-      - "qwen2.5:7b-instruct"
-
-  # OpenAI-compatible (custom endpoints)
-  openai_compatible:
-    enabled: false
-    priority: 4
-    provider_type: "openai_compatible"
-    model: "gpt-3.5-turbo"
-    api_key_env: "OPENAI_API_KEY"
-    base_url: "https://api.openai.com/v1"
-    timeout: 60
-    max_tokens: 4096
-    temperature: 0.2
+      - "qwen2:7b-instruct"
 
 # Fallback chain order (by priority)
-fallback_chain: ["opencode", "groq", "ollama"]
+fallback_chain: ["groq", "ollama"]
 
 # Embedding configuration (always local via Ollama)
 embeddings:
