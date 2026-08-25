@@ -21,10 +21,12 @@ if not BASE_DIR.exists():
     BASE_DIR = Path(__file__).resolve().parent
 
 DB_PATH = BASE_DIR / "Processed_Assets" / "my_rag_data.db"
+MANIFEST_PATH = BASE_DIR / "Processed_Assets" / "file_classification_manifest.json"
 
 EMBED_MODEL = "nomic-embed-text"
 OLLAMA_URL = "http://localhost:11434/api/embed"
 RRF_K = 60  # standard reciprocal rank fusion constant
+GEM_THRESHOLD = 8
 ANCHOR_WEIGHT = 1.0  # weight of document-anchor rank bonus vs chunk rank
 MAX_PER_DOC = 2      # result slots any single document may occupy
 
@@ -54,34 +56,102 @@ def sanitize_fts5_query(query: str) -> str:
         return ""
     return " ".join([f'"{tok}"*' for tok in tokens])
 
-def search_linear(query: str, limit: int = 8):
+def _resolve_topic_filter(topic_arg: str) -> set:
+    """Doc-id set for documents whose topic contains topic_arg (case-insensitive)."""
+    if not topic_arg:
+        return set()
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        rows = conn.execute(
+            "SELECT id FROM documents WHERE lower(topic) LIKE ?",
+            (f"%{topic_arg.lower()}%",),
+        ).fetchall()
+    finally:
+        conn.close()
+    return {r[0] for r in rows}
+
+
+_GEM_CACHE = {}  # manifest mtime -> {name_lower, ...}
+
+
+def _load_gem_names() -> set:
+    """Lower-cased raw file names whose manifest reusability_score >= GEM_THRESHOLD."""
+    mtime = MANIFEST_PATH.stat().st_mtime
+    cached = _GEM_CACHE.get(mtime)
+    if cached is not None:
+        return cached
+    names = set()
+    try:
+        with open(MANIFEST_PATH, encoding="utf-8") as f:
+            for entry in json.load(f):
+                score = entry.get("reusability_score")
+                if isinstance(score, (int, float)) and score >= GEM_THRESHOLD:
+                    names.add(Path(entry["raw_path"]).name.lower())
+    except FileNotFoundError:
+        pass
+    _GEM_CACHE.clear()
+    _GEM_CACHE[mtime] = names
+    return names
+
+
+def _load_gem_doc_ids() -> set:
+    """Doc ids whose manifest reusability_score >= GEM_THRESHOLD."""
+    gem_names = _load_gem_names()
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        rows = conn.execute("SELECT id, file_name FROM documents").fetchall()
+    finally:
+        conn.close()
+    return {did for did, fname in rows if fname.lower() in gem_names}
+
+
+def list_topics():
+    """Prints every topic with its document count."""
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        rows = conn.execute(
+            "SELECT topic, COUNT(*) FROM documents GROUP BY topic ORDER BY 2 DESC"
+        ).fetchall()
+    finally:
+        conn.close()
+    print(f"\n{'='*70}\n [TOPICS] {len(rows)} topics in the knowledge base\n{'='*70}\n")
+    for topic, n in rows:
+        print(f"  {n:>4} documents | {topic}")
+    print(f"\nFilter any search with:  --topic \"<name or part of name>\"\n")
+
+
+def search_linear(query: str, limit: int = 8, topic: str = None,
+                  gem_only: bool = False):
     """Executes SQLite FTS5 Full-Text Search (Linear / BM25)."""
     if not DB_PATH.exists():
         print(f"Error: Database not found at {DB_PATH}")
         return
-    
+
     if limit == 0:
         print(f"\n{'='*70}")
         print(f" [SEARCH] LINEAR FTS5 RESULTS FOR: '{query}' (0 matches)")
         print(f"{'='*70}\n")
         print("No matching records found. Try broader keywords.")
         return
-    
+
     actual_limit = limit if limit > 0 else 50
     formatted_query = sanitize_fts5_query(query)
-    
+
     if not formatted_query:
         print(f"\n{'='*70}")
         print(f" [SEARCH] LINEAR FTS5 RESULTS FOR: '{query}' (0 matches)")
         print(f"{'='*70}\n")
         print("No matching records found. Try broader keywords.")
         return
-    
+
+    gem_names = _load_gem_names() if gem_only else None
+    fetch_n = actual_limit * 15 if (topic or gem_only) else actual_limit
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    
+
     sql = """
-    SELECT 
+    SELECT
         asset_title,
         file_name,
         topic,
@@ -93,10 +163,16 @@ def search_linear(query: str, limit: int = 8):
     ORDER BY rank
     LIMIT ?;
     """
-    
+
     try:
-        cursor.execute(sql, (formatted_query, actual_limit))
+        cursor.execute(sql, (formatted_query, fetch_n))
         rows = cursor.fetchall()
+        if topic:
+            t = topic.lower()
+            rows = [r for r in rows if t in (r[2] or "").lower()]
+        if gem_only:
+            rows = [r for r in rows if (r[1] or "").lower() in gem_names]
+        rows = rows[:actual_limit]
         
         print(f"\n{'='*70}")
         print(f" [SEARCH] LINEAR FTS5 RESULTS FOR: '{query}' ({len(rows)} matches)")
@@ -366,7 +442,17 @@ def _anchor_rank_map(qvec: np.ndarray) -> dict:
     return {int(doc_ids[i]): pos + 1 for pos, i in enumerate(order)}
 
 
-def search_semantic(query: str, limit: int = 8):
+def _allowed_doc_set(topic_doc_ids, gem_doc_ids):
+    """Intersection of active filters, or None when nothing is filtered."""
+    sets = [s for s in (topic_doc_ids, gem_doc_ids) if s is not None]
+    if not sets:
+        return None
+    allow = set.intersection(*sets) if len(sets) > 1 else set(sets[0])
+    return allow or set([-1])  # empty filter must match nothing
+
+
+def search_semantic(query: str, limit: int = 8,
+                    topic_doc_ids=None, gem_doc_ids=None):
     """Cosine similarity search over pre-computed chunk embeddings."""
     if not DB_PATH.exists():
         print(f"Error: Database not found at {DB_PATH}")
@@ -398,11 +484,13 @@ def search_semantic(query: str, limit: int = 8):
         return
 
     sims = matrix @ qvec
+    allow = _allowed_doc_set(topic_doc_ids, gem_doc_ids)
     chunk_doc_map = _load_chunk_doc_map()
+    if allow is not None:
+        keep = np.array([chunk_doc_map.get(int(c), -1) in allow for c in chunk_ids])
+        sims = np.where(keep, sims, -np.inf)
     row_doc_ids = [chunk_doc_map.get(int(cid)) for cid in chunk_ids]
-    scores = fuse_chunk_anchor_scores(
-        sims, row_doc_ids, _anchor_rank_map(qvec)
-    )
+    scores = fuse_chunk_anchor_scores(sims, row_doc_ids, _anchor_rank_map(qvec))
     order = np.argsort(-scores)
     picked = diverse_top(order, chunk_ids, chunk_doc_map, actual_limit)
     elapsed = time.time() - t0
@@ -421,7 +509,8 @@ def search_semantic(query: str, limit: int = 8):
     print(f"(query embedded + ranked in {elapsed:.2f}s)")
 
 
-def search_hybrid(query: str, limit: int = 8):
+def search_hybrid(query: str, limit: int = 8,
+                  topic_doc_ids=None, gem_doc_ids=None):
     """Reciprocal Rank Fusion of BM25 keyword ranks + semantic similarity ranks."""
     if not DB_PATH.exists():
         print(f"Error: Database not found at {DB_PATH}")
@@ -435,6 +524,8 @@ def search_hybrid(query: str, limit: int = 8):
 
     actual_limit = limit if limit > 0 else 50
     pool = max(actual_limit * 5, 50)
+    allow = _allowed_doc_set(topic_doc_ids, gem_doc_ids)
+    chunk_doc_map = _load_chunk_doc_map()
 
     t0 = time.time()
 
@@ -450,6 +541,9 @@ def search_hybrid(query: str, limit: int = 8):
                 (formatted_query, pool),
             ).fetchall()
             bm25_ranks = [r[0] for r in rows]
+            if allow is not None:
+                bm25_ranks = [c for c in bm25_ranks
+                              if chunk_doc_map.get(int(c), -1) in allow]
         except Exception:
             pass
         finally:
@@ -460,7 +554,9 @@ def search_hybrid(query: str, limit: int = 8):
         qvec = _embed_query(query)
         chunk_ids, matrix = _load_embedding_matrix()
         sims = matrix @ qvec
-        chunk_doc_map = _load_chunk_doc_map()
+        if allow is not None:
+            keep = np.array([chunk_doc_map.get(int(c), -1) in allow for c in chunk_ids])
+            sims = np.where(keep, sims, -np.inf)
         row_doc_ids = [chunk_doc_map.get(int(cid)) for cid in chunk_ids]
         scores = fuse_chunk_anchor_scores(
             sims, row_doc_ids, _anchor_rank_map(qvec)
@@ -481,7 +577,6 @@ def search_hybrid(query: str, limit: int = 8):
         fused[cid] = fused.get(cid, 0.0) + 1.0 / (RRF_K + rank)
 
     ranked = sorted(fused.items(), key=lambda kv: -kv[1])
-    chunk_doc_map = _load_chunk_doc_map()
     top = []
     seen_per_doc = {}
     for cid, sc in ranked:
@@ -527,20 +622,36 @@ if __name__ == "__main__":
     parser.add_argument("--mode", type=str, choices=["linear", "graph", "semantic", "hybrid"],
                         default="linear", help="Search mode")
     parser.add_argument("--limit", type=int, default=6, help="Maximum results to return")
+    parser.add_argument("--topics", action="store_true",
+                        help="list all topics with document counts, then exit")
+    parser.add_argument("--topic", type=str, default=None,
+                        help="restrict results to one topic (partial match ok)")
+    parser.add_argument("--gems", action="store_true",
+                        help="only show assets rated 8+ (reusability gems)")
 
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(0)
 
     args = parser.parse_args()
+
+    if args.topics:
+        list_topics()
+        sys.exit(0)
+
+    topic_ids = _resolve_topic_filter(args.topic) if args.topic else None
+    gem_ids = _load_gem_doc_ids() if args.gems else None
+
     if args.mode == "linear":
-        search_linear(args.query, args.limit)
+        search_linear(args.query, args.limit, topic=args.topic, gem_only=args.gems)
     elif args.mode == "graph":
         search_graph(args.query)
     elif args.mode == "semantic":
-        search_semantic(args.query, args.limit)
+        search_semantic(args.query, args.limit,
+                        topic_doc_ids=topic_ids, gem_doc_ids=gem_ids)
     elif args.mode == "hybrid":
-        search_hybrid(args.query, args.limit)
+        search_hybrid(args.query, args.limit,
+                      topic_doc_ids=topic_ids, gem_doc_ids=gem_ids)
 
 
 
