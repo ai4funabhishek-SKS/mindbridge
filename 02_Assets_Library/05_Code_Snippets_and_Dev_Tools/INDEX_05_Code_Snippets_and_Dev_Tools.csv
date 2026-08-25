@@ -13,5 +13,5 @@ keybindings.json,keybindings,VSCode keybindings,Knowledge asset storage,5,,Deplo
 moc_template.md,moc_template,Map of Content template,Knowledge asset storage,6,,Reference Documentation,.md,05_Code_Snippets_and_Dev_Tools,.md,0.7,GM_Knowledge_Graph_and_Hybrid_Search_Engine_Architecture.md,Raw_copies/moc_template.md
 my_rag_data_schema.sql,my rag data schema,(no catalog entry - generated artifact),,,,,,05_Code_Snippets_and_Dev_Tools,.sql,1.6,,
 project_rules.md,project_rules,Global project rules/conventions,Knowledge asset storage,7,,Reference Documentation,.md,05_Code_Snippets_and_Dev_Tools,.md,5.2,GM_Local_Dev_Environment_Scaffolding_and_IDE_Tooling.md,Raw_copies/project_rules.md
-README.md,README,General repository readme,Knowledge asset storage,4,,Reference Documentation,.md,05_Code_Snippets_and_Dev_Tools,.md,0.2,,Raw_copies/README.md
+README.md,README,General repository readme,,4,,,,05_Code_Snippets_and_Dev_Tools,.md,0.2,,Raw_copies/README.md
 tunnel.md,tunnel,Docs on setting up tunnels (e.g. ngrok),Knowledge asset storage,7,,Reference Documentation,.md,05_Code_Snippets_and_Dev_Tools,.md,2.3,GM_Containerized_Docker_Runtime_and_Networking_Architecture.md,Raw_copies/tunnel.md

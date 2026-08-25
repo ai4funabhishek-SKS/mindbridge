@@ -1,4 +1,4 @@
 ﻿file_name,title,description,problem_solved,rating,gem,workability,tags,domain,format,size_kb,related_files,source_path
 1731557585964-PhoneCallingTool.json,1731557585964-PhoneCallingTool,Configuration or n8n node for phone calling tools,Knowledge asset storage,8,YES,Deployable Template,".json, JSON",04_Mobile_and_Android_Ecosystem,.json,8.2,GM_Voice_AI_Telephony_and_Vapi_Calling_Engines.md,Raw_copies/1731557585964-PhoneCallingTool.json
-README.md,README,General repository readme,Knowledge asset storage,4,,Reference Documentation,.md,04_Mobile_and_Android_Ecosystem,.md,0.2,,Raw_copies/README.md
+README.md,README,General repository readme,,4,,,,04_Mobile_and_Android_Ecosystem,.md,0.2,,Raw_copies/README.md
 vapi_telephony_config.json,vapi telephony config,(no catalog entry - generated artifact),,,,,,04_Mobile_and_Android_Ecosystem,.json,0.7,,

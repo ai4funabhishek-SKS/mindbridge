@@ -36,6 +36,9 @@ Raw_copies/
 Briefings/
 _trash_*
 
+# Heavy on-disk DB backups live only in cold storage, never in git
+04_Archive_Cold_Storage/db_backups/
+
 # Python Cache & Build Artifacts
 __pycache__/
 *.py[cod]
